@@ -1,0 +1,3 @@
+sto list.c sth sunarthsh insert prospathw na xwrisw to ngram se words kai na ta valw se ena array
+gia kapoio logo an valw thn protash "this is a" doyleuoun ta malloc kai ta realoc, enw an valw "this is a dog" den douleuei kai vgazei provlhma sto realloc
+gia na to deis auto p lew, prosthesa th grammh this is a sthn arxh tou init_file. ara trexto apla

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "auxMethods.h"
 #include "list.h"
 
@@ -19,7 +20,10 @@ int initializeList(FILE* file){
 	
 	int insert=0;
 	while ((read = getline(&line, &len, file)) != -1) {
-		insert = insert_ngram(line);
+	
+	
+		char* ngram = strtok(line, "\n");
+		insert = insert_ngram(ngram);
 		if (!insert){
 			fprintf( stderr, "%s\n","Insert was unsuccessful");	
 			break;
