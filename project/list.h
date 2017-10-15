@@ -1,19 +1,17 @@
 #ifndef _LIST_H_
 #define _LIST_H_
 #include <stdbool.h>
+#include "node.h"
 
-typedef struct node listNode;
+typedef struct listNode listNode;
 
 struct node{
 	listNode* sameLayer;
-	listNode* nextWord;
-	char* word;
-	bool isFinal;
+	dataNode* node;
 	
 };
 
-int insert_ngram(char* ngram);
-void setNode(listNode* this, listNode* sl,listNode* nw,char* data, bool f);
+int insert_ngram(dataNode* node);
 
 
 

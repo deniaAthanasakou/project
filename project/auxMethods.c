@@ -3,6 +3,7 @@
 #include <string.h>
 #include "auxMethods.h"
 #include "list.h"
+#include "node.h"
 
 
 int initializeList(FILE* file){
@@ -23,7 +24,7 @@ int initializeList(FILE* file){
 	
 	
 		char* ngram = strtok(line, "\n");
-		insert = insert_ngram(ngram);
+		insert = insert_ngram_in_node(ngram);
 		if (!insert){
 			fprintf( stderr, "%s\n","Insert was unsuccessful");	
 			break;
