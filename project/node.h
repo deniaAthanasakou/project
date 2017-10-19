@@ -5,14 +5,13 @@
 typedef struct dataNode dataNode;
 
 struct dataNode{
-	dataNode* nextWord;
-	char* word;
-	bool isFinal;
-	
+	dataNode** nextWordArray;		//pointer se array apo dataNodes
+	char* word;						//leksh
+	bool isFinal;					//final h oxi
 };
 
 
-int insert_ngram_in_node(char* ngram);
+int stringToArray(char* ngram);
 void setNode(dataNode* this,dataNode* nw,char* data, bool f);
 
 

@@ -3,13 +3,10 @@
 #include <stdbool.h>
 #include "node.h"
 
-typedef struct listNode listNode;
-
-struct node{
-	listNode* sameLayer;
-	dataNode* node;
-	
-};
+typedef struct arrayHeader{
+	int length;				//diastash array
+	dataNode** array;		//pointer se array apo dataNodes
+}arrayHeader;
 
 int insert_ngram(dataNode* node);
 

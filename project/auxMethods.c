@@ -24,7 +24,7 @@ int initializeList(FILE* file){
 	
 	
 		char* ngram = strtok(line, "\n");
-		insert = insert_ngram_in_node(ngram);
+		insert = stringToArray(ngram);
 		if (!insert){
 			fprintf( stderr, "%s\n","Insert was unsuccessful");	
 			break;

@@ -3,7 +3,7 @@
 #include <string.h>
 #include "node.h"
 
-int insert_ngram_in_node(char* ngram){
+int stringToArray(char* ngram){
 	printf ("===================================INSERT N GRAM IN NODE =====================================\n");
 	char* pch;
 	char** arrayOfWords; 
@@ -16,17 +16,12 @@ int insert_ngram_in_node(char* ngram){
 		noOfWords++;
 		printf ("!%s! noofwords = %d\n",pch,noOfWords);
 		arrayOfWords = (char**)realloc(arrayOfWords, noOfWords * sizeof(char*));		
-		arrayOfWords[noOfWords]=malloc(strlen(pch)* sizeof(char));
-		
+		arrayOfWords[noOfWords-1]=malloc(strlen(pch)* sizeof(char));
 		printf ("size of malloc %ld\n",strlen(pch)* sizeof(char));
-		
 		//add pch into arrayOfWords
-		strcpy(arrayOfWords[noOfWords],pch);
-		printf ("inside array !%s!\n",arrayOfWords[noOfWords]);
-		
-		
+		strcpy(arrayOfWords[noOfWords-1],pch);
+		printf ("inside array !%s!\n",arrayOfWords[noOfWords-1]);
 		pch = strtok (NULL, " ");
-	
 		
 	}
 	
@@ -50,13 +45,12 @@ int insert_ngram_in_node(char* ngram){
 	free(arrayOfWords);
 	*/
 
-
 	return 1;
 }
 
 void setNode(dataNode* this,dataNode* nw,char* data, bool f){
-	this->nextWord = nw;
+	/*this->nextWord = nw;
 	strcpy(this->word, data);
-	this->isFinal = f;
+	this->isFinal = f;*/
 }
 
