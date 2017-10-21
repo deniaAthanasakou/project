@@ -1,8 +1,8 @@
 CC = gcc
-FILES = main.c node.c list.c auxMethods.c 
-OBJECTS = main.o node.o list.o auxMethods.o
+FILES = main.c struct.c func.c auxMethods.c 
+OBJECTS = main.o struct.o func.o auxMethods.o
 OUT = main
-HEADERS = node.h list.h auxMethods.h
+HEADERS = struct.h func.h auxMethods.h
 
 all: $(OBJECTS) $(HEADERS)
 	$(CC) -o $(OUT) $(FILES)
@@ -11,11 +11,11 @@ all: $(OBJECTS) $(HEADERS)
 main.o: main.c
 	$(CC) -c main.c
 
-node.o: node.c
-	$(CC) -c node.c
+node.o: struct.c
+	$(CC) -c struct.c
 		
-list.o: list.c
-	$(CC) -c list.c 
+list.o: func.c
+	$(CC) -c func.c 
 
 auxMethods.o: auxMethods.c
 	$(CC) -c auxMethods.c

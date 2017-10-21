@@ -1,22 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "list.h"
+#include "func.h"
 #include "auxMethods.h"
 
 int main (int argc,char* argv[]){
-
-	//pairnei path tou init
-	//anoigei file
-	
-	// kleinei file
 	
 	
 	FILE * initFile;
 	initFile = fopen ("init_file","r");
 	if (initFile!=NULL)
 	{
-		printf ("fopen example\n");
-		int init = initializeList(initFile);
+		printf ("Before initializeList\n");
+		int init = initialize(initFile);
+		printf ("After initializeList\n");
 		if (!init){			//error with initializeList
 			exit(1); 
 		}
