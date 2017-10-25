@@ -1,19 +1,22 @@
-sto node.c einai komple h stringToArray function.
+Eftiaxa to binary insertion sory.
+ama to trexeis tha deis oti mpainoun komple sto layer oi lekseis.
+auto p dn exw kanei einai oti an px exoume 
+this is a cat
+this a dog
 
-allaksa tis domes apo:
+ta "is a cat" kai "a dog" na mpoun katw apo to idio this. dld sto idio layer 
+ousiastika tha prepei na vriskei prwta an uparxei h leksh ston pinaka prin th valei. 
+pros to paron auto pou kanw einai oti vazw th leksh ston pinaka kanonika kai sto telos ths for kalw thn insertion sort
+pou tsekarei an einai taksinomhmeno to idio layer. 
+Prosoxh!! h for dn vazei stoixeia sto idio layer!!
 
-node.h:
+Mia lush tha htan na diamorfwthei h insertionSort etsi wste na pairnei kai to stoixeio pou theloume na kanoume insert kai prwta na tsekarei an yparxei 
+kai an yparxei na epistrefei th thesh tou wste na paroume meta to next Word, alliws na to kanei insert ston pinaka.
+Epishs an ginei insert se different Layer prepei na klhthei kai h insertion sort gia auto to layer gi auto thn exw valei kai mesa sth for.
 
-struct dataNode{
-	dataNode** nextWordArray;		//pointer se array apo dataNodes
-	char* word;						//leksh
-	bool isFinal;					//final h oxi
-};
+an ftiaksoume auto nmzw teleiwse h insert ara prospathise na deis auto smr
 
+thn binary insertion sort th vrhka apo auto to site
+http://www.geeksforgeeks.org/binary-insertion-sort/
 
-list.h:
-
-typedef struct arrayHeader{
-	int length;					//diastash array
-	dataNode** array;			//pointer se array apo dataNodes
-}
+kai allaksa kapoia mikropragmata wste na douleuei gia tis domes mas

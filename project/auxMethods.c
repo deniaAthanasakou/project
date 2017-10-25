@@ -75,64 +75,67 @@ int stringToArray(char* ngram, arrayOfStructs* array){
 		return 0;
 	}
 	
-	
-		
 
 	return 1;
 }
 
 
-
-
-int binarySearch(int last, char* value, arrayOfStructs* array_of_str){
-	int first, middle, previous;
+int binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last)
+{
 
 	dataNode** array=array_of_str->array;
 
-	first = 0;
-	middle = (first+last)/2;
-	
-	if(last==0)
-		return 0;
-		
-	while (first <= last) {
-		previous = middle;
-		
+    if (last <= first)
+        return (strcmp(item->word,array[first]->word)>0)?  (first + 1): first;
 
-	
-		if (strcmp(array[middle]->word, value)<0){
-			//sprintf("if word in %d is %s\n", middle, array[middle]->word);
-			
-			first = middle + 1;
-		}    
-		else if (strcmp(array[middle]->word, value)==0) {
-			//printf("else if %s found at location %d.\n", value, middle);
-			return (middle);
-		}
-		else{
-			//printf("else word in %d is %s\n", middle, array[middle]->word);
-			last = middle - 1;
-		}
-
-		middle = (first + last)/2;
-		if(previous==middle){
-			//printf("%s should be at location %d.\n", value, middle);
-			return (middle);
-		}
-			
-		
-	}
-	if (first > last)
-		printf("Not found! %s is not present in the list.\n", value);
-
-	return 0;   
+ 	int mid = (first+last)/2;
+ 
+    if(strcmp(item->word ,array[mid]->word)==0)
+        return mid+1;
+ 
+    if(strcmp(item->word,array[mid]->word)>0)
+        return binarySearch(array_of_str, item, mid+1, last);
+    return binarySearch(array_of_str, item, first, mid-1);
+}
+ 
+ 
+ 
+// Function to sort an array_of_str->array  of size 'n'
+void insertionSort(arrayOfStructs* array_of_str, int n)
+{
+    int i, loc, j, k;
+    dataNode* selected;
+ 
+    for (i = 1; i < n; i++)
+    {
+        j = i - 1;
+        selected = array_of_str->array[i];
+ 
+        // find location where selected sould be inseretd
+        loc = binarySearch(array_of_str, selected, 0, j);
+ 
+        // Move all elements after location to create space
+        while (j >= loc)
+        {
+            array_of_str->array[j+1] = array_of_str->array[j];
+            j--;
+        }
+        array_of_str->array[j+1] = selected;
+    }
 }
 
-void printArray(arrayOfStructs* tempArray, int position){
+
+
+
+void printArray(arrayOfStructs* array_of_str, int position){
 
 	printf("ELEMENTS ARE: [");
 	for(int k=0; k<= position;k++){
-		printf("%s , ",  tempArray->array[k]->word);
+
+		printf("%s ",  array_of_str->array[k]->word);
+		
+		if(k!=position)
+			printf(", ");
 	}
 	printf("]\n");
 
