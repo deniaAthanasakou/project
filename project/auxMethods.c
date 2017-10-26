@@ -5,11 +5,9 @@
 
 
 
-int initialize(FILE* file){
+int initialize(FILE* file, arrayOfStructs* structureTree){
 	
-	structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
-	structureTree->length=10;
-	structureTree->position=0;
+
 	initializeArray(structureTree);
 
 	char *line = NULL;
@@ -27,11 +25,6 @@ int initialize(FILE* file){
 	
 		char* ngram = strtok(line, "\n");
 		
-		//find if first word is A for insert
-		char* wordCase = strtok(ngram," ");
-		if(strcmp(wordCase,"A")==0){
-			printf("INSERT\n");
-		}
 		
 		insert = stringToArray(ngram,structureTree);
 		
@@ -39,7 +32,6 @@ int initialize(FILE* file){
 			fprintf( stderr, "%s\n","Insert was unsuccessful");	
 			break;
 		}
-
 			
 	}
 	//found eof
@@ -87,20 +79,47 @@ int stringToArray(char* ngram, arrayOfStructs* array){
 }
 
 
-int binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last)
+checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last)	
 {
 
-	dataNode** array=array_of_str->array;
+	printf("IN BINARY\n");
 
-    if (last <= first)
-        return (strcmp(item->word,array[first]->word)>0)?  (first + 1): first;
+
+	
+	
+	
+	checkItemExists* check = malloc(sizeof(checkItemExists));
+
+	check->exists=false;
+	
+
+	dataNode* array=array_of_str->array;
+
+    if (last < first){
+    	printf("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa first %d last %d\n", first, last);
+    	check->exists=false;
+    	if(strcmp(item->word,array[first].word)>0)
+    		check->position=first + 1;
+    	else
+    		check->position=first;
+    	
+    	return 	check;
+    	
+        //return (strcmp(item->word,array[first].word)>0)?  (first + 1): first;
+     }
 
  	int mid = (first+last)/2;
+ 	
+ 	printf("item is %s and word is %s\n",item->word,array[mid].word);
  
-    if(strcmp(item->word ,array[mid]->word)==0)
-        return mid+1;
+    if(strcmp(item->word ,array[mid].word)==0){
+    	printf("FOUND INSIDE STRCMP BINARY\n");
+		check->position=mid+1;
+		check->exists=true;
+        return check;
+     }
  
-    if(strcmp(item->word,array[mid]->word)>0)
+    if(strcmp(item->word,array[mid].word)>0)
         return binarySearch(array_of_str, item, mid+1, last);
     return binarySearch(array_of_str, item, first, mid-1);
 }
@@ -108,27 +127,47 @@ int binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int la
  
  
 // Function to sort an array_of_str->array  of size 'n'
-void insertionSort(arrayOfStructs* array_of_str, int n)
+checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForInsert, int lastElement)
 {
-    int i, loc, j, k;
-    dataNode* selected;
+    int i, loc, j;
+    
+    checkItemExists* retPosition=malloc(sizeof(checkItemExists));
+    retPosition->position=0;	//insert in first elements
+    retPosition->exists=false;
+    
+	printf("Last element is %d\n",lastElement);
+	if(lastElement==0){
+		array_of_str->array[0] = *itemForInsert;
+		return retPosition;
+	}
+	i=lastElement;
+    j = i - 1;
+    
  
-    for (i = 1; i < n; i++)
-    {
-        j = i - 1;
-        selected = array_of_str->array[i];
- 
-        // find location where selected sould be inseretd
-        loc = binarySearch(array_of_str, selected, 0, j);
- 
-        // Move all elements after location to create space
-        while (j >= loc)
-        {
-            array_of_str->array[j+1] = array_of_str->array[j];
-            j--;
-        }
-        array_of_str->array[j+1] = selected;
+ 	
+
+    // find location where selected sould be inseretd
+    checkItemExists* getPosition = binarySearch(array_of_str, itemForInsert, 0, j);
+    if(getPosition->exists==true){
+    	printf("FOUND INSIDE STRCMP BINARY2\n");
+    	printf("is True\n");
+    	return getPosition;
     }
+
+    loc=getPosition->position;
+    printf("loc should be 0 %d\n",loc);
+    // Move all elements after location to create space
+    while (j >= loc)
+    {
+        array_of_str->array[j+1] = array_of_str->array[j];
+        j--;
+    }
+    array_of_str->array[j+1] = *itemForInsert;
+    getPosition->position=j+1;
+    printf("SELECTED %s\n", array_of_str->array[j+1].word);
+    printf("AAAAAAAAAAAMust be inserted in position %d\n", j+1);
+    
+    return getPosition;
 }
 
 
@@ -139,7 +178,7 @@ void printArray(arrayOfStructs* array_of_str, int position){
 	printf("ELEMENTS ARE: [");
 	for(int k=0; k<= position;k++){
 
-		printf("%s ",  array_of_str->array[k]->word);
+		printf("%s ",  array_of_str->array[k].word);
 		
 		if(k!=position)
 			printf(", ");
@@ -155,13 +194,13 @@ int binarySearchSame(arrayOfStructs* array_of_str,char*word,int position){
 
 	int first = 0;
 	int last = position-1;
-	dataNode** array=array_of_str->array; 
+	dataNode* array=array_of_str->array; 
 	int middle = (first+last)/2;
 
 	while (first <= last) {
-		if (strcmp(array[middle]->word,word) < 0)
+		if (strcmp(array[middle].word,word) < 0)
 			first = middle + 1;    
-		else if (strcmp(array[middle]->word,word) > 0) {
+		else if (strcmp(array[middle].word,word) > 0) {
 			last = middle - 1;
 		}
 		else
@@ -174,7 +213,9 @@ int binarySearchSame(arrayOfStructs* array_of_str,char*word,int position){
 
 }
 
+
 //insert from query file
+/*
 int executeQueryFile(FILE* file){
 
 	char *line = NULL;
@@ -233,7 +274,7 @@ int executeQueryFile(FILE* file){
 
 }
 
-
+*/
 
 
 

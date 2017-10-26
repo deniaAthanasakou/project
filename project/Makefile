@@ -1,7 +1,7 @@
 CC = gcc
 FILES = main.c struct.c func.c auxMethods.c 
 OBJECTS = main.o struct.o func.o auxMethods.o
-OUT = main
+OUT = ngrams
 HEADERS = struct.h func.h auxMethods.h
 
 all: $(OBJECTS) $(HEADERS)

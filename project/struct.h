@@ -15,11 +15,11 @@ struct dataNode{
 
 struct arrayOfStructs{
 	int length;				//diastash array initialized 10
-	dataNode** array;		//pointer se array apo dataNodes
+	dataNode* array;		//pointer se array apo structs dataNodes
 	int position;			//the position of the first null element of array
 };
 
-arrayOfStructs* structureTree;
+
 
 
 void initializeArray(arrayOfStructs* array_of_str);
