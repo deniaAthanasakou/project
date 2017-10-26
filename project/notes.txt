@@ -1,22 +1,22 @@
-Eftiaxa to binary insertion sory.
-ama to trexeis tha deis oti mpainoun komple sto layer oi lekseis.
-auto p dn exw kanei einai oti an px exoume 
-this is a cat
-this a dog
+loipon eftiaksa na mhn mpainei word an uparxei ena idio prin.
+auto pou ekana htan n ftiakso mia synarthsh binarySearchSame pou kanei return to position.
+authn thn kalo sthn insertgram ki otan t position!=0 gia n mhn bgalei segm.
+ekana kainouria sunarthsh telika dioti me thn dikia mas binarySearch eixame san prametro thn domh ki oxi t
+string ki an t allaza xezotan t insert me to strcpy.
+epeita, loipon, afou epairna to neo position aka "found" ebaza to katallhlo isFinal
+ekei allaksa allaksa ki an htan prin false na paramenei false, allios 8a exane thn idiothta final apo kapoio 
+allo ngram. epeita ebala to tempArray na deixnei sto epomeno tou.
+meta ekana mia nea sunarthsh "executeQueryFile" ki h opoia pairnei grammes apo t query file.
+ousiastika pairno to proto gramma-word ki an einai A kano t insert pou kseroume sthn remaining line.
+akomh, gia na ginetai to insert sosta, ekana mia domh h opoia einai global thn:
+arrayOfStructs* structureTree h opoia arxikopoieitai mono sto "initialize" etsi oste na xrhsimopoih8ei kai
+genika ta dedomena na uparxoun hdh sthn domh otan ektelestei to query_file.
+exo balei ki sto stringToArray na pairnei auth thn domh.Tsekare to.
+Epishs tsekare an pairnei sosta to nextWordArray gia na mhn exo kanei kamia blakeia.
+exo parei oles tis periptoseis apla prepei na kanoume alles duo sunarthseis ->search kai delete.
+kalutera na ksekinhsoume me thn search.
+a na sou po, opote einai diegrapse ki kana arxeio pou den xreiazomaste,exoun mazeytei polla...
+sigoura xreiazomaste auxMethods.c/h, struct.c/h, func.c/h, main.c, ta files.
 
-ta "is a cat" kai "a dog" na mpoun katw apo to idio this. dld sto idio layer 
-ousiastika tha prepei na vriskei prwta an uparxei h leksh ston pinaka prin th valei. 
-pros to paron auto pou kanw einai oti vazw th leksh ston pinaka kanonika kai sto telos ths for kalw thn insertion sort
-pou tsekarei an einai taksinomhmeno to idio layer. 
-Prosoxh!! h for dn vazei stoixeia sto idio layer!!
+HAPPY CODING MIEEEXEXEXEEXEXXEXE 
 
-Mia lush tha htan na diamorfwthei h insertionSort etsi wste na pairnei kai to stoixeio pou theloume na kanoume insert kai prwta na tsekarei an yparxei 
-kai an yparxei na epistrefei th thesh tou wste na paroume meta to next Word, alliws na to kanei insert ston pinaka.
-Epishs an ginei insert se different Layer prepei na klhthei kai h insertion sort gia auto to layer gi auto thn exw valei kai mesa sth for.
-
-an ftiaksoume auto nmzw teleiwse h insert ara prospathise na deis auto smr
-
-thn binary insertion sort th vrhka apo auto to site
-http://www.geeksforgeeks.org/binary-insertion-sort/
-
-kai allaksa kapoia mikropragmata wste na douleuei gia tis domes mas

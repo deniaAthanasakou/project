@@ -19,6 +19,7 @@ struct arrayOfStructs{
 	int position;			//the position of the first null element of array
 };
 
+arrayOfStructs* structureTree;
 
 
 void initializeArray(arrayOfStructs* array_of_str);

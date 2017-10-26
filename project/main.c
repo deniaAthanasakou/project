@@ -5,7 +5,7 @@
 
 int main (int argc,char* argv[]){
 	
-	
+	//initialize
 	FILE * initFile;
 	initFile = fopen ("init_file","r");
 	if (initFile!=NULL)
@@ -19,6 +19,19 @@ int main (int argc,char* argv[]){
 		fclose (initFile);
 	}
 	
+	//query
+	FILE * queryFile;
+	queryFile = fopen ("query_file","r");
+	if (queryFile!=NULL)
+	{
+		printf ("Before query\n");
+		int query = executeQueryFile(queryFile);
+		printf ("After query\n");
+		if (!query){			//error with query
+			exit(1); 
+		}
+		fclose (queryFile);
+	}
 
 
 	return 0;

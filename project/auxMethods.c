@@ -7,10 +7,10 @@
 
 int initialize(FILE* file){
 	
-	arrayOfStructs* array = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
-	array->length=10;
-	array->position=0;
-	initializeArray(array);
+	structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
+	structureTree->length=10;
+	structureTree->position=0;
+	initializeArray(structureTree);
 
 	char *line = NULL;
 	size_t len = 0;
@@ -26,7 +26,14 @@ int initialize(FILE* file){
 		printf("%s",line);
 	
 		char* ngram = strtok(line, "\n");
-		insert = stringToArray(ngram,array);
+		
+		//find if first word is A for insert
+		char* wordCase = strtok(ngram," ");
+		if(strcmp(wordCase,"A")==0){
+			printf("INSERT\n");
+		}
+		
+		insert = stringToArray(ngram,structureTree);
 		
 		if (!insert){
 			fprintf( stderr, "%s\n","Insert was unsuccessful");	
@@ -142,6 +149,89 @@ void printArray(arrayOfStructs* array_of_str, int position){
 
 }
 
+
+//search for the same word of array in arrayOfStructs
+int binarySearchSame(arrayOfStructs* array_of_str,char*word,int position){
+
+	int first = 0;
+	int last = position-1;
+	dataNode** array=array_of_str->array; 
+	int middle = (first+last)/2;
+
+	while (first <= last) {
+		if (strcmp(array[middle]->word,word) < 0)
+			first = middle + 1;    
+		else if (strcmp(array[middle]->word,word) > 0) {
+			last = middle - 1;
+		}
+		else
+			return middle;
+
+		middle = (first + last)/2;
+	}
+	if (first > last)
+		return -1;
+
+}
+
+//insert from query file
+int executeQueryFile(FILE* file){
+
+	char *line = NULL;
+	size_t len = 0;
+	char read;
+
+	if (file == NULL)
+		return 1;
+	
+	
+	int insert=0;
+	while ((read = getline(&line, &len, file)) != -1) {
+	
+		printf("%s",line);
+	
+		char* ngram = strtok(line, "\n");
+		
+		//find first letter for each case
+		char* wordCase = strtok(ngram," ");
+		char* remainingLine = strtok(NULL,"");
+		//printf("remaining:%s\n",remainingLine);
+		if(strcmp(wordCase,"A")==0){
+			printf("INSERT\n");
+			insert = stringToArray(remainingLine,structureTree);
+			if (!insert){
+				fprintf( stderr, "%s\n","Insert was unsuccessful");	
+				break;
+			}
+		}
+		else if(strcmp(wordCase,"Q")==0){
+			printf("SEARCH\n");
+		}
+		else if(strcmp(wordCase,"D")==0){
+			printf("DELETE\n");
+		}
+		else if(strcmp(wordCase,"F")==0){
+			printf("END\n");
+		}
+		else{
+			printf("Error in query_file structure.\n");
+		}
+			
+	}
+	//found eof
+
+	if (line){
+		free(line);
+		line=NULL;
+	}
+	
+		
+	if (!insert)
+		return 0;	
+
+	return 1;
+
+}
 
 
 
