@@ -10,9 +10,12 @@ int insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 	int i=0;
 	
 	for(i=0; i<noOfWords; i++){				//different layers
-	
-		printf("POINTER IS AFTER %p\n",tempArray);
-		printf("WORD IS %s\n", arrayOfWords[i]);
+		printf("I = %d\n",i);
+		/*if(!strcmp(arrayOfWords[i],"a")){
+			printf("THIS IS THE WORD WE'VE BEEN LOOKING FOR \"A\"\n");
+			printf("position is %d (should be 1)\n",tempArray->position);
+			printf("POINTER IS %p\n",tempArray);
+		}*/
 		
 		int position = tempArray->position;
 		
@@ -27,63 +30,56 @@ int insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 		
 		checkItemExists* getPosition = insertionSort(tempArray, tempElement, tempArray->position); 
 		
-		
-		printf("After Insertion Sort Try\n");
-		
 		if(getPosition->exists==true){
-			printf("FOUND INSIDE STRCMP BINARY3\n");
 			if(i==noOfWords -1)		//final word
 				tempArray->array[getPosition->position].isFinal=true;
-			else{
+			else{																									//AUTO TO ELSE EINAI LATHOS
 				if(tempArray->array[getPosition->position].isFinal==false)		//if it wasnt true before 
 					tempArray->array[getPosition->position].isFinal=false;
 			}
+			printf("word inside array already is '%s'\n",tempArray->array[getPosition->position].word);
 			
-			printArray(tempArray, getPosition->position);
+			//printArray(tempArray, getPosition->position);
 			printf("inside if TRUE\n");
-			tempArray = tempArray->array[getPosition->position].nextWordArray;
-			//printf("POINTER IS %p\n",tempArray);
+			if(!strcmp(arrayOfWords[i],"this"))
+				printf("POINTER OF 'THIS' IS %p POSITION IS %d\n",tempArray,getPosition->position);
+				printf("POINTER FOR NEXT WORD OF 'THIS' IS %p\n",tempArray->array[getPosition->position].nextWordArray);
+			printf("hhaha\n");
+			
+
 		
 			
 		}
-		else{
-		
-			printf("inside else\n");
-			
-			printf("position is %d\n",getPosition->position);
-
+		else{			//if word is not in array yet
 		
 			if(i==noOfWords -1)		//final word
 				tempArray->array[getPosition->position].isFinal=true;
 			else
 				tempArray->array[getPosition->position].isFinal=false; 
-				
-			printf("after final\n");
 			
-			printArray(tempArray, getPosition->position);	
+			//printArray(tempArray, getPosition->position);	
 		
 			tempArray->position++;
-	
+			printf("WORD IS '%s' POINTER IS %p NEXT POSITION IS %d (SHOULD BE 1)\n ",arrayOfWords[i],tempArray,tempArray->position);
+
 		}
 		
 
 		tempArray = tempArray->array[getPosition->position].nextWordArray;
 		
-		printf("before null\n");
+		//printf("before null\n");
 		if(tempArray==NULL){
-			printf("is null\n");
 			tempArray = malloc(1 * sizeof(arrayOfStructs));
-			//printf("POINTER IS %p\n",tempArray);
+			if(!strcmp(arrayOfWords[i],"this"))
+				printf("WORD IS '%s' and next word POINTER IS %p\n",arrayOfWords[i],tempArray);
 			initializeArray(tempArray);	
 			tempArray->position=0;
 		}
+		else
+			printf("NOT NULL NEXT WORD\n");
 		
-		printf("POINTER IS BEFORE %p\n",tempArray);
 		
 	}
-	
-	//insertionSort(array_of_structs, arrayOfWords[i-1],array_of_structs->position);
-	printf("after insertion sort\n");
 	printArray(array_of_structs, array_of_structs->position-1);
 
 	return 1;

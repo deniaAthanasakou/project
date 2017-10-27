@@ -1,22 +1,24 @@
-loipon eftiaksa na mhn mpainei word an uparxei ena idio prin.
-auto pou ekana htan n ftiakso mia synarthsh binarySearchSame pou kanei return to position.
-authn thn kalo sthn insertgram ki otan t position!=0 gia n mhn bgalei segm.
-ekana kainouria sunarthsh telika dioti me thn dikia mas binarySearch eixame san prametro thn domh ki oxi t
-string ki an t allaza xezotan t insert me to strcpy.
-epeita, loipon, afou epairna to neo position aka "found" ebaza to katallhlo isFinal
-ekei allaksa allaksa ki an htan prin false na paramenei false, allios 8a exane thn idiothta final apo kapoio 
-allo ngram. epeita ebala to tempArray na deixnei sto epomeno tou.
-meta ekana mia nea sunarthsh "executeQueryFile" ki h opoia pairnei grammes apo t query file.
-ousiastika pairno to proto gramma-word ki an einai A kano t insert pou kseroume sthn remaining line.
-akomh, gia na ginetai to insert sosta, ekana mia domh h opoia einai global thn:
-arrayOfStructs* structureTree h opoia arxikopoieitai mono sto "initialize" etsi oste na xrhsimopoih8ei kai
-genika ta dedomena na uparxoun hdh sthn domh otan ektelestei to query_file.
-exo balei ki sto stringToArray na pairnei auth thn domh.Tsekare to.
-Epishs tsekare an pairnei sosta to nextWordArray gia na mhn exo kanei kamia blakeia.
-exo parei oles tis periptoseis apla prepei na kanoume alles duo sunarthseis ->search kai delete.
-kalutera na ksekinhsoume me thn search.
-a na sou po, opote einai diegrapse ki kana arxeio pou den xreiazomaste,exoun mazeytei polla...
-sigoura xreiazomaste auxMethods.c/h, struct.c/h, func.c/h, main.c, ta files.
+prospathisa na ftiaksw thn insert alla exw kollhsei
+katarxas to
+if(tempArray->array[getPosition->position].isFinal==false)		//if it wasnt true before 
+	tempArray->array[getPosition->position].isFinal=false;
+einai lathos giati einai san na les 
+if(a==false)
+	a=false;
 
-HAPPY CODING MIEEEXEXEXEEXEXXEXE 
+epishs an deis sto init file exw afhsei apla 
+this
+this
 
+kai apo ta pointers fainetai oti to deutero this einai san na antikathista to prwto.
+kanonika tha eprepe na eixan akrivws to idio pointer afou to deutero this dn eisagetai ksana.
+
+
+DIORTHWSH:
+
+to eftiaksa auto apla einai einai san na ksanaginetai auto to malloc
+array_of_str->array=malloc(array_of_str->length * sizeof(dataNode));						
+
+to opoio ginetai ousiastika sthn initializeArray.
+
+ara kathe fora pou thetoume sto tempArray to nextWord auto ksanaginetai null. dld dn kratietai h mnhmh toy.

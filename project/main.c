@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "func.h"
 #include "auxMethods.h"
+#include <string.h>
 
 
 
@@ -11,11 +12,24 @@
 int main (int argc,char* argv[]){
 	
 	if(argc!=5){
+		printf("Error! Wrong Number of Arguments\n");
+		exit(1);
+	}
+	char* init=NULL;
+	char* query=NULL;
+	for(int i=0; i<argc; i++){
+		if(!strcmp(argv[i],"-i"))
+			init=argv[i+1];
+		else if(!strcmp(argv[i],"-q"))
+			query=argv[i+1];	
+	}
+	
+	if(init==NULL || query==NULL){
 		printf("Error! Wrong Arguments\n");
 		exit(1);
 	}
-	char* init=argv[2];
-	char* query=argv[4];
+	
+	
 	
 	arrayOfStructs* structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
 	
