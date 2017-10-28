@@ -12,13 +12,12 @@ struct checkItemExists{
 
 
 int initialize(FILE* file, arrayOfStructs* structureTree);
-int stringToArray(char* ngram, arrayOfStructs* array);
+int stringToArray(char* ngram, arrayOfStructs* array, char query);
 
 void printArray(arrayOfStructs* tempArray, int position);
 
 checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last);
 checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForInsert, int lastElement);
-int binarySearchSame(arrayOfStructs* array_of_str,char*word,int position);
-int executeQueryFile(FILE* file);
+int executeQueryFile(FILE* file,arrayOfStructs* structureTree);
 
 #endif

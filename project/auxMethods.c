@@ -26,7 +26,7 @@ int initialize(FILE* file, arrayOfStructs* structureTree){
 		char* ngram = strtok(line, "\n");
 		
 		
-		insert = stringToArray(ngram,structureTree);
+		insert = stringToArray(ngram,structureTree,'A');
 		
 		if (!insert){
 			fprintf( stderr, "%s\n","Insert was unsuccessful");	
@@ -49,7 +49,7 @@ int initialize(FILE* file, arrayOfStructs* structureTree){
 
 }
 
-int stringToArray(char* ngram, arrayOfStructs* array){
+int stringToArray(char* ngram, arrayOfStructs* array, char query){
 	//printf ("===================================INSERT N GRAM IN NODE =====================================\n");
 	char* pch;
 	char** arrayOfWords; 
@@ -67,10 +67,17 @@ int stringToArray(char* ngram, arrayOfStructs* array){
 		
 	}
 	
-	if(!insert_ngram(array, arrayOfWords,noOfWords)){
-		
-		return 0;
+	if(query == 'A'){
+		if(!insert_ngram(array, arrayOfWords,noOfWords)){
+			return 0;
+		}	
 	}
+	if(query == 'Q'){
+		if(!search_ngram(array, arrayOfWords,noOfWords)){
+			return 0;
+		}	
+	}
+	
 	
 
 	return 1;
@@ -85,14 +92,23 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 	check->exists=false;
 	
 
-	dataNode* array=array_of_str->array;
+	dataNode* array = array_of_str->array;
 
     if (last < first){
+		//printf("last<first\n");
     	check->exists=false;
-    	if(strcmp(item->word,array[first].word)>0)
-    		check->position=first + 1;
-    	else
-    		check->position=first;
+		//printf("%s aaxxx %s arrays word\n",item->word,array[first].word);
+		if(array[first].word!=NULL){
+			if(strcmp(item->word,array[first].word)>0)
+    			check->position=first + 1;
+    		else
+    			check->position=first;
+		
+		}else{
+			check->position = first+1;
+		
+		}
+    	
     	
     	return 	check;
     	
@@ -122,7 +138,7 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
     retPosition->position=0;	//insert in first elements
     retPosition->exists=false;
     
-	printf("Last element is %d\n",lastElement);
+	//printf("Last element is %d\n",lastElement);
 	if(lastElement==0){
 		array_of_str->array[0] = *itemForInsert;
 		return retPosition;
@@ -133,8 +149,7 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
     // find location where selected sould be inseretd
     checkItemExists* getPosition = binarySearch(array_of_str, itemForInsert, 0, j);
     if(getPosition->exists==true){
-    	printf("word '%s' already exists in array in pos %d\n",itemForInsert->word,getPosition->position);
-    	
+    	//printf("word '%s' already exists in array in pos %d\n",itemForInsert->word,getPosition->position);
     	return getPosition;
     }
 
@@ -170,34 +185,8 @@ void printArray(arrayOfStructs* array_of_str, int position){
 }
 
 
-//search for the same word of array in arrayOfStructs
-int binarySearchSame(arrayOfStructs* array_of_str,char*word,int position){
-
-	int first = 0;
-	int last = position-1;
-	dataNode* array=array_of_str->array; 
-	int middle = (first+last)/2;
-
-	while (first <= last) {
-		if (strcmp(array[middle].word,word) < 0)
-			first = middle + 1;    
-		else if (strcmp(array[middle].word,word) > 0) {
-			last = middle - 1;
-		}
-		else
-			return middle;
-
-		middle = (first + last)/2;
-	}
-	if (first > last)
-		return -1;
-
-}
-
-
 //insert from query file
-/*
-int executeQueryFile(FILE* file){
+int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 
 	char *line = NULL;
 	size_t len = 0;
@@ -220,7 +209,7 @@ int executeQueryFile(FILE* file){
 		//printf("remaining:%s\n",remainingLine);
 		if(strcmp(wordCase,"A")==0){
 			printf("INSERT\n");
-			insert = stringToArray(remainingLine,structureTree);
+			insert = stringToArray(remainingLine,structureTree,'A');
 			if (!insert){
 				fprintf( stderr, "%s\n","Insert was unsuccessful");	
 				break;
@@ -228,6 +217,11 @@ int executeQueryFile(FILE* file){
 		}
 		else if(strcmp(wordCase,"Q")==0){
 			printf("SEARCH\n");
+			int search = stringToArray(remainingLine,structureTree,'Q');
+			if (!search){
+				fprintf( stderr, "%s\n","Search was unsuccessful");	
+				break;
+			}
 		}
 		else if(strcmp(wordCase,"D")==0){
 			printf("DELETE\n");
@@ -255,7 +249,6 @@ int executeQueryFile(FILE* file){
 
 }
 
-*/
 
 
 

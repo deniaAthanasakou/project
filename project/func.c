@@ -10,12 +10,7 @@ int insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 	int i=0;
 	
 	for(i=0; i<noOfWords; i++){				//different layers
-		printf("I = %d\n",i);
-		/*if(!strcmp(arrayOfWords[i],"a")){
-			printf("THIS IS THE WORD WE'VE BEEN LOOKING FOR \"A\"\n");
-			printf("position is %d (should be 1)\n",tempArray->position);
-			printf("POINTER IS %p\n",tempArray);
-		}*/
+		//printf("I = %d\n",i);
 		
 		int position = tempArray->position;
 		
@@ -33,22 +28,6 @@ int insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 		if(getPosition->exists==true){
 			if(i==noOfWords -1)		//final word
 				tempArray->array[getPosition->position].isFinal=true;
-			else{																									//AUTO TO ELSE EINAI LATHOS
-				if(tempArray->array[getPosition->position].isFinal==false)		//if it wasnt true before 
-					tempArray->array[getPosition->position].isFinal=false;
-			}
-			printf("word inside array already is '%s'\n",tempArray->array[getPosition->position].word);
-			
-			//printArray(tempArray, getPosition->position);
-			printf("inside if TRUE\n");
-			if(!strcmp(arrayOfWords[i],"this"))
-				printf("POINTER OF 'THIS' IS %p POSITION IS %d\n",tempArray,getPosition->position);
-				printf("POINTER FOR NEXT WORD OF 'THIS' IS %p\n",tempArray->array[getPosition->position].nextWordArray);
-			printf("hhaha\n");
-			
-
-		
-			
 		}
 		else{			//if word is not in array yet
 		
@@ -56,36 +35,76 @@ int insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 				tempArray->array[getPosition->position].isFinal=true;
 			else
 				tempArray->array[getPosition->position].isFinal=false; 
-			
-			//printArray(tempArray, getPosition->position);	
-		
+				
+			if(tempArray->position == tempArray->length-1){
+				doubleLength(tempArray);
+			}
 			tempArray->position++;
-			printf("WORD IS '%s' POINTER IS %p NEXT POSITION IS %d (SHOULD BE 1)\n ",arrayOfWords[i],tempArray,tempArray->position);
+			//printf("WORD IS '%s' POINTER IS %p NEXT POSITION IS %d (SHOULD BE 1)\n ",arrayOfWords[i],tempArray,tempArray->position);
+			tempArray->array[getPosition->position].nextWordArray = malloc(1 * sizeof(arrayOfStructs));
+			initializeArray(tempArray->array[getPosition->position].nextWordArray);
+			tempArray->array[getPosition->position].nextWordArray->position=0;
+			
 
 		}
-		
-
+		//printArray(tempArray, tempArray->position-1);
 		tempArray = tempArray->array[getPosition->position].nextWordArray;
 		
-		//printf("before null\n");
-		if(tempArray==NULL){
-			tempArray = malloc(1 * sizeof(arrayOfStructs));
-			if(!strcmp(arrayOfWords[i],"this"))
-				printf("WORD IS '%s' and next word POINTER IS %p\n",arrayOfWords[i],tempArray);
-			initializeArray(tempArray);	
-			tempArray->position=0;
-		}
-		else
-			printf("NOT NULL NEXT WORD\n");
-		
-		
 	}
-	printArray(array_of_structs, array_of_structs->position-1);
+	//printArray(array_of_structs, array_of_structs->position-1);
 
 	return 1;
 }
 
-//delete
-
 //search
+int search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords){
+
+	arrayOfStructs* tempArray = array_of_structs;
+	char* finalString;
+	int i=0;
+	int strLength=0;
+	int found = 0;
+	for(i=0; i < noOfWords; i++){				//different layers
+		
+		dataNode* tempElement = malloc(sizeof(dataNode));
+		
+		tempElement->word= (char*)malloc(strlen(arrayOfWords[i]) * sizeof(char));
+		strcpy(tempElement->word,arrayOfWords[i]);
+		
+		checkItemExists* getPosition = binarySearch(tempArray, tempElement, 0 ,tempArray->position); 
+		
+		printf("AFTER BINARY\n");
+		if(getPosition->exists==true){
+			strLength += strlen(arrayOfWords[i]) + 1;
+			finalString = realloc(finalString,strLength*sizeof(char));
+			strcat(finalString,tempArray->array[getPosition->position].word);
+			//printf("FINAL STRING IS:%s WITH ALLOCATED LENGTH:%d\n",finalString, strLength);
+			if(tempArray->array[getPosition->position].isFinal == true){
+				//printf("FINAL\n");
+				found=1;
+				//printf("FINAL STRING IS:%s WITH ALLOCATED LENGTH:%d\n",finalString, strLength);
+				printf("%s|",finalString);
+			}
+			strcat(finalString, " ");
+		}
+		
+		tempArray = tempArray->array[getPosition->position].nextWordArray;
+		if(tempArray == NULL)
+		{
+			break;
+		}
+		
+			
+	}
+	
+	//not found 
+	if(found == 0){
+		return 0;
+	}
+	
+	return 1;
+
+}
+
+//delete
 

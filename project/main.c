@@ -48,19 +48,18 @@ int main (int argc,char* argv[]){
 	}
 	
 	//query
-	/*FILE * queryFile;
+	FILE * queryFile;
 	queryFile = fopen (query,"r");
 	if (queryFile!=NULL)
 	{
 		printf ("Before query\n");
-		int query = executeQueryFile(queryFile);
+		int query = executeQueryFile(queryFile,structureTree);
 		printf ("After query\n");
 		if (!query){			//error with query
 			exit(1); 
 		}
 		fclose (queryFile);
 	}
-*/
 
 	return 0;
 }

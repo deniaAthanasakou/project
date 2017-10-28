@@ -5,11 +5,12 @@
 #include "auxMethods.h"
 
 
-
+//insert
 int insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords);
 
-
 //search
+int search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords);
+
 //delete
 
 

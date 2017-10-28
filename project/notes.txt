@@ -1,24 +1,7 @@
-prospathisa na ftiaksw thn insert alla exw kollhsei
-katarxas to
-if(tempArray->array[getPosition->position].isFinal==false)		//if it wasnt true before 
-	tempArray->array[getPosition->position].isFinal=false;
-einai lathos giati einai san na les 
-if(a==false)
-	a=false;
-
-epishs an deis sto init file exw afhsei apla 
-this
-this
-
-kai apo ta pointers fainetai oti to deutero this einai san na antikathista to prwto.
-kanonika tha eprepe na eixan akrivws to idio pointer afou to deutero this dn eisagetai ksana.
-
-
-DIORTHWSH:
-
-to eftiaksa auto apla einai einai san na ksanaginetai auto to malloc
-array_of_str->array=malloc(array_of_str->length * sizeof(dataNode));						
-
-to opoio ginetai ousiastika sthn initializeArray.
-
-ara kathe fora pou thetoume sto tempArray to nextWord auto ksanaginetai null. dld dn kratietai h mnhmh toy.
+ebgala apo to insert to false == false ktlp
+epishs logika eftiaksa thn insert ki ekana ki diplasiasmo
+auto pou h8ele htan n kanoume malloc sto nextwordarray ki meta na to ana8esoyme sto temparray
+akomh allaksa to stringToArray bazontas allh mia parametro gia thn ka8e energeia
+des i t executeQueryFile kiolas gia na deis pos to kalo
+akomh ksekinhsa t search to proto bgainei sosta, alla an bgaleis to printf me to "after binary" xezetai ki bgazei segm pio prin
+dn exo ktlabei gt bgazei segm, isos exo kanei la8os allocate sto finalString
