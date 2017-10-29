@@ -50,7 +50,6 @@ int initialize(FILE* file, arrayOfStructs* structureTree){
 }
 
 int stringToArray(char* ngram, arrayOfStructs* array, char query){
-	//printf ("===================================INSERT N GRAM IN NODE =====================================\n");
 	char* pch;
 	char** arrayOfWords; 
 	pch = strtok (ngram," ");
@@ -86,18 +85,13 @@ int stringToArray(char* ngram, arrayOfStructs* array, char query){
 
 checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last)	
 {
-
 	checkItemExists* check = malloc(sizeof(checkItemExists));
 
 	check->exists=false;
 	
-
 	dataNode* array = array_of_str->array;
-
     if (last < first){
-		//printf("last<first\n");
     	check->exists=false;
-		//printf("%s aaxxx %s arrays word\n",item->word,array[first].word);
 		if(array[first].word!=NULL){
 			if(strcmp(item->word,array[first].word)>0)
     			check->position=first + 1;
@@ -115,15 +109,21 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
      }
 
  	int mid = (first+last)/2;
- 
+
+ 	if(array[mid].word==NULL){			//to prosthesa egw dn kserw an einai swsto
+ 		check->exists=false;
+ 		check->position=-1;
+		return check;
+ 	}
     if(strcmp(item->word ,array[mid].word)==0){
 		check->position=mid;
 		check->exists=true;
         return check;
      }
  
-    if(strcmp(item->word,array[mid].word)>0)
+    if(strcmp(item->word,array[mid].word)>0){
         return binarySearch(array_of_str, item, mid+1, last);
+        }
     return binarySearch(array_of_str, item, first, mid-1);
 }
  
@@ -138,7 +138,6 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
     retPosition->position=0;	//insert in first elements
     retPosition->exists=false;
     
-	//printf("Last element is %d\n",lastElement);
 	if(lastElement==0){
 		array_of_str->array[0] = *itemForInsert;
 		return retPosition;
@@ -149,7 +148,6 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
     // find location where selected sould be inseretd
     checkItemExists* getPosition = binarySearch(array_of_str, itemForInsert, 0, j);
     if(getPosition->exists==true){
-    	//printf("word '%s' already exists in array in pos %d\n",itemForInsert->word,getPosition->position);
     	return getPosition;
     }
 
@@ -180,10 +178,25 @@ void printArray(arrayOfStructs* array_of_str, int position){
 			printf(", ");
 	}
 	printf("]\n");
-
-
+	
+	
 }
 
+void printArrayFinalWords(arrayOfStructs* array_of_str, int position){
+
+	printf("FINAL ELEMENTS ARE: [");
+	for(int k=0; k<= position;k++){
+		if(array_of_str->array[k].isFinal){
+			printf("%s ",  array_of_str->array[k].word);
+		
+			if(k!=position)
+				printf(", ");
+		}
+	}
+	printf("]\n");
+	
+	
+}
 
 //insert from query file
 int executeQueryFile(FILE* file,arrayOfStructs* structureTree){

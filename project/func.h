@@ -9,7 +9,7 @@
 int insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords);
 
 //search
-int search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords);
+int search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, int noOfWordsOriginal);
 
 //delete
 

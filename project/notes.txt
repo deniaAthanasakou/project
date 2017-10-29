@@ -1,7 +1,13 @@
-ebgala apo to insert to false == false ktlp
-epishs logika eftiaksa thn insert ki ekana ki diplasiasmo
-auto pou h8ele htan n kanoume malloc sto nextwordarray ki meta na to ana8esoyme sto temparray
-akomh allaksa to stringToArray bazontas allh mia parametro gia thn ka8e energeia
-des i t executeQueryFile kiolas gia na deis pos to kalo
-akomh ksekinhsa t search to proto bgainei sosta, alla an bgaleis to printf me to "after binary" xezetai ki bgazei segm pio prin
-dn exo ktlabei gt bgazei segm, isos exo kanei la8os allocate sto finalString
+insert is done
+
+search:
+	leitourgei swsta alla twra prepei na thewroume oti kaleitai apo to deutero word kai meta (done)
+	
+	
+	if(found == 0){			//auto giati xreiazetai?
+		return 0;
+	}
+	
+	prepei na emfanizontai apla dipla dipla (done)
+	
+	pisteuw einai etoimh alla na to dei kai h stefania
