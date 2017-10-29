@@ -1,8 +1,8 @@
 CC = gcc
-FILES = main.c struct.c func.c auxMethods.c 
-OBJECTS = main.o struct.o func.o auxMethods.o
+FILES = main.c struct.c func.c auxMethods.c stack.c
+OBJECTS = main.o struct.o func.o auxMethods.o stack.o
 OUT = ngrams
-HEADERS = struct.h func.h auxMethods.h
+HEADERS = struct.h func.h auxMethods.h stack.h
 
 all: $(OBJECTS) $(HEADERS)
 	$(CC) -o $(OUT) $(FILES)
@@ -11,10 +11,13 @@ all: $(OBJECTS) $(HEADERS)
 main.o: main.c
 	$(CC) -c main.c
 
-node.o: struct.c
+struct.o: struct.c
 	$(CC) -c struct.c
+
+stack.o: stack.c
+	$(CC) -c stack.c	
 		
-list.o: func.c
+func.o: func.c
 	$(CC) -c func.c 
 
 auxMethods.o: auxMethods.c

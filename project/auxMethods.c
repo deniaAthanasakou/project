@@ -76,6 +76,11 @@ int stringToArray(char* ngram, arrayOfStructs* array, char query){
 			return 0;
 		}	
 	}
+	if(query == 'D'){
+		if(!delete_ngram(array, arrayOfWords,noOfWords)){
+			return 0;
+		}	
+	}
 	
 	
 
@@ -164,6 +169,31 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
     return getPosition;
 }
 
+checkItemExists* deletionSort(arrayOfStructs* array_of_str, dataNode* itemForInsert, int lastElement){
+	
+    int i, loc, j;
+
+	i=lastElement;
+    j = i - 1;
+
+    // find location where selected sould be inseretd
+    checkItemExists* getPosition = binarySearch(array_of_str, itemForInsert, 0, j);
+    if(getPosition->exists==true){
+    
+    	loc=getPosition->position;
+		// Move all elements before location to create space
+		while (loc < lastElement -1)
+		{
+		    array_of_str->array[loc] = array_of_str->array[loc+1];
+		    loc++;
+		}
+		
+		array_of_str->position--;
+	}
+     
+    return getPosition;
+}
+
 
 
 
@@ -219,8 +249,9 @@ int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 		//find first letter for each case
 		char* wordCase = strtok(ngram," ");
 		char* remainingLine = strtok(NULL,"");
+
 		//printf("remaining:%s\n",remainingLine);
-		if(strcmp(wordCase,"A")==0){
+		if(strcmp(wordCase,"A")==0){	
 			printf("INSERT\n");
 			insert = stringToArray(remainingLine,structureTree,'A');
 			if (!insert){
@@ -230,7 +261,7 @@ int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 		}
 		else if(strcmp(wordCase,"Q")==0){
 			printf("SEARCH\n");
-			int search = stringToArray(remainingLine,structureTree,'Q');
+			int search = stringToArray(remainingLine,structureTree,'Q');		//isws na nai void
 			if (!search){
 				fprintf( stderr, "%s\n","Search was unsuccessful");	
 				break;
@@ -238,6 +269,11 @@ int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 		}
 		else if(strcmp(wordCase,"D")==0){
 			printf("DELETE\n");
+			int delete = stringToArray(remainingLine,structureTree,'D');
+			if (!delete){
+				fprintf( stderr, "%s\n","Delete was unsuccessful");	
+				break;
+			}
 		}
 		else if(strcmp(wordCase,"F")==0){
 			printf("END\n");

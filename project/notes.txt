@@ -11,3 +11,27 @@ search:
 	prepei na emfanizontai apla dipla dipla (done)
 	
 	pisteuw einai etoimh alla na to dei kai h stefania
+	
+	
+delete:
+	eftiaksa mia domh stoivas sta stack.h kai stack.c
+	
+	ston pinaka ths domhs thelw na krataw ta positions pou tha prepei na diagrapsw
+		
+	eftiaksa auth checkItemExists* getPosition = deletionSort(tempArray, tempElement ,tempArray->position); alla pros to paron thn exw sxoliasei giati thelw na valw 
+	ola ta positions sth stoiva
+	
+	ta evala sth stoiva. ara twra prepei an dn einai adeia h stoiva na ginetai delete.
+	
+	
+	
+	Apories:
+		An exei ginei
+		A test 
+		A test is this
+		kai meta exw 
+		D test fox
+		tote prepei to test na ginei not Final? h epeidh dn exoume protash test fox dn kanoume tpt?
+		
+	
+	

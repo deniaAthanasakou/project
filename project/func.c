@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "func.h"
+#include "stack.h"
 
 
 int insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords){		//same layer
@@ -125,4 +126,96 @@ int search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, 
 }
 
 //delete
+int delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords){
+	printf("<-------------------------DELETE STARTING------------------------->\n");
+	arrayOfStructs* tempArray = array_of_structs;
+	stack* myStack = malloc(sizeof(stack));
+	initializeStack(myStack);
+	for(int i=0; i<noOfWords; i++){
+	
+		printArray(tempArray,tempArray->position-1);
+		printf("Must delete word '%s'\n",arrayOfWords[i]);
+		int position = tempArray->position;
+		
+		dataNode* tempElement = malloc(sizeof(dataNode));
+		tempElement->word= (char*)malloc(strlen(arrayOfWords[i]) * sizeof(char));
+		strcpy(tempElement->word,arrayOfWords[i]);	
+		
+		
+		//find out if word exists in array and if it does return position
+		//checkItemExists* getPosition = deletionSort(tempArray, tempElement ,tempArray->position); 
+		checkItemExists* getPosition = binarySearch(tempArray, tempElement,0 ,tempArray->position);
+		if(	getPosition->exists==true){
+			printf("found inside array\n");
+			push(myStack, getPosition->position);
+		}
+		else{										//element was not found inside array so it can not be deleted	
+			printf("element '%s' was not found \n",tempElement->word);
+					//if !isEmpty(myStack)
+						//start deleting elements
+					//else return	
+		}
+			
+		
+		/*if(getPosition->exists==true){
+			printf("element '%s' found in position %d\n",tempElement->word, getPosition->position);
+			//if(i==noOfWords-1)	//xreiazetai?
+			if(tempArray->array[getPosition->position].isFinal==true)
+				tempArray->array[getPosition->position].isFinal=false;
+			
+						
+		}*/
+		
+		printArray(tempArray,tempArray->position-1);
+		printf("position new is %d\n",tempArray->position);
+		
+		printArrayFinalWords(tempArray,tempArray->position-1);
+		
+		tempArray = tempArray->array[getPosition->position].nextWordArray;
+		if(tempArray == NULL)
+		{
+			break;			//isws return 1
+		}
+		
+	}
+	
+	displayStack(myStack);
+	
+	printf("<-------------------------DELETE ENDING------------------------->\n");
+	
+	return 1;
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

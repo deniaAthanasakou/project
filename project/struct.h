@@ -1,5 +1,5 @@
-#ifndef _NODE_H_
-#define _NODE_H_
+#ifndef _STRUCT_H_
+#define _STRUCT_H_
 #include <stdbool.h>
 
 typedef struct dataNode dataNode;
