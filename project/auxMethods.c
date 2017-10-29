@@ -169,29 +169,17 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
     return getPosition;
 }
 
-checkItemExists* deletionSort(arrayOfStructs* array_of_str, dataNode* itemForInsert, int lastElement){
-	
-    int i, loc, j;
+void deletionSort(arrayOfStructs* array_of_str,	int position, int lastElement){
 
-	i=lastElement;
-    j = i - 1;
-
-    // find location where selected sould be inseretd
-    checkItemExists* getPosition = binarySearch(array_of_str, itemForInsert, 0, j);
-    if(getPosition->exists==true){
-    
-    	loc=getPosition->position;
-		// Move all elements before location to create space
-		while (loc < lastElement -1)
-		{
-		    array_of_str->array[loc] = array_of_str->array[loc+1];
-		    loc++;
-		}
-		
-		array_of_str->position--;
+	// delete item in position	'position'
+	while (position < lastElement -1)
+	{
+	    array_of_str->array[position] = array_of_str->array[position+1];
+	    position++;
 	}
+	
+	array_of_str->position--;
      
-    return getPosition;
 }
 
 

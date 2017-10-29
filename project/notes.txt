@@ -1,4 +1,5 @@
-insert is done
+insert: 
+	done
 
 search:
 	leitourgei swsta alla twra prepei na thewroume oti kaleitai apo to deutero word kai meta (done)
@@ -22,6 +23,11 @@ delete:
 	ola ta positions sth stoiva
 	
 	ta evala sth stoiva. ara twra prepei an dn einai adeia h stoiva na ginetai delete.
+	
+	
+	Stefania: Auto pou prepei na ginei einai o elegxos gia to pote tha diagrafontai ta elements kai pote oxi.
+		px an to item exei next word tote na mh ginetai diagrafh tou
+		epishs na allazei to isFinal opou xreiazetai 
 	
 	
 	

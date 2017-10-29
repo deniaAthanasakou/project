@@ -22,7 +22,7 @@ void printArrayFinalWords(arrayOfStructs* array_of_str, int position);
 checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last);
 
 checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForInsert, int lastElement);
-checkItemExists* deletionSort(arrayOfStructs* array_of_str, dataNode* itemForInsert, int lastElement);
+void deletionSort(arrayOfStructs* array_of_str, int position, int lastElement);
 
 
 #endif

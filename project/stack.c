@@ -3,10 +3,9 @@
 #include "stack.h"
 
 void initializeStack(stack* myStack){
-	myStack->positionsToDelete = malloc(10*sizeof(int));
-	myStack->top=-1;
 	myStack->length=10;
-
+	myStack->positionsToDelete = malloc(myStack->length*sizeof(int));
+	myStack->top=-1;
 }
 
 
@@ -27,7 +26,7 @@ void push(stack* myStack, int item){
 }
 
 int pop(stack* myStack){
-    if (myStack->top == - 1)
+    if (isEmpty(myStack))
     {
         printf ("Stack is Empty\n");
         return 0;

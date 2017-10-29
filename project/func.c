@@ -143,7 +143,6 @@ int delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 		
 		
 		//find out if word exists in array and if it does return position
-		//checkItemExists* getPosition = deletionSort(tempArray, tempElement ,tempArray->position); 
 		checkItemExists* getPosition = binarySearch(tempArray, tempElement,0 ,tempArray->position);
 		if(	getPosition->exists==true){
 			printf("found inside array\n");
@@ -153,7 +152,8 @@ int delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 			printf("element '%s' was not found \n",tempElement->word);
 					//if !isEmpty(myStack)
 						//start deleting elements
-					//else return	
+					//else return
+			break;			
 		}
 			
 		
@@ -179,7 +179,32 @@ int delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 		
 	}
 	
+	
 	displayStack(myStack);
+	
+	//delete elements in positions of myStack
+	if(!isEmpty(myStack)){
+		for (int i = myStack->top; i >= 0; i--)
+		{
+			int counter=i;
+			tempArray = array_of_structs;
+			for(int j=0; j<i; j++){
+				tempArray = tempArray->array[counter].nextWordArray;
+				counter--;
+				if(tempArray->array[counter].word!=NULL)
+					printf("word %s\n",tempArray->array[counter].word);
+			}
+			//phgaine i nextWords mprosta
+			//diegrapse to stoixeio[i]
+			//must check here if tempArray->nextWord==Null diegrapse to
+			
+			
+			
+		    deletionSort(tempArray,myStack->positionsToDelete[i], tempArray->position);
+		}
+    }
+	
+	
 	
 	printf("<-------------------------DELETE ENDING------------------------->\n");
 	
