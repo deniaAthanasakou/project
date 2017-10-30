@@ -189,10 +189,33 @@ void deletionSort(arrayOfStructs* array_of_str,	int position, int lastElement){
      
 }
 
+void printFullArray(arrayOfStructs* array_of_str, int position){	//prints all layers
 
+	arrayOfStructs* tempArray = array_of_str;
+	
+	if(tempArray != NULL){
+		int lastElement = tempArray->position;
+	
+		for(int i=0; i < lastElement; i++){
+			printf("'%s' is in position %d, ", tempArray->array[i].word, i);
+			if(i==lastElement-1){				//print only once
+				printf("\b\b: ");
+				printArray(tempArray,(tempArray->position-1));
+			}
+			if( tempArray->array[i].nextWordArray!=NULL){
+				printFullArray( tempArray->array[i].nextWordArray, tempArray->array[i].nextWordArray->position);
+				
+			}
+			else
+				printf("found null array\n");
+		}
+	}
+	else
+		printf("Null array_of_str\n");	
+		
+}
 
-
-void printArray(arrayOfStructs* array_of_str, int position){
+void printArray(arrayOfStructs* array_of_str, int position){		//prints layer
 
 	printf("ELEMENTS ARE: [");
 	for(int k=0; k<= position;k++){
@@ -222,6 +245,8 @@ void printArrayFinalWords(arrayOfStructs* array_of_str, int position){
 	
 	
 }
+
+
 
 //insert from query file
 int executeQueryFile(FILE* file,arrayOfStructs* structureTree){

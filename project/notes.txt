@@ -6,24 +6,28 @@ search:
 	
 	
 delete:
-	Stefania: Auto pou prepei na ginei einai o elegxos gia to pote tha diagrafontai ta elements kai pote oxi.
-		px an to item exei next word tote na mh ginetai diagrafh tou
-		epishs na allazei to isFinal opou xreiazetai 
+	done
 	
 	
+freeEverything:
+	an exei o pinakas to test is
+	kai sto query file ginei
 	
-	Apories:
-		An exei ginei
-		A test 
-		A test is this
-		kai meta exw 
-		D test fox
-		tote prepei to test na ginei not Final? h epeidh dn exoume protash test fox dn kanoume tpt?
-		
-		
 	A test
-	Α test is this wow
-	A test is this
-	D test is this
-
-
+	A this fox
+	F
+	
+	tote ousiastika exoume 
+	-------------
+	|test | this|
+	-------------
+			|
+			v
+			----------
+			|fox | is|
+			----------
+			
+	kai den diagrafetai swsta.
+	Gia kapoio logo uparxei not null komvos katw apo to test o opoios omws dn periexei kapoia leksh
+	
+	Isws tha vohthouse mia printFullArray pou tha ektupwnei ta epipeda	(done) (printFullArray)

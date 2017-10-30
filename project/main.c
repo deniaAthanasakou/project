@@ -60,7 +60,11 @@ int main (int argc,char* argv[]){
 		}
 		fclose (queryFile);
 	}
+	printf("\n\n\nPRINTING FULL TREE\n\n\n");
 	
+	printFullArray(structureTree,structureTree->position);
+	
+	printf("\n\n\nBEFORE DELETE\n\n\n");
 	deleteArray(structureTree);
 
 	return 0;

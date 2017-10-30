@@ -18,6 +18,7 @@ int stringToArray(char* ngram, arrayOfStructs* array, char query);
 
 void printArray(arrayOfStructs* tempArray, int position);
 void printArrayFinalWords(arrayOfStructs* array_of_str, int position);
+void printFullArray(arrayOfStructs* array_of_str, int position);
 
 checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last);
 
