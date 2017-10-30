@@ -61,7 +61,7 @@ int main (int argc,char* argv[]){
 		fclose (queryFile);
 	}
 	
-	//printArrayFinalWords(structureTree,structureTree->position);
+	deleteArray(structureTree);
 
 	return 0;
 }

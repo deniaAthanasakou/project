@@ -18,6 +18,7 @@ void push(stack* myStack, int item);
 int pop(stack* myStack);
 bool isEmpty(stack* myStack);
 void displayStack(stack* myStack);
+void deleteStack(stack* myStack);
 
 
 

@@ -19,3 +19,15 @@ void doubleLength(arrayOfStructs* array_of_str){
 	array_of_str->array = (dataNode*) realloc(array_of_str->array , array_of_str->length * sizeof(dataNode));
 	
 }
+
+void deleteArray(arrayOfStructs* array_of_str){
+	
+		
+}
+
+void deleteDataNode(dataNode* elem){
+	free(elem->word);
+	elem->word = NULL;
+	free(elem);
+	elem = NULL;	
+}

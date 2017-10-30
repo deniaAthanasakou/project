@@ -68,25 +68,34 @@ int stringToArray(char* ngram, arrayOfStructs* array, char query){
 	
 	if(query == 'A'){
 		if(!insert_ngram(array, arrayOfWords,noOfWords)){
+			deleteArrayOfWords(arrayOfWords,noOfWords);
 			return 0;
 		}	
 	}
-	if(query == 'Q'){
-		if(!search_ngram(array, arrayOfWords,noOfWords)){
-			return 0;
-		}	
+	else if(query == 'Q'){
+		search_ngram(array, arrayOfWords,noOfWords);
 	}
-	if(query == 'D'){
+	else if(query == 'D'){
 		if(!delete_ngram(array, arrayOfWords,noOfWords)){
+			deleteArrayOfWords(arrayOfWords,noOfWords);
 			return 0;
 		}	
 	}
 	
-	
+	deleteArrayOfWords(arrayOfWords,noOfWords);
 
 	return 1;
 }
 
+void deleteArrayOfWords(char** array,int length){
+	for(int i=0;i<length;i++){
+		free(array[i]);
+		array[i] = NULL;
+	}
+	free(array);
+	array = NULL;
+
+}
 
 checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last)	
 {
@@ -107,8 +116,6 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 			check->position = first+1;
 		
 		}
-    	
-    	
     	return 	check;
     	
      }

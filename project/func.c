@@ -49,7 +49,8 @@ int insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 		}
 		printArray(tempArray, tempArray->position-1);
 		tempArray = tempArray->array[getPosition->position].nextWordArray;
-		
+		free(getPosition);
+		getPosition = NULL;
 	}
 	printArray(array_of_structs, array_of_structs->position-1);
 
@@ -57,7 +58,7 @@ int insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 }
 
 //search
-int search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, int noOfWordsOriginal){		//is called for a single query
+void search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, int noOfWordsOriginal){		//is called for a single query
 	printf("<-------------------------SEARCH BEGINNING------------------------->\n");
 	
 	
@@ -66,7 +67,7 @@ int search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, 
 	for(int j=0; j < noOfWordsOriginal; j++){	//for each word of query starting as first Word
 		
 		arrayOfStructs* tempArray = array_of_structs;
-		char* finalString=malloc(sizeof(char));
+		char* finalString;
 		int strLength=0;
 
 		char* arrayOfWords[noOfWords];
@@ -101,28 +102,36 @@ int search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, 
 				}
 				strcat(finalString, " ");
 			}
-			else
+			else{
+				deleteDataNode(tempElement);
+				free(getPosition);
+				getPosition = NULL;
 				break;
-		
+			}		
 			tempArray = tempArray->array[getPosition->position].nextWordArray;
 			if(tempArray == NULL)
 			{
-				break;			//isws return 1
+				deleteDataNode(tempElement);
+				free(getPosition);
+				getPosition = NULL;
+				break;		
 			}
 			
+			deleteDataNode(tempElement);
+			free(getPosition);
+			getPosition = NULL;
+			
 		}
+		free(finalString);
+		finalString = NULL;
 		noOfWords--;
 	}
 	
-	//not found 
-	/*if(found == 0){			//auto giati xreiazetai?
-		return 0;
-	}*/
+	printf("\b ");				//remove last "|" 
+	
+	
 	printf("\n");
 	printf("<-------------------------SEARCH ENDING------------------------->\n");
-	
-	return 1;
-
 }
 
 //delete
@@ -145,37 +154,31 @@ int delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 		//find out if word exists in array and if it does return position
 		checkItemExists* getPosition = binarySearch(tempArray, tempElement,0 ,tempArray->position);
 		if(	getPosition->exists==true){
-			printf("found inside array\n");
+			//printf("found inside array\n");
 			push(myStack, getPosition->position);
 		}
 		else{										//element was not found inside array so it can not be deleted	
 			printf("element '%s' was not found \n",tempElement->word);
-					//if !isEmpty(myStack)
-						//start deleting elements
-					//else return
+			deleteDataNode(tempElement);
+			free(getPosition);
+			getPosition = NULL;
 			break;			
 		}
 			
-		
-		/*if(getPosition->exists==true){
-			printf("element '%s' found in position %d\n",tempElement->word, getPosition->position);
-			//if(i==noOfWords-1)	//xreiazetai?
-			if(tempArray->array[getPosition->position].isFinal==true)
-				tempArray->array[getPosition->position].isFinal=false;
-			
-						
-		}*/
-		
-		printArray(tempArray,tempArray->position-1);
-		printf("position new is %d\n",tempArray->position);
 		
 		printArrayFinalWords(tempArray,tempArray->position-1);
 		
 		tempArray = tempArray->array[getPosition->position].nextWordArray;
 		if(tempArray == NULL)
 		{
-			break;			//isws return 1
+			deleteDataNode(tempElement);
+			free(getPosition);
+			getPosition = NULL;
+			break;			
 		}
+		deleteDataNode(tempElement);
+		free(getPosition);
+		getPosition = NULL;
 		
 	}
 	
@@ -183,28 +186,39 @@ int delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 	displayStack(myStack);
 	
 	//delete elements in positions of myStack
-	if(!isEmpty(myStack)){
-		for (int i = myStack->top; i >= 0; i--)
-		{
-			int counter=i;
-			tempArray = array_of_structs;
-			for(int j=0; j<i; j++){
-				tempArray = tempArray->array[counter].nextWordArray;
-				counter--;
-				if(tempArray->array[counter].word!=NULL)
-					printf("word %s\n",tempArray->array[counter].word);
+	
+	
+	//while stack not empty
+	while(!isEmpty(myStack)){
+		//root of trie
+		tempArray = array_of_structs;
+		//displayStack(myStack);
+		
+		//get last element of stack
+		for(int i=0;i <= myStack->top ;i++){
+			if(tempArray != NULL){
+				tempArray = tempArray->array[myStack->positionsToDelete[i]].nextWordArray;
 			}
-			//phgaine i nextWords mprosta
-			//diegrapse to stoixeio[i]
-			//must check here if tempArray->nextWord==Null diegrapse to
-			
-			
-			
-		    deletionSort(tempArray,myStack->positionsToDelete[i], tempArray->position);
 		}
-    }
+
+		
+		if(tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray == NULL){			//hasnt got children
+			deletionSort(tempArray,myStack->positionsToDelete[myStack->top], tempArray->position);
+		}else{																						//has children
+			tempArray->array[myStack->positionsToDelete[myStack->top]].isFinal = false;
+			break;																			//final word -> not final and exit
+		}
+
+		//pop top item
+		int popElem = pop(myStack);
+		if(!popElem){
+			printf("Error with popping element from stack.\n");
+			break;
+		}
+		
+	}
 	
-	
+	deleteStack(myStack);
 	
 	printf("<-------------------------DELETE ENDING------------------------->\n");
 	

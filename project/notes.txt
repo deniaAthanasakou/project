@@ -2,29 +2,10 @@ insert:
 	done
 
 search:
-	leitourgei swsta alla twra prepei na thewroume oti kaleitai apo to deutero word kai meta (done)
-	
-	
-	if(found == 0){			//auto giati xreiazetai?
-		return 0;
-	}
-	
-	prepei na emfanizontai apla dipla dipla (done)
-	
-	pisteuw einai etoimh alla na to dei kai h stefania
+	done
 	
 	
 delete:
-	eftiaksa mia domh stoivas sta stack.h kai stack.c
-	
-	ston pinaka ths domhs thelw na krataw ta positions pou tha prepei na diagrapsw
-		
-	eftiaksa auth checkItemExists* getPosition = deletionSort(tempArray, tempElement ,tempArray->position); alla pros to paron thn exw sxoliasei giati thelw na valw 
-	ola ta positions sth stoiva
-	
-	ta evala sth stoiva. ara twra prepei an dn einai adeia h stoiva na ginetai delete.
-	
-	
 	Stefania: Auto pou prepei na ginei einai o elegxos gia to pote tha diagrafontai ta elements kai pote oxi.
 		px an to item exei next word tote na mh ginetai diagrafh tou
 		epishs na allazei to isFinal opou xreiazetai 
@@ -39,5 +20,10 @@ delete:
 		D test fox
 		tote prepei to test na ginei not Final? h epeidh dn exoume protash test fox dn kanoume tpt?
 		
-	
-	
+		
+	A test
+	Α test is this wow
+	A test is this
+	D test is this
+
+

@@ -59,3 +59,13 @@ void displayStack(stack* myStack){
     }
     printf ("]\n");
 }
+
+void deleteStack(stack* myStack){
+	if (!isEmpty(myStack))
+    {
+        free(myStack->positionsToDelete);
+		myStack->positionsToDelete = NULL;
+		free(myStack);
+		myStack = NULL;
+    }
+}
