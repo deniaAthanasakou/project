@@ -21,14 +21,19 @@ int insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 		else
 			tempElement->isFinal=false;
 			
-		tempElement->word= (char*)malloc(strlen(arrayOfWords[i]) * sizeof(char));
+		tempElement->word= (char*)malloc((strlen(arrayOfWords[i]) + 1) * sizeof(char));
 		strcpy(tempElement->word,arrayOfWords[i]);	
 		
+		printf("aaaa\n");
 		checkItemExists* getPosition = insertionSort(tempArray, tempElement, tempArray->position); 
+		printf("bbb\n");
+		
 		
 		if(getPosition->exists==true){
 			if(i==noOfWords -1)		//final word
 				tempArray->array[getPosition->position].isFinal=true;
+			//deleteDataNode(tempElement);
+			
 		}
 		else{			//if word is not in array yet
 		
@@ -43,10 +48,16 @@ int insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 			tempArray->position++;
 			tempArray->array[getPosition->position].nextWordArray = malloc(1 * sizeof(arrayOfStructs));
 			initializeArray(tempArray->array[getPosition->position].nextWordArray);
-			//tempArray->array[getPosition->position].nextWordArray->position=0;		//to evgala giati ginetai mesa sto initialize
-			
+			//deleteDataNode(tempElement);
+			//printf("word isssssssssss %s\n",tempElement->word);
+			//free(tempElement);
 
 		}
+		printf("cccc\n");
+		
+		free(tempElement);
+		tempElement=NULL;
+		printf("ddd\n");
 		printArray(tempArray, tempArray->position-1);
 		tempArray = tempArray->array[getPosition->position].nextWordArray;
 		free(getPosition);
@@ -67,7 +78,7 @@ void search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal,
 	for(int j=0; j < noOfWordsOriginal; j++){	//for each word of query starting as first Word
 		
 		arrayOfStructs* tempArray = array_of_structs;
-		char* finalString;
+		char* finalString= NULL;
 		int strLength=0;
 
 		char* arrayOfWords[noOfWords];
@@ -85,21 +96,33 @@ void search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal,
 		
 			dataNode* tempElement = malloc(sizeof(dataNode));
 		
-			tempElement->word= (char*)malloc(strlen(arrayOfWords[i]) * sizeof(char));
+			tempElement->word= (char*)malloc((strlen(arrayOfWords[i])+1) * sizeof(char));
 			strcpy(tempElement->word,arrayOfWords[i]);
 		
 			checkItemExists* getPosition = binarySearch(tempArray, tempElement, 0 ,tempArray->position); 
 			//printf("After binary\n");
 			if(getPosition->exists==true){
-				strLength += strlen(arrayOfWords[i]) + 1;
-				finalString = realloc(finalString,strLength*sizeof(char));
-				strcat(finalString,tempArray->array[getPosition->position].word);
+				strLength += strlen(arrayOfWords[i]) + 2;
+				finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
+				
+				
+				//printf("'%s' strlength =  %ld\n",finalString,strlen(finalString));
+				if(i==0){
+					strcpy(finalString, tempArray->array[getPosition->position].word);						
+				}
+				else{
+					finalString[strlen(finalString)] = '\0';
+					strcat(finalString,tempArray->array[getPosition->position].word);
+				}
+					
 				//printf("FINAL STRING IS:%s WITH ALLOCATED LENGTH:%d\n",finalString, strLength);
 				if(tempArray->array[getPosition->position].isFinal == true){
 					found=1;
 					//printf("FINAL STRING  WITH ALLOCATED LENGTH %d IS : %s|\n", strLength, finalString);
 					printf("%s|", finalString);
 				}
+				finalString = realloc(finalString,(strlen(finalString)+2)*sizeof(char));
+				finalString[strlen(finalString)] = '\0';
 				strcat(finalString, " ");
 			}
 			else{
@@ -147,7 +170,7 @@ int delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 		int position = tempArray->position;
 		
 		dataNode* tempElement = malloc(sizeof(dataNode));
-		tempElement->word= (char*)malloc(strlen(arrayOfWords[i]) * sizeof(char));
+		tempElement->word= (char*)malloc((strlen(arrayOfWords[i])+1) * sizeof(char));
 		strcpy(tempElement->word,arrayOfWords[i]);	
 		
 		

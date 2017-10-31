@@ -21,8 +21,9 @@ freeEverything:
 	-------------
 	|test | this|
 	-------------
-			|
-			v
+	|		|
+	v		|
+	null		v
 			----------
 			|fox | is|
 			----------

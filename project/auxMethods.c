@@ -59,7 +59,7 @@ int stringToArray(char* ngram, arrayOfStructs* array, char query){
 	{	
 		noOfWords++;
 		arrayOfWords = (char**)realloc(arrayOfWords, noOfWords * sizeof(char*));		
-		arrayOfWords[noOfWords-1]=malloc(strlen(pch)* sizeof(char));
+		arrayOfWords[noOfWords-1]=malloc((strlen(pch)+1)* sizeof(char));
 		strcpy(arrayOfWords[noOfWords-1],pch);    //add pch into arrayOfWords
 
 		pch = strtok (NULL, " ");
@@ -87,7 +87,7 @@ int stringToArray(char* ngram, arrayOfStructs* array, char query){
 	return 1;
 }
 
-void deleteArrayOfWords(char** array,int length){
+void deleteArrayOfWords(char** array,int length){			//douleuei komple
 	for(int i=0;i<length;i++){
 		free(array[i]);
 		array[i] = NULL;
@@ -151,9 +151,17 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
     retPosition->exists=false;
     
 	if(lastElement==0){
-		array_of_str->array[0] = *itemForInsert;
+		//array_of_str->array[0] = *itemForInsert;
+		array_of_str->array[0].word = malloc( (strlen(itemForInsert->word)+1)*sizeof(char));
+    	strcpy(array_of_str->array[0].word,itemForInsert->word);
+    //printf("ins b\n");
+    	array_of_str->array[0].isFinal=itemForInsert->isFinal;
+    //printf("ins c\n");
+    	array_of_str->array[0].nextWordArray=itemForInsert->nextWordArray;
 		return retPosition;
 	}
+	free(retPosition);
+	retPosition=NULL;
 	i=lastElement;
     j = i - 1;
 
@@ -170,7 +178,14 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
         array_of_str->array[j+1] = array_of_str->array[j];
         j--;
     }
-    array_of_str->array[j+1] = *itemForInsert;
+    //array_of_str->array[j+1] = *itemForInsert;
+    printf("ins a\n");
+    array_of_str->array[j+1].word = realloc(array_of_str->array[j+1].word, (strlen(itemForInsert->word)+1)*sizeof(char));
+    strcpy(array_of_str->array[j+1].word,itemForInsert->word);
+    printf("ins b\n");
+    array_of_str->array[j+1].isFinal=itemForInsert->isFinal;
+    printf("ins c\n");
+    array_of_str->array[j+1].nextWordArray=itemForInsert->nextWordArray;
     getPosition->position=j+1;
     
     return getPosition;

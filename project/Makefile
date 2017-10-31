@@ -1,4 +1,4 @@
-CC = gcc
+CC = gcc -g
 FILES = main.c struct.c func.c auxMethods.c stack.c
 OBJECTS = main.o struct.o func.o auxMethods.o stack.o
 OUT = ngrams
