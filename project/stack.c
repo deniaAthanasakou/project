@@ -28,7 +28,7 @@ void push(stack* myStack, int item){
 int pop(stack* myStack){
     if (isEmpty(myStack))
     {
-        printf ("Stack is Empty\n");
+        //printf ("Stack is Empty\n");
         return 0;
     }
     myStack->top--;
@@ -61,11 +61,20 @@ void displayStack(stack* myStack){
 }
 
 void deleteStack(stack* myStack){
-	if (!isEmpty(myStack))
-    {
-        free(myStack->positionsToDelete);
-		myStack->positionsToDelete = NULL;
-		free(myStack);
-		myStack = NULL;
-    }
+	if (myStack!=NULL){
+		if (myStack->positionsToDelete!=NULL)
+		{
+		    free(myStack->positionsToDelete);
+			myStack->positionsToDelete = NULL;
+			
+		}
+		//free(myStack);
+		//myStack = NULL;
+	}
 }
+
+
+
+
+
+

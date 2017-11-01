@@ -30,10 +30,11 @@ int main (int argc,char* argv[]){
 		exit(1);
 	}
 	
+	printf("\nstarting testing\n");
 	
 	testAllFunctions(); //test that all functions are working properly
 	
-	
+	printf("ending testing\n\n\n");
 	
 	arrayOfStructs* structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
 	

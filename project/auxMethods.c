@@ -213,7 +213,7 @@ void printFullArray(arrayOfStructs* array_of_str, int position){	//prints all la
 			printf("'%s' is in position %d, ", tempArray->array[i].word, i);
 			if(i==lastElement-1){				//print only once
 				printf("\b\b: ");
-				printArray(tempArray,(tempArray->position-1));
+				dprintArray(tempArray,(tempArray->position-1));
 			}
 			if( tempArray->array[i].nextWordArray!=NULL){
 				printFullArray( tempArray->array[i].nextWordArray, tempArray->array[i].nextWordArray->position);

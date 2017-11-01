@@ -230,6 +230,8 @@ int delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 	}
 	
 	deleteStack(myStack);
+	free(myStack);
+	myStack = NULL;
 	
 	//printf("<-------------------------DELETE ENDING------------------------->\n");
 	

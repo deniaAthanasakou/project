@@ -9,12 +9,10 @@ void initializeArray(arrayOfStructs* array_of_str){
 	array_of_str->position=0;
 	array_of_str->length=10;
 	array_of_str->array=malloc(array_of_str->length * sizeof(dataNode));
-	array_of_str->array[array_of_str->position].word = NULL;
 	for(int i=0;i<array_of_str->length;i++){
+		array_of_str->array[i].word = NULL;
 		array_of_str->array[i].nextWordArray = NULL;
 	}
-	
-	
 	
 }
 
