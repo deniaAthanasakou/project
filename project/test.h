@@ -11,4 +11,9 @@ void test_isEmpty();
 void test_pop();
 void test_deleteStack();
 
+//test auxMethods functions
+void test_deleteArrayOfWords();
+
+
+
 #endif

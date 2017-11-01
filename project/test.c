@@ -1,12 +1,14 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "test.h"
 #include "stack.h"
+#include "auxMethods.h"
 
 
-void testAllFunctions(){
-//call all testFunctions
+void testAllFunctions(){		//calls all testFunctions
+	
 	
 	test_initializeStack();
 	test_deleteStack();
@@ -14,6 +16,8 @@ void testAllFunctions(){
 	test_push();
 	test_isEmpty();
 	test_pop();
+	
+	test_deleteArrayOfWords();
 	
 }
 
@@ -105,6 +109,72 @@ void test_pop(){
   	free(myStack);
 	myStack = NULL;
 }
+
+
+//test all auxMethods functions
+
+void test_deleteArrayOfWords(){
+	char** array=NULL;
+	int length=0;									//delete null array
+	deleteArrayOfWords(array, length);
+	if(array!=NULL){
+		free(array);
+		array = NULL;
+	}
+	assert(array==NULL);
+	
+	length=1;										//delete array with one element
+	char** array2 = malloc(sizeof(char*)*length);
+	array2[0]= malloc(sizeof(char)*(strlen("Hello")+1));
+	strcpy(array2[0],"Hello");
+	deleteArrayOfWords(array2, length);
+	if(array2!=NULL){
+		free(array2);
+		array2 = NULL;
+	}
+	assert(array2==NULL);
+	
+	length=4;										//delete array with multiple elements
+	char** array3 = malloc(sizeof(char*)*length);
+	
+	array3[0]= malloc(sizeof(char)*(strlen("The")+1));
+	strcpy(array3[0],"The");
+	array3[1]= malloc(sizeof(char)*(strlen("fox,")+1));
+	strcpy(array3[1],"fox,");
+	array3[2]= malloc(sizeof(char)*(strlen("the")+1));
+	strcpy(array3[2],"the");
+	array3[3]= malloc(sizeof(char)*(strlen("cat.")+1));
+	strcpy(array3[3],"cat.");
+	
+	deleteArrayOfWords(array3, length);
+	if(array3!=NULL){
+		free(array3);
+		array3 = NULL;
+	}
+	assert(array3==NULL);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

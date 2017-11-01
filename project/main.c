@@ -36,7 +36,7 @@ int main (int argc,char* argv[]){
 	
 	printf("ending testing\n\n\n");
 	
-	arrayOfStructs* structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
+	/*arrayOfStructs* structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
 	
 	//initialize
 	FILE * initFile;
@@ -73,7 +73,7 @@ int main (int argc,char* argv[]){
 	printFullArray(structureTree,structureTree->position);
 	
 	printf("\n\n\nBEFORE DELETE\n\n\n");
-	deleteArray(structureTree);
+	deleteArray(structureTree);*/
 
 	return 0;
 }

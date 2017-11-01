@@ -69,6 +69,10 @@ int stringToArray(char* ngram, arrayOfStructs* array, char query){
 	if(query == 'A'){
 		if(!insert_ngram(array, arrayOfWords,noOfWords)){
 			deleteArrayOfWords(arrayOfWords,noOfWords);
+			if(arrayOfWords!=NULL){
+				free(arrayOfWords);
+				arrayOfWords=NULL;
+			}
 			return 0;
 		}	
 	}
@@ -78,22 +82,39 @@ int stringToArray(char* ngram, arrayOfStructs* array, char query){
 	else if(query == 'D'){
 		if(!delete_ngram(array, arrayOfWords,noOfWords)){
 			deleteArrayOfWords(arrayOfWords,noOfWords);
+			if(arrayOfWords!=NULL){
+				free(arrayOfWords);
+				arrayOfWords=NULL;
+			}
 			return 0;
 		}	
 	}
 	
 	deleteArrayOfWords(arrayOfWords,noOfWords);
+	if(arrayOfWords!=NULL){
+		free(arrayOfWords);
+		arrayOfWords=NULL;
+	}
 
 	return 1;
 }
 
-void deleteArrayOfWords(char** array,int length){			//douleuei komple
-	for(int i=0;i<length;i++){
-		free(array[i]);
-		array[i] = NULL;
+void deleteArrayOfWords(char** array,int length){
+	if(array!=NULL){
+		//printf("dns\n");
+		for(int i=0;i<length;i++){
+			//printf("dddwe\n");
+			if( array[i]!=NULL){
+				//printf("array[i] %s length %d\n",array[i], length);
+				//printf("dddwe\n");
+				free(array[i]);
+				//printf("we\n");
+				array[i] = NULL;
+			}
+		}
+		//printf("we\n");
+		
 	}
-	free(array);
-	array = NULL;
 
 }
 
@@ -213,7 +234,7 @@ void printFullArray(arrayOfStructs* array_of_str, int position){	//prints all la
 			printf("'%s' is in position %d, ", tempArray->array[i].word, i);
 			if(i==lastElement-1){				//print only once
 				printf("\b\b: ");
-				dprintArray(tempArray,(tempArray->position-1));
+				printArray(tempArray,(tempArray->position-1));
 			}
 			if( tempArray->array[i].nextWordArray!=NULL){
 				printFullArray( tempArray->array[i].nextWordArray, tempArray->array[i].nextWordArray->position);
