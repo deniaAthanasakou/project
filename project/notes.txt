@@ -10,25 +10,9 @@ delete:
 	
 	
 freeEverything:
-	an exei o pinakas to test is
-	kai sto query file ginei
+	me to valgrind vlepoume oti dn ginontai free ola. 
+	An prolavoume to ksanaprospathoume
 	
-	A test
-	A this fox
-	F
-	
-	tote ousiastika exoume 
-	-------------
-	|test | this|
-	-------------
-	|		|
-	v		|
-	null		v
-			----------
-			|fox | is|
-			----------
-			
-	kai den diagrafetai swsta.
-	Gia kapoio logo uparxei not null komvos katw apo to test o opoios omws dn periexei kapoia leksh
-	
-	Isws tha vohthouse mia printFullArray pou tha ektupwnei ta epipeda	(done) (printFullArray)
+
+unitTesting:
+		

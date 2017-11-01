@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "func.h"
 #include "auxMethods.h"
-#include <string.h>
+#include "test.h"
 
 
 
@@ -30,6 +31,9 @@ int main (int argc,char* argv[]){
 	}
 	
 	
+	testAllFunctions(); //test that all functions are working properly
+	
+	
 	
 	arrayOfStructs* structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
 	
@@ -38,9 +42,9 @@ int main (int argc,char* argv[]){
 	initFile = fopen (init,"r");
 	if (initFile!=NULL)
 	{
-		printf ("Before initializeList\n");
+		//printf ("Before initializeList\n");
 		int init = initialize(initFile, structureTree);
-		printf ("After initializeList\n");
+		//printf ("After initializeList\n");
 		if (!init){			//error with initializeList
 			exit(1); 
 		}
@@ -52,16 +56,16 @@ int main (int argc,char* argv[]){
 	queryFile = fopen (query,"r");
 	if (queryFile!=NULL)
 	{
-		printf ("Before query\n");
+		//printf ("Before query\n");
 		int query = executeQueryFile(queryFile,structureTree);
-		printf ("After query\n");
+		//printf ("After query\n");
 		if (!query){			//error with query
-			printf("query =0\n");
+			//printf("query =0\n");
 			exit(1); 
 		}
-		printf("queryfile before\n");
+		//printf("queryfile before\n");
 		fclose (queryFile);
-		printf("queryfile after\n");
+		//printf("queryfile after\n");
 	}
 	printf("\n\n\nPRINTING FULL TREE\n\n\n");
 	

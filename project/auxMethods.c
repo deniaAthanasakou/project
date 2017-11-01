@@ -21,7 +21,7 @@ int initialize(FILE* file, arrayOfStructs* structureTree){
 	int insert=0;
 	while ((read = getline(&line, &len, file)) != -1) {
 	
-		printf("%s",line);
+		//printf("%s",line);
 	
 		char* ngram = strtok(line, "\n");
 		
@@ -135,7 +135,7 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
  
     if(strcmp(item->word,array[mid].word)>0){
         return binarySearch(array_of_str, item, mid+1, last);
-        }
+    }
     return binarySearch(array_of_str, item, first, mid-1);
 }
  
@@ -151,13 +151,11 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
     retPosition->exists=false;
     
 	if(lastElement==0){
-		//array_of_str->array[0] = *itemForInsert;
-		array_of_str->array[0].word = malloc( (strlen(itemForInsert->word)+1)*sizeof(char));
+		array_of_str->array[0] = *itemForInsert;
+		/*array_of_str->array[0].word = malloc( (strlen(itemForInsert->word)+1)*sizeof(char));
     	strcpy(array_of_str->array[0].word,itemForInsert->word);
-    //printf("ins b\n");
     	array_of_str->array[0].isFinal=itemForInsert->isFinal;
-    //printf("ins c\n");
-    	array_of_str->array[0].nextWordArray=itemForInsert->nextWordArray;
+    	array_of_str->array[0].nextWordArray=itemForInsert->nextWordArray;*/
 		return retPosition;
 	}
 	free(retPosition);
@@ -178,14 +176,14 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
         array_of_str->array[j+1] = array_of_str->array[j];
         j--;
     }
-    //array_of_str->array[j+1] = *itemForInsert;
-    printf("ins a\n");
+    array_of_str->array[j+1] = *itemForInsert;
+   /* printf("ins a\n");
     array_of_str->array[j+1].word = realloc(array_of_str->array[j+1].word, (strlen(itemForInsert->word)+1)*sizeof(char));
     strcpy(array_of_str->array[j+1].word,itemForInsert->word);
     printf("ins b\n");
     array_of_str->array[j+1].isFinal=itemForInsert->isFinal;
     printf("ins c\n");
-    array_of_str->array[j+1].nextWordArray=itemForInsert->nextWordArray;
+    array_of_str->array[j+1].nextWordArray=itemForInsert->nextWordArray;*/
     getPosition->position=j+1;
     
     return getPosition;
@@ -221,12 +219,12 @@ void printFullArray(arrayOfStructs* array_of_str, int position){	//prints all la
 				printFullArray( tempArray->array[i].nextWordArray, tempArray->array[i].nextWordArray->position);
 				
 			}
-			else
-				printf("found null array\n");
+			//else
+				//printf("found null array\n");
 		}
 	}
-	else
-		printf("Null array_of_str\n");	
+	//else
+		//printf("Null array_of_str\n");	
 		
 }
 
@@ -277,7 +275,7 @@ int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 	int insert=0;
 	while ((read = getline(&line, &len, file)) != -1) {
 	
-		printf("%s",line);
+		//printf("%s",line);
 	
 		char* ngram = strtok(line, "\n");
 		
@@ -287,7 +285,7 @@ int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 
 		//printf("remaining:%s\n",remainingLine);
 		if(strcmp(wordCase,"A")==0){	
-			printf("INSERT\n");
+			//printf("INSERT\n");
 			insert = stringToArray(remainingLine,structureTree,'A');
 			if (!insert){
 				fprintf( stderr, "%s\n","Insert was unsuccessful");	
@@ -295,7 +293,7 @@ int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 			}
 		}
 		else if(strcmp(wordCase,"Q")==0){
-			printf("SEARCH\n");
+			//printf("SEARCH\n");
 			int search = stringToArray(remainingLine,structureTree,'Q');		//isws na nai void
 			if (!search){
 				fprintf( stderr, "%s\n","Search was unsuccessful");	
@@ -303,7 +301,7 @@ int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 			}
 		}
 		else if(strcmp(wordCase,"D")==0){
-			printf("DELETE\n");
+		//	printf("DELETE\n");
 			int delete = stringToArray(remainingLine,structureTree,'D');
 			if (!delete){
 				fprintf( stderr, "%s\n","Delete was unsuccessful");	
@@ -311,7 +309,7 @@ int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 			}
 		}
 		else if(strcmp(wordCase,"F")==0){
-			printf("END\n");
+			//printf("END\n");
 		}
 		else{
 			printf("Error in query_file structure.\n");

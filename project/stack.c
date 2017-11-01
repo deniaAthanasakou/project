@@ -18,7 +18,7 @@ void doubleLengthOfStack(stack* myStack){
 void push(stack* myStack, int item){
     if (myStack->top == (myStack->length - 1))
     {
-        printf ("prepei na diplasiastei h stoiva\n");
+       // printf ("prepei na diplasiastei h stoiva\n");
         doubleLengthOfStack(myStack);
     }
     myStack->top++;

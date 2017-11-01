@@ -8,7 +8,6 @@
 int insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords){		//same layer
 
 	arrayOfStructs* tempArray = array_of_structs;
-	//printf("LENGTH IS %d\n",tempArray->length);
 	int i=0;
 	
 	for(i=0; i<noOfWords; i++){				//different layers
@@ -24,9 +23,7 @@ int insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 		tempElement->word= (char*)malloc((strlen(arrayOfWords[i]) + 1) * sizeof(char));
 		strcpy(tempElement->word,arrayOfWords[i]);	
 		
-		printf("aaaa\n");
 		checkItemExists* getPosition = insertionSort(tempArray, tempElement, tempArray->position); 
-		printf("bbb\n");
 		
 		
 		if(getPosition->exists==true){
@@ -48,29 +45,25 @@ int insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 			tempArray->position++;
 			tempArray->array[getPosition->position].nextWordArray = malloc(1 * sizeof(arrayOfStructs));
 			initializeArray(tempArray->array[getPosition->position].nextWordArray);
-			//deleteDataNode(tempElement);
-			//printf("word isssssssssss %s\n",tempElement->word);
-			//free(tempElement);
 
 		}
-		printf("cccc\n");
 		
+		//deleteDataNode(tempElement);
 		free(tempElement);
 		tempElement=NULL;
-		printf("ddd\n");
-		printArray(tempArray, tempArray->position-1);
+		//printArray(tempArray, tempArray->position-1);
 		tempArray = tempArray->array[getPosition->position].nextWordArray;
 		free(getPosition);
 		getPosition = NULL;
 	}
-	printArray(array_of_structs, array_of_structs->position-1);
+	//printArray(array_of_structs, array_of_structs->position-1);
 
 	return 1;
 }
 
 //search
 void search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, int noOfWordsOriginal){		//is called for a single query
-	printf("<-------------------------SEARCH BEGINNING------------------------->\n");
+	//printf("<-------------------------SEARCH BEGINNING------------------------->\n");
 	
 	
 	int found = 0;
@@ -83,16 +76,12 @@ void search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal,
 
 		char* arrayOfWords[noOfWords];
 		int counter=j;
-		//printf("Creating arrayOfWords: ");
 		for(int k=0; k<noOfWords; k++){
 			arrayOfWords[k]=arrayOfWordsOriginal[counter];
 			counter++;
-			//printf(" %s ", arrayOfWords[k]);
 		}
-		//printf("\n");
 	
 		for(int i=0; i < noOfWords; i++){				//for each word of query
-		//	printf("WOW word of array is %s\n",arrayOfWords[i]);
 		
 			dataNode* tempElement = malloc(sizeof(dataNode));
 		
@@ -100,13 +89,10 @@ void search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal,
 			strcpy(tempElement->word,arrayOfWords[i]);
 		
 			checkItemExists* getPosition = binarySearch(tempArray, tempElement, 0 ,tempArray->position); 
-			//printf("After binary\n");
 			if(getPosition->exists==true){
 				strLength += strlen(arrayOfWords[i]) + 2;
 				finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
 				
-				
-				//printf("'%s' strlength =  %ld\n",finalString,strlen(finalString));
 				if(i==0){
 					strcpy(finalString, tempArray->array[getPosition->position].word);						
 				}
@@ -149,24 +135,26 @@ void search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal,
 		finalString = NULL;
 		noOfWords--;
 	}
-	
-	printf("\b ");				//remove last "|" 
+	if(found==0)
+		printf("-1\n");
+	else	
+		printf("\b ");				//remove last "|" 
 	
 	
 	printf("\n");
-	printf("<-------------------------SEARCH ENDING------------------------->\n");
+	//printf("<-------------------------SEARCH ENDING------------------------->\n");
 }
 
 //delete
 int delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords){
-	printf("<-------------------------DELETE STARTING------------------------->\n");
+	//printf("<-------------------------DELETE STARTING------------------------->\n");
 	arrayOfStructs* tempArray = array_of_structs;
 	stack* myStack = malloc(sizeof(stack));
 	initializeStack(myStack);
 	for(int i=0; i<noOfWords; i++){
 	
-		printArray(tempArray,tempArray->position-1);
-		printf("Must delete word '%s'\n",arrayOfWords[i]);
+		//printArray(tempArray,tempArray->position-1);
+		//printf("Must delete word '%s'\n",arrayOfWords[i]);
 		int position = tempArray->position;
 		
 		dataNode* tempElement = malloc(sizeof(dataNode));
@@ -181,7 +169,7 @@ int delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 			push(myStack, getPosition->position);
 		}
 		else{										//element was not found inside array so it can not be deleted	
-			printf("element '%s' was not found \n",tempElement->word);
+			//printf("element '%s' was not found \n",tempElement->word);
 			deleteDataNode(tempElement);
 			free(getPosition);
 			getPosition = NULL;
@@ -189,7 +177,7 @@ int delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 		}
 			
 		
-		printArrayFinalWords(tempArray,tempArray->position-1);
+		//printArrayFinalWords(tempArray,tempArray->position-1);
 		
 		tempArray = tempArray->array[getPosition->position].nextWordArray;
 		if(tempArray == NULL)
@@ -206,7 +194,7 @@ int delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 	}
 	
 	
-	displayStack(myStack);
+	//displayStack(myStack);
 	
 	//delete elements in positions of myStack
 	
@@ -243,7 +231,7 @@ int delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 	
 	deleteStack(myStack);
 	
-	printf("<-------------------------DELETE ENDING------------------------->\n");
+	//printf("<-------------------------DELETE ENDING------------------------->\n");
 	
 	return 1;
 
