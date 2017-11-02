@@ -20,17 +20,22 @@ void testAllFunctions(){		//calls all testFunctions
 	test_pop();
 	
 	test_deleteArrayOfWords();
-	test_binarySearch();
-	test_insertionSort();
-	test_executeQueryFile();
+	test_stringToArray();
+	//test_initialize();			//MEMORY LEAK BECAUSE OF BINARY
 	
-	test_initializeArray();
+	//test_binarySearch();
+	//test_insertionSort();
+	test_deletionSort();			//PROVLIMA sto deleteArray sega
+	//test_executeQueryFile();
+	
+	/*test_initializeArray();
 	test_doubleLength();
 	test_deleteArray();
 	test_deleteDataNode();
 	
 	test_insert_ngram();
-	test_search_ngram();
+	test_search_ngram();*/
+	test_delete_ngram();
 }
 
 
@@ -129,10 +134,8 @@ void test_deleteArrayOfWords(){
 	char** array=NULL;
 	int length=0;									//delete null array
 	deleteArrayOfWords(array, length);
-	if(array!=NULL){
-		free(array);
-		array = NULL;
-	}
+	free(array);
+	array = NULL;
 	assert(array==NULL);
 	
 	length=1;										//delete array with one element
@@ -140,10 +143,8 @@ void test_deleteArrayOfWords(){
 	array2[0]= malloc(sizeof(char)*(strlen("Hello")+1));
 	strcpy(array2[0],"Hello");
 	deleteArrayOfWords(array2, length);
-	if(array2!=NULL){
-		free(array2);
-		array2 = NULL;
-	}
+	free(array2);
+	array2 = NULL;
 	assert(array2==NULL);
 	
 	length=4;										//delete array with multiple elements
@@ -159,13 +160,76 @@ void test_deleteArrayOfWords(){
 	strcpy(array3[3],"cat.");
 	
 	deleteArrayOfWords(array3, length);
-	if(array3!=NULL){
-		free(array3);
-		array3 = NULL;
-	}
+	free(array3);
+	array3 = NULL;
 	assert(array3==NULL);
 
 }
+
+void test_stringToArray(){
+	char* ngram=NULL;
+	arrayWords* array = stringToArray(ngram);
+	assert(array!=NULL && array->length==0 && array->words!=NULL);
+	deleteArrayOfWords(array->words, array->length);
+	free(array->words);
+	array->words = NULL;
+	free(array);
+	array=NULL;
+	
+	ngram=malloc((strlen("The fox is bad and the cat is good.")+1) * sizeof(char));
+	strcpy(ngram,"The fox is bad and the cat is good.");
+	array = stringToArray(ngram);
+	assert(array!=NULL && array->length==9 && array->words!=NULL);
+	
+	assert(strcmp(array->words[0],"The")==0);
+	assert(strcmp(array->words[1],"fox")==0);
+	assert(strcmp(array->words[2],"is")==0);
+	assert(strcmp(array->words[3],"bad")==0);
+	assert(strcmp(array->words[4],"and")==0);
+	assert(strcmp(array->words[5],"the")==0);
+	assert(strcmp(array->words[6],"cat")==0);
+	assert(strcmp(array->words[7],"is")==0);
+	assert(strcmp(array->words[8],"good.")==0);
+	
+	deleteArrayOfWords(array->words, array->length);
+	free(array->words);
+	array->words = NULL;
+	free(array);
+	array=NULL;
+}
+
+void test_initialize(){
+	/*text inside test_initialize:
+		test
+		hi
+		this dog
+		this cat
+	*/
+
+	arrayOfStructs* structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
+	FILE * initFile;
+	initFile = fopen ("test_initialize","r");
+	if (initFile!=NULL)
+	{
+		assert(initialize(initFile, structureTree));
+		fclose (initFile);
+	}
+	assert(structureTree->length==10 && structureTree->position==3 && structureTree->array!=NULL);
+	
+	assert(strcmp(structureTree->array[0].word,"hi")==0 && structureTree->array[0].nextWordArray!=NULL && structureTree->array[0].isFinal==true);
+	assert(strcmp(structureTree->array[1].word,"test")==0 && structureTree->array[1].nextWordArray!=NULL && structureTree->array[1].isFinal==true);
+	assert(strcmp(structureTree->array[2].word,"this")==0 && structureTree->array[2].nextWordArray!=NULL && structureTree->array[2].isFinal==false);
+	
+	arrayOfStructs* nextArray = structureTree->array[2].nextWordArray; 
+	assert(nextArray->length==10 && nextArray->position==2 && nextArray->array!=NULL);
+	
+	assert(strcmp(nextArray->array[0].word,"cat")==0 && nextArray->array[0].nextWordArray!=NULL && nextArray->array[0].isFinal==true);
+	assert(strcmp(nextArray->array[1].word,"dog")==0 && nextArray->array[1].nextWordArray!=NULL && nextArray->array[1].isFinal==true);
+	
+	deleteArray(structureTree);
+	//assert(nextArray==NULL);
+}
+
 
 void test_binarySearch(){
 
@@ -210,8 +274,8 @@ void test_insertionSort(){
 	
 	dataNode *item = malloc(sizeof(dataNode));
 	item->word = malloc(10 * sizeof(char));
-	checkItemExists* getPosition = malloc(sizeof(checkItemExists));
-	getPosition = insertionSort(array_of_str,item,array_of_str->position);			//array is empty
+	//checkItemExists* getPosition = malloc(sizeof(checkItemExists));									//HERE WAS LEAK
+	checkItemExists* getPosition = insertionSort(array_of_str,item,array_of_str->position);			//array is empty		
 	assert(getPosition->position==0 && getPosition->exists==false);
 		
 	strcpy(item->word,"cat");													//existing word
@@ -248,6 +312,98 @@ void test_insertionSort(){
 	getPosition = NULL;
 
 }
+
+void test_deletionSort(){
+	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
+	initializeArray(array_of_str);
+	
+	
+	dataNode *item = malloc(sizeof(dataNode));
+	item->word = malloc((strlen("hello")+1) * sizeof(char));
+	strcpy(item->word,"hello");																
+	assert(insertionSort(array_of_str,item,array_of_str->position)!=NULL);
+	
+	deletionSort(array_of_str,0,array_of_str->position);		//delete only element
+	assert(array_of_str!=NULL);
+	assert(array_of_str->array!=NULL);
+	assert(array_of_str->length==10);
+	assert(array_of_str->position==-1);
+	
+	deleteDataNode(item);
+	free(item);
+	item=NULL;
+	
+	array_of_str->position=0;
+	//printf("pos1 %d\n",array_of_str->position);
+	
+	
+	item = malloc(sizeof(dataNode));
+	item->word = malloc((strlen("hello")+1) * sizeof(char));
+	strcpy(item->word,"hello");																
+	assert(insertionSort(array_of_str,item,array_of_str->position)!=NULL);		//add hello
+	/*deleteDataNode(item);
+	free(item);
+	item=NULL;*/
+	
+	array_of_str->position++;
+	
+	
+	dataNode* item2 = malloc(sizeof(dataNode));
+	item2->word = malloc((strlen("test")+1) * sizeof(char));
+	strcpy(item2->word,"test");																
+	insertionSort(array_of_str,item2,array_of_str->position);	//add test
+	
+	array_of_str->position++;
+
+	
+	dataNode* item3 = malloc(sizeof(dataNode));
+	item3->word = malloc((strlen("the")+1) * sizeof(char));
+	strcpy(item3->word,"the");																
+	assert(insertionSort(array_of_str,item3,array_of_str->position)!=NULL);		//add the
+	
+	array_of_str->position++;
+	
+	dataNode* item4 = malloc(sizeof(dataNode));
+	item4->word = malloc((strlen("this")+1) * sizeof(char));
+	strcpy(item4->word,"this");						
+	assert(insertionSort(array_of_str,item4,array_of_str->position)!=NULL);		//add this
+	
+	array_of_str->position++;
+	
+	
+	deletionSort(array_of_str,3,array_of_str->position);		//from hello, test, the, this delete this
+	
+	
+	assert(array_of_str!=NULL);
+	assert(array_of_str->array!=NULL);
+	assert(array_of_str->length==10);
+	assert(array_of_str->position==3);
+	
+	assert(strcmp(array_of_str->array[0].word,"hello")==0);
+	assert(strcmp(array_of_str->array[1].word,"test")==0);
+	assert(strcmp(array_of_str->array[2].word,"the")==0);
+	
+	dataNode* item5 = malloc(sizeof(dataNode));
+	item5->word = malloc((strlen("this")+1) * sizeof(char));
+	strcpy(item5->word,"this");																
+	assert(insertionSort(array_of_str,item5,array_of_str->position)!=NULL);		//add this
+	
+	array_of_str->position++;
+	
+	deletionSort(array_of_str,1,array_of_str->position);		//from hello, test, the, this delete test
+	assert(array_of_str!=NULL);
+	assert(array_of_str->array!=NULL);
+	assert(array_of_str->length==10);
+	assert(array_of_str->position==3);
+	assert(strcmp(array_of_str->array[0].word,"hello")==0);	
+	assert(strcmp(array_of_str->array[1].word,"the")==0);
+	assert(strcmp(array_of_str->array[2].word,"this")==0);
+	
+	//deleteArray(array_of_str);
+	
+
+}
+
 
 void test_executeQueryFile(){
 	
@@ -468,6 +624,103 @@ void test_search_ngram(){
 	printf("End of testing search_ngram\n");
 }
 
+void test_delete_ngram(){
+	
+}
+/*int delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords){
+	//printf("<-------------------------DELETE STARTING------------------------->\n");
+	arrayOfStructs* tempArray = array_of_structs;
+	stack* myStack = malloc(sizeof(stack));
+	initializeStack(myStack);
+	for(int i=0; i<noOfWords; i++){
+	
+		//printArray(tempArray,tempArray->position-1);
+		//printf("Must delete word '%s'\n",arrayOfWords[i]);
+		int position = tempArray->position;
+		
+		dataNode* tempElement = malloc(sizeof(dataNode));
+		tempElement->word= (char*)malloc((strlen(arrayOfWords[i])+1) * sizeof(char));
+		strcpy(tempElement->word,arrayOfWords[i]);	
+		
+		
+		//find out if word exists in array and if it does return position
+		checkItemExists* getPosition = binarySearch(tempArray, tempElement,0 ,tempArray->position);
+		if(	getPosition->exists==true){
+			//printf("found inside array\n");
+			push(myStack, getPosition->position);
+		}
+		else{										//element was not found inside array so it can not be deleted	
+			//printf("element '%s' was not found \n",tempElement->word);
+			deleteDataNode(tempElement);
+			free(getPosition);
+			getPosition = NULL;
+			break;			
+		}
+			
+		
+		//printArrayFinalWords(tempArray,tempArray->position-1);
+		
+		tempArray = tempArray->array[getPosition->position].nextWordArray;
+		if(tempArray == NULL)
+		{
+			deleteDataNode(tempElement);
+			free(getPosition);
+			getPosition = NULL;
+			break;			
+		}
+		deleteDataNode(tempElement);
+		free(getPosition);
+		getPosition = NULL;
+		
+	}
+	
+	
+	//displayStack(myStack);
+	
+	//delete elements in positions of myStack
+	
+	
+	//while stack not empty
+	while(!isEmpty(myStack)){
+		//root of trie
+		tempArray = array_of_structs;
+		//displayStack(myStack);
+		
+		//get last element of stack
+		for(int i=0;i <= myStack->top ;i++){
+			if(tempArray != NULL){
+				tempArray = tempArray->array[myStack->positionsToDelete[i]].nextWordArray;
+			}
+		}
+
+		
+		if(tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray == NULL){			//hasnt got children
+			deletionSort(tempArray,myStack->positionsToDelete[myStack->top], tempArray->position);
+		}else{																						//has children
+			tempArray->array[myStack->positionsToDelete[myStack->top]].isFinal = false;
+			break;																			//final word -> not final and exit
+		}
+
+		//pop top item
+		int popElem = pop(myStack);
+		if(!popElem){
+			printf("Error with popping element from stack.\n");
+			break;
+		}
+		
+	}
+	
+	deleteStack(myStack);
+	free(myStack);
+	myStack = NULL;
+	
+	//printf("<-------------------------DELETE ENDING------------------------->\n");
+	
+	return 1;
+
+
+}
+*/
 
 
 

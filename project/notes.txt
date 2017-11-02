@@ -15,4 +15,7 @@ freeEverything:
 	
 
 unitTesting:
+		problhma me:
+			test_initialize				assert sto deleteArray
+			deletionSort				sega sto deleteArray 
 		

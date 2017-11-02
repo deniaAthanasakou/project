@@ -20,7 +20,7 @@ int initialize(FILE* file, arrayOfStructs* structureTree);
 int executeQueryFile(FILE* file,arrayOfStructs* structureTree);
 
 int callBasicFuncs(char* ngram, arrayOfStructs* array, char query);
-arrayWords* stringToArray(char* ngram, arrayOfStructs* array);
+arrayWords* stringToArray(char* ngram);
 
 void printArray(arrayOfStructs* tempArray, int position);
 void printArrayFinalWords(arrayOfStructs* array_of_str, int position);

@@ -52,7 +52,7 @@ int initialize(FILE* file, arrayOfStructs* structureTree){
 
 int callBasicFuncs(char* ngram, arrayOfStructs* array, char query){
 
-	arrayWords* arrayW = stringToArray(ngram,array);
+	arrayWords* arrayW = stringToArray(ngram);
 	int noOfWords = arrayW->length;
 	char** arrayOfWords = arrayW->words;
 	if(query == 'A'){
@@ -97,7 +97,7 @@ int callBasicFuncs(char* ngram, arrayOfStructs* array, char query){
 
 
 
-arrayWords* stringToArray(char* ngram, arrayOfStructs* array){
+arrayWords* stringToArray(char* ngram){
 	char* pch;
 	char** arrayOfWords; 
 	pch = strtok (ngram," ");
@@ -147,13 +147,19 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
     if (last < first){
     	check->exists=false;
 		if(array[first].word!=NULL){
-			if(strcmp(item->word,array[first].word)>0)
+			if(strcmp(item->word,array[first].word)>0){
     			check->position=first + 1;
-    		else
+    			//printf("1111 %d\n",check->position);
+    			}
+    		else{
     			check->position=first;
+    			//printf("2222 %d\n",check->position);
+    			}
 		
 		}else{
+			
 			check->position = first+1;
+			//printf("43333 %d\n",check->position);
 		
 		}
     	return 	check;
@@ -169,6 +175,7 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
  	}
     if(strcmp(item->word ,array[mid].word)==0){
 		check->position=mid;
+		//printf("check->position=mid%d\n",check->position);
 		check->exists=true;
         return check;
      }
@@ -205,18 +212,23 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
 
     // find location where selected sould be inseretd
     checkItemExists* getPosition = binarySearch(array_of_str, itemForInsert, 0, j);
+   // printf("loc %d \n",getPosition->position);
     if(getPosition->exists==true){
     	return getPosition;
     }
 
     loc=getPosition->position;
     // Move all elements after location to create space
+    //printf("loc %d j %d\n",loc,j);
     while (j >= loc)
     {
         array_of_str->array[j+1] = array_of_str->array[j];
         j--;
     }
+   // printf("pos10 %d\n",array_of_str->position);
+   // printf("%d\n",j+1);
     array_of_str->array[j+1] = *itemForInsert;
+   // printf("pos11 %d\n",array_of_str->position);
    /* printf("ins a\n");
     array_of_str->array[j+1].word = realloc(array_of_str->array[j+1].word, (strlen(itemForInsert->word)+1)*sizeof(char));
     strcpy(array_of_str->array[j+1].word,itemForInsert->word);
