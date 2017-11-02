@@ -10,11 +10,17 @@ struct checkItemExists{
 	bool exists;	// if exists true
 };
 
+typedef struct arrayWords{
+	int length;					//length of array of strings
+	char** words;			//array of strings
+}arrayWords;
+
 
 int initialize(FILE* file, arrayOfStructs* structureTree);
 int executeQueryFile(FILE* file,arrayOfStructs* structureTree);
 
-int stringToArray(char* ngram, arrayOfStructs* array, char query);
+int callBasicFuncs(char* ngram, arrayOfStructs* array, char query);
+arrayWords* stringToArray(char* ngram, arrayOfStructs* array);
 
 void printArray(arrayOfStructs* tempArray, int position);
 void printArrayFinalWords(arrayOfStructs* array_of_str, int position);

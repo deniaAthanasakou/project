@@ -13,7 +13,15 @@ void test_deleteStack();
 
 //test auxMethods functions
 void test_deleteArrayOfWords();
+void test_binarySearch();
+void test_insertionSort();
+void test_executeQueryFile();
 
+//test struct.c methods
+void test_initializeArray();
+void test_doubleLength();
+void test_deleteArray();
+void test_deleteDataNode();
 
 
 #endif

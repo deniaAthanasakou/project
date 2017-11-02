@@ -26,7 +26,7 @@ int initialize(FILE* file, arrayOfStructs* structureTree){
 		char* ngram = strtok(line, "\n");
 		
 		
-		insert = stringToArray(ngram,structureTree,'A');
+		insert = callBasicFuncs(ngram,structureTree,'A');
 		
 		if (!insert){
 			fprintf( stderr, "%s\n","Insert was unsuccessful");	
@@ -49,29 +49,20 @@ int initialize(FILE* file, arrayOfStructs* structureTree){
 
 }
 
-int stringToArray(char* ngram, arrayOfStructs* array, char query){
-	char* pch;
-	char** arrayOfWords; 
-	pch = strtok (ngram," ");
-	int noOfWords=0;
-	arrayOfWords = malloc(noOfWords * sizeof(char*));
-	while (pch != NULL)
-	{	
-		noOfWords++;
-		arrayOfWords = (char**)realloc(arrayOfWords, noOfWords * sizeof(char*));		
-		arrayOfWords[noOfWords-1]=malloc((strlen(pch)+1)* sizeof(char));
-		strcpy(arrayOfWords[noOfWords-1],pch);    //add pch into arrayOfWords
 
-		pch = strtok (NULL, " ");
-		
-	}
-	
+int callBasicFuncs(char* ngram, arrayOfStructs* array, char query){
+
+	arrayWords* arrayW = stringToArray(ngram,array);
+	int noOfWords = arrayW->length;
+	char** arrayOfWords = arrayW->words;
 	if(query == 'A'){
 		if(!insert_ngram(array, arrayOfWords,noOfWords)){
 			deleteArrayOfWords(arrayOfWords,noOfWords);
 			if(arrayOfWords!=NULL){
 				free(arrayOfWords);
 				arrayOfWords=NULL;
+				free(arrayW);
+				arrayW = NULL;
 			}
 			return 0;
 		}	
@@ -85,6 +76,8 @@ int stringToArray(char* ngram, arrayOfStructs* array, char query){
 			if(arrayOfWords!=NULL){
 				free(arrayOfWords);
 				arrayOfWords=NULL;
+				free(arrayW);
+				arrayW = NULL;
 			}
 			return 0;
 		}	
@@ -94,9 +87,35 @@ int stringToArray(char* ngram, arrayOfStructs* array, char query){
 	if(arrayOfWords!=NULL){
 		free(arrayOfWords);
 		arrayOfWords=NULL;
+		free(arrayW);
+		arrayW = NULL;
 	}
 
 	return 1;
+	
+}
+
+
+
+arrayWords* stringToArray(char* ngram, arrayOfStructs* array){
+	char* pch;
+	char** arrayOfWords; 
+	pch = strtok (ngram," ");
+	int noOfWords=0;
+	arrayOfWords = malloc(noOfWords * sizeof(char*));
+	while (pch != NULL)
+	{	
+		noOfWords++;
+		arrayOfWords = (char**)realloc(arrayOfWords, noOfWords * sizeof(char*));		
+		arrayOfWords[noOfWords-1]=malloc((strlen(pch)+1)* sizeof(char));
+		strcpy(arrayOfWords[noOfWords-1],pch);    //add pch into arrayOfWords
+		pch = strtok (NULL, " ");
+	}
+	
+	arrayWords* arrayW = malloc(sizeof(arrayWords));
+	arrayW->length = noOfWords;
+	arrayW->words = arrayOfWords;
+	return arrayW;
 }
 
 void deleteArrayOfWords(char** array,int length){
@@ -294,6 +313,8 @@ int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 	
 	
 	int insert=0;
+	int search = 0;
+	int delete = 0;
 	while ((read = getline(&line, &len, file)) != -1) {
 	
 		//printf("%s",line);
@@ -307,7 +328,7 @@ int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 		//printf("remaining:%s\n",remainingLine);
 		if(strcmp(wordCase,"A")==0){	
 			//printf("INSERT\n");
-			insert = stringToArray(remainingLine,structureTree,'A');
+			insert = callBasicFuncs(remainingLine,structureTree,'A');
 			if (!insert){
 				fprintf( stderr, "%s\n","Insert was unsuccessful");	
 				break;
@@ -315,7 +336,7 @@ int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 		}
 		else if(strcmp(wordCase,"Q")==0){
 			//printf("SEARCH\n");
-			int search = stringToArray(remainingLine,structureTree,'Q');		//isws na nai void
+			search = callBasicFuncs(remainingLine,structureTree,'Q');		//isws na nai void
 			if (!search){
 				fprintf( stderr, "%s\n","Search was unsuccessful");	
 				break;
@@ -323,7 +344,7 @@ int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 		}
 		else if(strcmp(wordCase,"D")==0){
 		//	printf("DELETE\n");
-			int delete = stringToArray(remainingLine,structureTree,'D');
+			delete = callBasicFuncs(remainingLine,structureTree,'D');
 			if (!delete){
 				fprintf( stderr, "%s\n","Delete was unsuccessful");	
 				break;
@@ -345,7 +366,7 @@ int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 	}
 	
 		
-	if (!insert)
+	if (!insert || !delete || !search)
 		return 0;	
 
 	return 1;

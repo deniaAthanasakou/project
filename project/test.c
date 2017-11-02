@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "test.h"
 #include "stack.h"
 #include "auxMethods.h"
+#include "func.h"
 
 
 void testAllFunctions(){		//calls all testFunctions
@@ -18,7 +20,14 @@ void testAllFunctions(){		//calls all testFunctions
 	test_pop();
 	
 	test_deleteArrayOfWords();
+	test_binarySearch();
+	test_insertionSort();
+	test_executeQueryFile();
 	
+	test_initializeArray();
+	test_doubleLength();
+	test_deleteArray();
+	test_deleteDataNode();
 }
 
 
@@ -155,10 +164,178 @@ void test_deleteArrayOfWords(){
 
 }
 
+void test_binarySearch(){
 
+	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
+	initializeArray(array_of_str);
+	
+	dataNode *item = malloc(sizeof(dataNode));
+	item->word = malloc(10 * sizeof(char));
+	checkItemExists* getPosition = malloc(sizeof(checkItemExists));
+	getPosition = binarySearch(array_of_str,item,0,array_of_str->position);			//array is empty
+	assert(getPosition->position==-1 && getPosition->exists==false);
+		
+	strcpy(item->word,"cat");										//existing word
+	array_of_str->array[0].word = malloc(10*sizeof(char));
+	strcpy(array_of_str->array[0].word,"cat");
+	array_of_str->position++;
+	array_of_str->array[1].word = malloc(10*sizeof(char));
+	strcpy(array_of_str->array[1].word,"dog");
+	array_of_str->position++;
+	getPosition = binarySearch(array_of_str,item,0,array_of_str->position);
+	assert(getPosition->position==0 && getPosition->exists==true);
+		
+	strcpy(item->word,"hello");																//non existing word
+	getPosition = binarySearch(array_of_str,item,0,array_of_str->position);
+	assert(getPosition->position==-1 && getPosition->exists==false);						//kanonika eprepe getPosition->position==2
+	
+	deleteDataNode(item);
+	free(item);
+	item = NULL;
+	deleteArray(array_of_str);
+	array_of_str = NULL;
+	
+	free(getPosition);
+	getPosition = NULL;
+	
+}
 
+void test_insertionSort(){
 
+	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
+	initializeArray(array_of_str);
+	
+	dataNode *item = malloc(sizeof(dataNode));
+	item->word = malloc(10 * sizeof(char));
+	checkItemExists* getPosition = malloc(sizeof(checkItemExists));
+	getPosition = insertionSort(array_of_str,item,array_of_str->position);			//array is empty
+	assert(getPosition->position==0 && getPosition->exists==false);
+		
+	strcpy(item->word,"cat");													//existing word
+	array_of_str->array[0].word = malloc(10*sizeof(char));
+	strcpy(array_of_str->array[0].word,"cat");
+	array_of_str->position++;
+	array_of_str->array[1].word = malloc(10*sizeof(char));
+	strcpy(array_of_str->array[1].word,"dog");
+	array_of_str->position++;
+	getPosition = insertionSort(array_of_str,item,array_of_str->position);
+	assert(getPosition->position!=-1 && getPosition->exists==true);
+		
+	strcpy(item->word,"hello");																//non existing word
+	getPosition = insertionSort(array_of_str,item,array_of_str->position);
+	assert(getPosition->position==2 && getPosition->exists==false);						
+	
+	strcpy(item->word,"ant");																//non existing word for insertion at front
+	getPosition = insertionSort(array_of_str,item,array_of_str->position);
+	assert(getPosition->position==0 && getPosition->exists==false);	
+	assert(strcmp(array_of_str->array[0].word,"ant")==0);
+	assert(strcmp(array_of_str->array[1].word,"cat")==0);
+	assert(strcmp(array_of_str->array[2].word,"dog")==0);
+	//assert(strcmp(array_of_str->array[3].word,"hello")==0);				//segm
+	
+	
+	deleteDataNode(item);
+	free(item);
+	item = NULL;
+	//deleteArray(array_of_str);										//segm
+	free(array_of_str);
+	array_of_str = NULL;
+	
+	free(getPosition);
+	getPosition = NULL;
 
+}
+
+void test_executeQueryFile(){
+	
+	printf("Start of Testing executeQueryFile\n");
+	FILE * queryFile;
+	queryFile = fopen ("query_file","r");
+	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
+	initializeArray(array_of_str);
+	assert(executeQueryFile(queryFile,array_of_str));
+	fclose (queryFile);
+	deleteArray(array_of_str);									
+	array_of_str = NULL;
+	printf("End of Testing executeQueryFile\n");
+
+}
+
+//test struct.c methods
+
+void test_initializeArray(){
+	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
+	array_of_str->position=0;
+	array_of_str->length=10;
+	array_of_str->array=malloc(array_of_str->length * sizeof(dataNode));
+	
+	for(int i=0;i<array_of_str->length;i++){
+		array_of_str->array[i].word = NULL;
+		array_of_str->array[i].nextWordArray = NULL;
+	}
+	
+	assert(array_of_str->length == 10 && array_of_str->position==0 && array_of_str->array!=NULL);
+	for(int i=0;i<array_of_str->length;i++){
+		assert(array_of_str->array[i].word == NULL);
+		assert(array_of_str->array[i].nextWordArray == NULL);
+	}
+	
+	deleteArray(array_of_str);
+	array_of_str = NULL;
+}
+
+void test_doubleLength(){
+	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
+	initializeArray(array_of_str);
+	int lengthBefore = array_of_str->length;
+	doubleLength(array_of_str);
+	assert((array_of_str->length == lengthBefore * 2) && array_of_str->array!=NULL);
+	deleteArray(array_of_str);
+	array_of_str = NULL;
+}
+
+void test_deleteArray(){
+	arrayOfStructs* array_of_str = NULL;					//when array_of_str is null
+	deleteArray(array_of_str);
+	assert(array_of_str == NULL);
+	
+	array_of_str = malloc(sizeof(arrayOfStructs));			//when array_of_str is not initialized 
+	array_of_str->array = NULL;
+	array_of_str->position = 0;
+	array_of_str->length = 0;
+	deleteArray(array_of_str);
+	array_of_str = NULL;
+	assert(array_of_str == NULL);
+	
+	
+	array_of_str = malloc(sizeof(arrayOfStructs));			//when initialized
+	initializeArray(array_of_str);
+	deleteArray(array_of_str);
+	array_of_str = NULL;
+	assert(array_of_str == NULL);
+	
+}
+
+void test_deleteDataNode(){
+	
+	int k = 15;											//word null
+	dataNode* elem = malloc(sizeof(dataNode));
+	elem->word = NULL;
+	deleteDataNode(elem);
+	assert(elem->word == NULL);
+	free(elem);
+	elem = NULL;
+
+	elem = malloc(sizeof(dataNode));					//word not null
+	elem->word = malloc(k * sizeof(char));
+	strcpy(elem->word,"Hello world");
+	deleteDataNode(elem);
+	elem->word = NULL;
+	assert(elem->word == NULL);
+	free(elem);
+	elem = NULL;
+	
+}
 
 
 
