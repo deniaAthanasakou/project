@@ -2,7 +2,8 @@ insert:
 	done
 
 search:
-	done
+	return -1 if not found
+	
 	
 	
 delete:
@@ -18,4 +19,15 @@ unitTesting:
 		problhma me:
 			test_initialize				assert sto deleteArray
 			deletionSort				sega sto deleteArray 
+			delete_ngram
+		
+		
+		
+		delete ngram:
+		A test it
+		A this is cat
+		A this is fox
+		D test it
+		A test
+		D this is
 		

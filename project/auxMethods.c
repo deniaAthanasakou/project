@@ -244,6 +244,7 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
 void deletionSort(arrayOfStructs* array_of_str,	int position, int lastElement){
 
 	// delete item in position	'position'
+	//printf("del sort %d\n",position);
 	while (position < lastElement -1)
 	{
 	    array_of_str->array[position] = array_of_str->array[position+1];
