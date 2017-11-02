@@ -30,6 +30,7 @@ void testAllFunctions(){		//calls all testFunctions
 	test_deleteDataNode();
 	
 	test_insert_ngram();
+	test_search_ngram();
 }
 
 
@@ -430,7 +431,42 @@ void test_insert_ngram(){
 }
 
 
+void test_search_ngram(){
+	
+	printf("Start of testing search_ngram\n");
+	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
+	initializeArray(array_of_str);
+	arrayOfStructs* tempArray;
+	
+	char** arrayOfWords = malloc(3*sizeof(char*));
+	int noOfWords;
+	
+	arrayOfWords[0] = malloc(10* sizeof(char));
+	arrayOfWords[1] = malloc(10* sizeof(char));
+	arrayOfWords[2] = malloc(10* sizeof(char));
+	
+	
+	noOfWords = 3;
+	strcpy(arrayOfWords[0],"cat");										//get search phrase
+	strcpy(arrayOfWords[1],"dog");
+	strcpy(arrayOfWords[2],"record");
 
+	insert_ngram(array_of_str, arrayOfWords, noOfWords);
+	
+	search_ngram(array_of_str, arrayOfWords, noOfWords);
+	
+	
+	for(int i=0;i<3;i++){												//free 
+		free(arrayOfWords[i]);
+		arrayOfWords[i] = NULL;
+	}
+	free(arrayOfWords);
+	arrayOfWords = NULL;
+	deleteArray(array_of_str);
+	array_of_str = NULL;
+	
+	printf("End of testing search_ngram\n");
+}
 
 
 

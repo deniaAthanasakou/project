@@ -25,5 +25,6 @@ void test_deleteDataNode();
 
 //test func.c methods
 void test_insert_ngram();
+void test_search_ngram();
 
 #endif
