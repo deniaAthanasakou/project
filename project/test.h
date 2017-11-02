@@ -3,7 +3,7 @@
 
 void testAllFunctions();
 
-//test stuck functions
+//test stack functions
 void test_initializeStack();
 void test_doubleLengthOfStack();
 void test_push();
@@ -23,5 +23,7 @@ void test_doubleLength();
 void test_deleteArray();
 void test_deleteDataNode();
 
+//test func.c methods
+void test_insert_ngram();
 
 #endif

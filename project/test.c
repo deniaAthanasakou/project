@@ -28,6 +28,8 @@ void testAllFunctions(){		//calls all testFunctions
 	test_doubleLength();
 	test_deleteArray();
 	test_deleteDataNode();
+	
+	test_insert_ngram();
 }
 
 
@@ -338,8 +340,94 @@ void test_deleteDataNode(){
 }
 
 
+//test func.c methods
 
-
+void test_insert_ngram(){
+	
+	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
+	initializeArray(array_of_str);
+	arrayOfStructs* tempArray;
+	
+	char** arrayOfWords = malloc(12*sizeof(char*));
+	int noOfWords;
+	
+	
+	arrayOfWords[0] = malloc(10* sizeof(char));
+	arrayOfWords[1] = malloc(10* sizeof(char));
+	arrayOfWords[2] = malloc(10* sizeof(char));
+	arrayOfWords[3] = malloc(10* sizeof(char));
+	arrayOfWords[4] = malloc(10* sizeof(char));
+	arrayOfWords[5] = malloc(10* sizeof(char));
+	arrayOfWords[6] = malloc(10* sizeof(char));
+	arrayOfWords[7] = malloc(10* sizeof(char));
+	arrayOfWords[8] = malloc(10* sizeof(char));
+	arrayOfWords[9] = malloc(10* sizeof(char));
+	arrayOfWords[10] = malloc(10* sizeof(char));
+	arrayOfWords[11] = malloc(10* sizeof(char));
+	
+	noOfWords = 3;
+	strcpy(arrayOfWords[0],"cat");										//check if nextWordArray is created -> insert phrase 'cat dog record'
+	strcpy(arrayOfWords[1],"dog");
+	strcpy(arrayOfWords[2],"record");
+	assert(insert_ngram(array_of_str, arrayOfWords, noOfWords));
+	assert(strcmp(array_of_str->array[0].word,"cat")==0 && array_of_str->array[0].isFinal == false);
+	tempArray = array_of_str->array[0].nextWordArray;
+	assert(strcmp(tempArray->array[0].word,"dog")==0 && tempArray->array[0].isFinal == false);
+	tempArray = tempArray->array[0].nextWordArray;
+	assert(strcmp(tempArray->array[0].word,"record")==0 && tempArray->array[0].isFinal == true);
+	
+	
+	
+	strcpy(arrayOfWords[0],"ant");															//check if insert is sorting array -> insert phrase 'ant dog'
+	strcpy(arrayOfWords[1],"dog");
+	noOfWords = 2;
+	assert(insert_ngram(array_of_str, arrayOfWords, noOfWords));
+	assert(strcmp(array_of_str->array[0].word,"ant")==0 && strcmp(array_of_str->array[1].word,"cat")==0);
+	assert(array_of_str->array[0].isFinal == false && array_of_str->array[1].isFinal == false);
+	tempArray = array_of_str->array[0].nextWordArray;
+	assert(strcmp(tempArray->array[0].word,"dog")==0 && tempArray->array[0].isFinal==true);
+	
+	strcpy(arrayOfWords[0],"ant");															//check if insert is sorting nextWordArray -> insert phrase 'ant ant'
+	strcpy(arrayOfWords[1],"ant");
+	noOfWords = 2;
+	assert(insert_ngram(array_of_str, arrayOfWords, noOfWords));
+	assert(strcmp(array_of_str->array[0].word,"ant")==0 && strcmp(array_of_str->array[1].word,"cat")==0);
+	assert(array_of_str->array[0].isFinal == false && array_of_str->array[1].isFinal == false);
+	tempArray = array_of_str->array[0].nextWordArray;
+	assert(strcmp(tempArray->array[0].word,"ant")==0 && strcmp(tempArray->array[1].word,"dog")==0);
+	assert(tempArray->array[0].isFinal==true);
+	
+	strcpy(arrayOfWords[0],"ant");															//check insert of a word
+	noOfWords = 1;
+	assert(insert_ngram(array_of_str, arrayOfWords, noOfWords));
+	assert(strcmp(array_of_str->array[0].word,"ant")==0 && array_of_str->array[0].isFinal == true);
+	
+	char* temp = malloc(10*sizeof(char));
+	char* number = malloc(2*sizeof(char));
+	strcpy(temp,"hello");
+	noOfWords = 1;
+	for(int i=0;i<12;i++){
+		sprintf(number,"%d",i);																//check double of array
+		strcat(temp,number);
+		strcpy(arrayOfWords[0],temp);										
+		assert(insert_ngram(array_of_str, arrayOfWords, noOfWords));
+	}
+	assert(array_of_str->length==20);
+	
+	
+	for(int i=0;i<12;i++){												//free 
+		free(arrayOfWords[i]);
+		arrayOfWords[i] = NULL;
+	}
+	free(arrayOfWords);
+	arrayOfWords = NULL;
+	free(temp);
+	temp = NULL;
+	free(number);
+	number = NULL;
+	deleteArray(array_of_str);
+	array_of_str = NULL;
+}
 
 
 
