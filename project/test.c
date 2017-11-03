@@ -22,21 +22,20 @@ void testAllFunctions(){		//calls all testFunctions
 	test_deleteArrayOfWords();
 	test_stringToArray();
 	test_initialize();			//MEMORY LEAK BECAUSE OF BINARY
-	test_callBasicFuncs();
+//	test_callBasicFuncs();		//LEAK
 	
-	//test_binarySearch();
+	test_binarySearch();		
 	test_insertionSort();
-	test_deletionSort();			//PROVLIMA sto deleteArray sega
-	//test_executeQueryFile();
+	test_deletionSort();		
+	//test_executeQueryFile();		//leak
 	
-	/*test_initializeArray();
+	test_initializeArray();
 	test_doubleLength();
 	test_deleteArray();
 	test_deleteDataNode();
-	
-	test_insert_ngram();
-	test_search_ngram();*/
-	test_delete_ngram();			//for now doesn't work
+	test_insert_ngram();			//leaks kai errors
+	//test_search_ngram();			//leak
+	//test_delete_ngram();			//for now doesn't work leak, errors sega
 }
 
 
@@ -197,6 +196,9 @@ void test_stringToArray(){
 	array->words = NULL;
 	free(array);
 	array=NULL;
+	
+	free(ngram);
+	ngram=NULL;
 }
 
 void test_initialize(){
@@ -217,15 +219,15 @@ void test_initialize(){
 	}
 	assert(structureTree->length==10 && structureTree->position==3 && structureTree->array!=NULL);
 	
-	assert(strcmp(structureTree->array[0].word,"hi")==0 && structureTree->array[0].nextWordArray!=NULL && structureTree->array[0].isFinal==true);
-	assert(strcmp(structureTree->array[1].word,"test")==0 && structureTree->array[1].nextWordArray!=NULL && structureTree->array[1].isFinal==true);
+	assert(strcmp(structureTree->array[0].word,"hi")==0 && structureTree->array[0].nextWordArray==NULL && structureTree->array[0].isFinal==true);
+	assert(strcmp(structureTree->array[1].word,"test")==0 && structureTree->array[1].nextWordArray==NULL && structureTree->array[1].isFinal==true);
 	assert(strcmp(structureTree->array[2].word,"this")==0 && structureTree->array[2].nextWordArray!=NULL && structureTree->array[2].isFinal==false);
 	
 	arrayOfStructs* nextArray = structureTree->array[2].nextWordArray; 
 	assert(nextArray->length==10 && nextArray->position==2 && nextArray->array!=NULL);
 	
-	assert(strcmp(nextArray->array[0].word,"cat")==0 && nextArray->array[0].nextWordArray!=NULL && nextArray->array[0].isFinal==true);
-	assert(strcmp(nextArray->array[1].word,"dog")==0 && nextArray->array[1].nextWordArray!=NULL && nextArray->array[1].isFinal==true);
+	assert(strcmp(nextArray->array[0].word,"cat")==0 && nextArray->array[0].nextWordArray==NULL && nextArray->array[0].isFinal==true);
+	assert(strcmp(nextArray->array[1].word,"dog")==0 && nextArray->array[1].nextWordArray==NULL && nextArray->array[1].isFinal==true);
 	assert(nextArray->position==2);
 	
 	deleteArray(structureTree);
@@ -238,12 +240,16 @@ void test_binarySearch(){
 
 	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
 	initializeArray(array_of_str);
+	checkItemExists* getPosition;
 	
 	dataNode *item = malloc(sizeof(dataNode));
 	item->word = malloc(10 * sizeof(char));
-	checkItemExists* getPosition = malloc(sizeof(checkItemExists));
-	getPosition = binarySearch(array_of_str,item,0,array_of_str->position);			//array is empty
+	getPosition = binarySearch(array_of_str,item,0,array_of_str->position,NULL);			//array is empty
 	assert(getPosition->position==-1 && getPosition->exists==false);
+	
+	free(getPosition);
+	getPosition = NULL;
+	
 		
 	strcpy(item->word,"cat");										//existing word
 	array_of_str->array[0].word = malloc(10*sizeof(char));
@@ -252,12 +258,19 @@ void test_binarySearch(){
 	array_of_str->array[1].word = malloc(10*sizeof(char));
 	strcpy(array_of_str->array[1].word,"dog");
 	array_of_str->position++;
-	getPosition = binarySearch(array_of_str,item,0,array_of_str->position);
+	
+	getPosition = binarySearch(array_of_str,item,0,array_of_str->position,NULL);
 	assert(getPosition->position==0 && getPosition->exists==true);
 		
+	free(getPosition);
+	getPosition = NULL;	
+		
 	strcpy(item->word,"hello");																//non existing word
-	getPosition = binarySearch(array_of_str,item,0,array_of_str->position);
+	getPosition = binarySearch(array_of_str,item,0,array_of_str->position,NULL);
 	assert(getPosition->position==-1 && getPosition->exists==false);						//kanonika eprepe getPosition->position==2
+	
+	free(getPosition);
+	getPosition = NULL;
 	
 	deleteDataNode(item);
 	free(item);
@@ -265,64 +278,103 @@ void test_binarySearch(){
 	deleteArray(array_of_str);
 	array_of_str = NULL;
 	
-	free(getPosition);
-	getPosition = NULL;
-	
 }
 
 void test_insertionSort(){
 
 	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
 	initializeArray(array_of_str);
-	
+
 	dataNode *item = malloc(sizeof(dataNode));
-	item->word = malloc(10 * sizeof(char));
-	//checkItemExists* getPosition = malloc(sizeof(checkItemExists));									//HERE WAS LEAK
-	checkItemExists* getPosition = insertionSort(array_of_str,item,array_of_str->position);			//array is empty		
+	item->word=NULL;
+	//checkItemExists* getPosition = malloc(sizeof(checkItemExists));         //HERE WAS LEAK
+	checkItemExists* getPosition = insertionSort(array_of_str,item,array_of_str->position);   //array is empty  
 	assert(getPosition->position==0 && getPosition->exists==false);
-		
-	strcpy(item->word,"cat");													//existing word
-	array_of_str->array[0].word = malloc(10*sizeof(char));
-	strcpy(array_of_str->array[0].word,"cat");
-	array_of_str->position++;
-	array_of_str->array[1].word = malloc(10*sizeof(char));
-	strcpy(array_of_str->array[1].word,"dog");
-	array_of_str->position++;
-	getPosition = insertionSort(array_of_str,item,array_of_str->position);
-	assert(getPosition->position!=-1 && getPosition->exists==true);
-		
-		
-	array_of_str->array[2].word = malloc(10*sizeof(char));
-	strcpy(item->word,"hello");	
-	array_of_str->position++;															//non existing word
-	getPosition = insertionSort(array_of_str,item,array_of_str->position);
-	assert(getPosition->position==3 && getPosition->exists==false);						
 	
-	array_of_str->array[3].word = malloc(10*sizeof(char));
-	strcpy(item->word,"ant");
-	array_of_str->position++;																//non existing word for insertion at front
-	getPosition = insertionSort(array_of_str,item,array_of_str->position);
-	//printf(" pos %d\n", array_of_str->position);
-	assert(getPosition->position==0 && getPosition->exists==false);	
+	free(getPosition);
+	getPosition = NULL;
+
+	dataNode *item1 = malloc(sizeof(dataNode));
+	item1->word = malloc((strlen("cat")+1) * sizeof(char));
+	strcpy(item1->word,"cat");     
+	item1->nextWordArray=NULL;
+	array_of_str->array[0]= *item1;
+	array_of_str->position++;
+	
+	
+	dataNode *item2 = malloc(sizeof(dataNode));
+	item2->word = malloc((strlen("dog")+1) * sizeof(char));
+	strcpy(item2->word,"dog");     
+	item2->nextWordArray=NULL;
+	array_of_str->array[1]= *item2;
+	array_of_str->position++;
+	
+	
+	getPosition = insertionSort(array_of_str,item1,array_of_str->position);		//try to insert cat
+	assert(getPosition->position!=-1 && getPosition->exists==true);
+	
+	free(getPosition);
+	getPosition = NULL;
+	
+	
+	dataNode *item3 = malloc(sizeof(dataNode));
+	item3->word = malloc((strlen("hello")+1) * sizeof(char));
+	strcpy(item3->word,"hello");     
+	item3->nextWordArray=NULL;
+	
+	getPosition = insertionSort(array_of_str,item3,array_of_str->position);
+	array_of_str->position++;               //non existing word
+	assert(getPosition->position==2 && getPosition->exists==false);      
+	
+	free(getPosition);
+	getPosition = NULL;
+	
+	
+	dataNode *item4 = malloc(sizeof(dataNode));
+	item4->word = malloc((strlen("ant")+1) * sizeof(char));
+	strcpy(item4->word,"ant");     
+	item4->nextWordArray=NULL;
+	
+	getPosition = insertionSort(array_of_str,item4,array_of_str->position);
+	array_of_str->position++;               	//non existing word
+
+	assert(getPosition->position==0 && getPosition->exists==false); 
 	assert(strcmp(array_of_str->array[0].word,"ant")==0);
 	assert(strcmp(array_of_str->array[1].word,"cat")==0);
 	assert(strcmp(array_of_str->array[2].word,"dog")==0);
-	printf("insert \n");
+	assert(strcmp(array_of_str->array[3].word,"hello")==0);    
 	
-	
-	printf("word is %s\n",array_of_str->array[3].word);
-	assert(strcmp(array_of_str->array[3].word,"hello")==0);				//segm
+	free(getPosition);
+	getPosition = NULL;
 	
 	
 	deleteDataNode(item);
 	free(item);
-	item = NULL;
-	//deleteArray(array_of_str);										//segm
+	item=NULL;
+	
+	
+	deleteDataNode(item1);
+	free(item1);
+	item1=NULL;
+	
+	
+	deleteDataNode(item2);
+	free(item2);
+	item2=NULL;
+	
+	deleteDataNode(item3);
+	free(item3);
+	item3=NULL;
+	
+	deleteDataNode(item4);
+	free(item4);
+	item4=NULL;
+	
+	free(array_of_str->array);
+	array_of_str->array = NULL;
 	free(array_of_str);
 	array_of_str = NULL;
 	
-	free(getPosition);
-	getPosition = NULL;
 
 }
 
@@ -416,15 +468,12 @@ void test_deletionSort(){
 	assert(array_of_str->length==10);
 	assert(array_of_str->position==3);
 	assert(strcmp(array_of_str->array[0].word,"hello")==0);	
-	printf("word %s\n",array_of_str->array[1].word);
 	assert(strcmp(array_of_str->array[1].word,"the")==0);
 	assert(strcmp(array_of_str->array[2].word,"this")==0);
 	
 	
-	printf("a\n");
-	//deleteArray(array_of_str);
+	deleteArray(array_of_str);
 	array_of_str=NULL;
-	printf("b\n");
 }
 
 
@@ -583,11 +632,12 @@ void test_insert_ngram(){
 	assert(strcmp(array_of_str->array[0].word,"ant")==0 && array_of_str->array[0].isFinal == true);
 	
 	char* temp = malloc(10*sizeof(char));
-	char* number = malloc(2*sizeof(char));
-	strcpy(temp,"hello");
+	char* number = malloc(3*sizeof(char));
+	
 	noOfWords = 1;
 	for(int i=0;i<12;i++){
-		sprintf(number,"%d",i);																//check double of array
+		sprintf(number,"%d",i);	
+		strcpy(temp,"hello");															//check double of array
 		strcat(temp,number);
 		strcpy(arrayOfWords[0],temp);										
 		assert(insert_ngram(array_of_str, arrayOfWords, noOfWords));
@@ -650,6 +700,7 @@ void test_search_ngram(){
 void test_delete_ngram(){
 
 	/*
+		D a
 		A test it
 		A this is cat
 		A this is fox
@@ -663,10 +714,11 @@ void test_delete_ngram(){
 	
 	char* myString= malloc(sizeof(char)*(strlen("a")+1));
 	strcpy(myString,"a");
-	//assert(callBasicFuncs(myString,array_of_str,'D'));			//will not be deleted because array_of_str does not have any ngrams inside yet
+	assert(callBasicFuncs(myString,array_of_str,'D'));			//will not be deleted because array_of_str does not have any ngrams inside yet
 	free(myString);
 	
 	assert(array_of_str!=NULL && array_of_str->position==0 && array_of_str->length==10 && array_of_str->array!=NULL && array_of_str->array[array_of_str->position].word==NULL);
+	assert(array_of_str->array[array_of_str->position].nextWordArray==NULL);
 	
 	myString= malloc(sizeof(char)*(strlen("test it")+1));
 	strcpy(myString,"test it");

@@ -81,7 +81,6 @@ int callBasicFuncs(char* ngram, arrayOfStructs* array, char query){
 		free(arrayW);
 		arrayW = NULL;
 	}
-
 	return 1;
 	
 }
@@ -128,9 +127,10 @@ void deleteArrayOfWords(char** array,int length){
 
 }
 
-checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last)	
+checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last, checkItemExists* check)	
 {
-	checkItemExists* check = malloc(sizeof(checkItemExists));
+	if(check==NULL)
+		check = malloc(sizeof(checkItemExists));
 
 	check->exists=false;
 	
@@ -172,9 +172,9 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
      }
  
     if(strcmp(item->word,array[mid].word)>0){
-        return binarySearch(array_of_str, item, mid+1, last);
+        return binarySearch(array_of_str, item, mid+1, last, check);
     }
-    return binarySearch(array_of_str, item, first, mid-1);
+    return binarySearch(array_of_str, item, first, mid-1, check);
 }
  
  
@@ -190,6 +190,7 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
     
 	if(lastElement==0){
 		array_of_str->array[0] = *itemForInsert;
+		//printf("a\n");
 		/*array_of_str->array[0].word = malloc( (strlen(itemForInsert->word)+1)*sizeof(char));
     	strcpy(array_of_str->array[0].word,itemForInsert->word);
     	array_of_str->array[0].isFinal=itemForInsert->isFinal;
@@ -202,13 +203,22 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
     j = i - 1;
 
     // find location where selected sould be inseretd
-    checkItemExists* getPosition = binarySearch(array_of_str, itemForInsert, 0, j);
+    checkItemExists* getPosition = binarySearch(array_of_str, itemForInsert, 0, j,NULL);
    // printf("loc %d \n",getPosition->position);
     if(getPosition->exists==true){
+   // printf("b\n");
     	return getPosition;
     }
 
+	//double array
+	if(array_of_str->position == array_of_str->length-1){
+		//printf("length was doubled\n");
+		doubleLength(array_of_str);
+		//printf("length is %d\n",array_of_str->length);
+	}
+
     loc=getPosition->position;
+    
     // Move all elements after location to create space
     //printf("loc %d j %d\n",loc,j);
     while (j >= loc)
@@ -229,6 +239,7 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
     array_of_str->array[j+1].nextWordArray=itemForInsert->nextWordArray;*/
     getPosition->position=j+1;
     
+   // printf("c\n");
     return getPosition;
 }
 
@@ -236,13 +247,14 @@ void deletionSort(arrayOfStructs* array_of_str,	int position, int lastElement){
 
 	// delete item in position	'position'
 	//printf("del sort %d\n",position);
+	//printf("last %d\n", lastElement);
 	while (position < lastElement -1)
 	{
 	   //array_of_str->array[position] = array_of_str->array[position+1];
 	   free(array_of_str->array[position].word);
 	   array_of_str->array[position].word=NULL;
 	   
-	   deleteArray( array_of_str->array[position].nextWordArray);
+	  // deleteArray( array_of_str->array[position].nextWordArray);
 	   
 	   array_of_str->array[position].word=malloc(sizeof(char)*(strlen(array_of_str->array[position+1].word)+1));
 	   strcpy(array_of_str->array[position].word,array_of_str->array[position+1].word);
@@ -252,13 +264,18 @@ void deletionSort(arrayOfStructs* array_of_str,	int position, int lastElement){
 	    position++;
 	}
 	
+	free(array_of_str->array[position].word);
+	array_of_str->array[position].word=NULL;
+	//free(array_of_str->array[position].nextWordArray);				//ADDED
+	//array_of_str->array[position].nextWordArray=NULL;				//ADDED
+	
 	
 	array_of_str->position--;
      
 }
 
 void printFullArray(arrayOfStructs* array_of_str, int position){	//prints all layers
-
+	//printf("inside printfull\n");
 	arrayOfStructs* tempArray = array_of_str;
 	
 	if(tempArray != NULL){
@@ -267,10 +284,13 @@ void printFullArray(arrayOfStructs* array_of_str, int position){	//prints all la
 		for(int i=0; i < lastElement; i++){
 			printf("'%s' is in position %d, ", tempArray->array[i].word, i);
 			if(i==lastElement-1){				//print only once
+				//printf("kk\n");
 				printf("\b\b: ");
 				printArray(tempArray,(tempArray->position-1));
 			}
 			if( tempArray->array[i].nextWordArray!=NULL){
+				//printf("ll\n");
+				//printf("pos of next %d\n",tempArray->array[i].nextWordArray->position);
 				printFullArray( tempArray->array[i].nextWordArray, tempArray->array[i].nextWordArray->position);
 				
 			}
@@ -358,7 +378,6 @@ int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 			}
 		}
 		else if(strcmp(wordCase,"D")==0){
-		//	printf("DELETE\n");
 			delete = callBasicFuncs(remainingLine,structureTree,'D');
 			if (!delete){
 				fprintf( stderr, "%s\n","Delete was unsuccessful");	
@@ -381,8 +400,9 @@ int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 	}
 	
 		
-	if (!insert || !delete || !search)
+	if (!insert && !delete && !search){
 		return 0;	
+	}
 
 	return 1;
 

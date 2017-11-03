@@ -47,10 +47,16 @@ int main (int argc,char* argv[]){
 		int init = initialize(initFile, structureTree);
 		//printf ("After initializeList\n");
 		if (!init){			//error with initializeList
+			printf("Error with initializing file\n");
 			exit(1); 
 		}
 		fclose (initFile);
 	}
+	
+	
+	printf("\n\n\nPRINTING FULL TREE before query\n\n\n");
+	
+	printFullArray(structureTree,structureTree->position);
 	
 	//query
 	FILE * queryFile;
@@ -61,14 +67,14 @@ int main (int argc,char* argv[]){
 		int query = executeQueryFile(queryFile,structureTree);
 		//printf ("After query\n");
 		if (!query){			//error with query
-			//printf("query =0\n");
+			printf("Error with query file\n");
 			exit(1); 
 		}
 		//printf("queryfile before\n");
 		fclose (queryFile);
 		//printf("queryfile after\n");
 	}
-	printf("\n\n\nPRINTING FULL TREE\n\n\n");
+	printf("\n\n\nPRINTING FULL TREE after query\n\n\n");
 	
 	printFullArray(structureTree,structureTree->position);
 	

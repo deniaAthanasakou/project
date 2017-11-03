@@ -18,7 +18,6 @@ freeEverything:
 unitTesting:
 		problhma me:
 			Denia:
-				deletionSort				sega sto deleteArray 
 				delete_ngram
 			
 			Stefania:
@@ -31,6 +30,8 @@ unitTesting:
 				deleteArray
 			
 				leaks
+				
+	
 		
 		
 		

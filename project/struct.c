@@ -16,10 +16,15 @@ void initializeArray(arrayOfStructs* array_of_str){
 	
 }
 
-
 void doubleLength(arrayOfStructs* array_of_str){
+	int lengthBefore=array_of_str->length;
 	array_of_str->length*=2;
 	array_of_str->array = (dataNode*) realloc(array_of_str->array , array_of_str->length * sizeof(dataNode));
+	
+	for(int i=lengthBefore;i<array_of_str->length;i++){
+		array_of_str->array[i].word = NULL;
+		array_of_str->array[i].nextWordArray = NULL;
+	}
 	
 }
 
@@ -33,7 +38,7 @@ void deleteArray(arrayOfStructs* array_of_str){
 	if(tempArray != NULL){
 		//printf("b\n");
 		int lastElement = tempArray->length;
-		//printf("lastElement = %d\n",lastElement);
+		printf("lastElement = %d\n",lastElement);
 	
 		for(int i=0; i < lastElement; i++){
 		//	printf("'%s' is in position %d\n ", tempArray->array[i].word, i);
