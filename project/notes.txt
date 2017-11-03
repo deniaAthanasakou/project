@@ -2,7 +2,7 @@ insert:
 	done
 
 search:
-	return -1 if not found
+	done
 	
 	
 	
@@ -17,9 +17,20 @@ freeEverything:
 
 unitTesting:
 		problhma me:
-			test_initialize				assert sto deleteArray
-			deletionSort				sega sto deleteArray 
-			delete_ngram
+			Denia:
+				deletionSort				sega sto deleteArray 
+				delete_ngram
+			
+			Stefania:
+				search_ngram		-> 	parametro na mhn emfanizetai to idio
+				insertion sort
+				callFunctions search
+				
+				
+				
+				deleteArray
+			
+				leaks
 		
 		
 		

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "auxMethods.h"
-
+#include "struct.h"
 
 
 int initialize(FILE* file, arrayOfStructs* structureTree){
@@ -71,16 +71,7 @@ int callBasicFuncs(char* ngram, arrayOfStructs* array, char query){
 		search_ngram(array, arrayOfWords,noOfWords);
 	}
 	else if(query == 'D'){
-		if(!delete_ngram(array, arrayOfWords,noOfWords)){
-			deleteArrayOfWords(arrayOfWords,noOfWords);
-			if(arrayOfWords!=NULL){
-				free(arrayOfWords);
-				arrayOfWords=NULL;
-				free(arrayW);
-				arrayW = NULL;
-			}
-			return 0;
-		}	
+		delete_ngram(array, arrayOfWords,noOfWords);
 	}
 	
 	deleteArrayOfWords(arrayOfWords,noOfWords);
@@ -247,9 +238,20 @@ void deletionSort(arrayOfStructs* array_of_str,	int position, int lastElement){
 	//printf("del sort %d\n",position);
 	while (position < lastElement -1)
 	{
-	    array_of_str->array[position] = array_of_str->array[position+1];
+	   //array_of_str->array[position] = array_of_str->array[position+1];
+	   free(array_of_str->array[position].word);
+	   array_of_str->array[position].word=NULL;
+	   
+	   deleteArray( array_of_str->array[position].nextWordArray);
+	   
+	   array_of_str->array[position].word=malloc(sizeof(char)*(strlen(array_of_str->array[position+1].word)+1));
+	   strcpy(array_of_str->array[position].word,array_of_str->array[position+1].word);
+	   array_of_str->array[position].nextWordArray = array_of_str->array[position+1].nextWordArray;
+	   array_of_str->array[position].isFinal = array_of_str->array[position+1].isFinal;
+	    
 	    position++;
 	}
+	
 	
 	array_of_str->position--;
      

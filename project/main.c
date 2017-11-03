@@ -73,7 +73,8 @@ int main (int argc,char* argv[]){
 	printFullArray(structureTree,structureTree->position);
 	
 	printf("\n\n\nBEFORE DELETE\n\n\n");
-	deleteArray(structureTree);*/
+	deleteArray(structureTree);
+	structureTree=NULL;*/
 
 	return 0;
 }

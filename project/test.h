@@ -14,6 +14,7 @@ void test_deleteStack();
 //test auxMethods functions
 void test_deleteArrayOfWords();
 void test_stringToArray();
+void test_callBasicFuncs();
 void test_initialize();
 void test_binarySearch();
 void test_insertionSort();

@@ -146,7 +146,7 @@ void search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal,
 }
 
 //delete
-int delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords){
+void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords){
 	//printf("<-------------------------DELETE STARTING------------------------->\n");
 	arrayOfStructs* tempArray = array_of_structs;
 	stack* myStack = malloc(sizeof(stack));
@@ -234,8 +234,7 @@ int delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOf
 	myStack = NULL;
 	
 	//printf("<-------------------------DELETE ENDING------------------------->\n");
-	
-	return 1;
+
 
 
 }

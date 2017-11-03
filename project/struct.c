@@ -27,18 +27,26 @@ void doubleLength(arrayOfStructs* array_of_str){
 
 void deleteArray(arrayOfStructs* array_of_str){	
 
+	//printf("h\n");
 	arrayOfStructs* tempArray = array_of_str;
 	
 	if(tempArray != NULL){
-		int lastElement = tempArray->position;
+		//printf("b\n");
+		int lastElement = tempArray->length;
+		//printf("lastElement = %d\n",lastElement);
 	
 		for(int i=0; i < lastElement; i++){
-			//printf("'%s' is in position %d\n ", tempArray->array[i].word, i);
-			
+		//	printf("'%s' is in position %d\n ", tempArray->array[i].word, i);
+			//printf("c\n");
 			if( tempArray->array[i].nextWordArray!=NULL){
+			//printf("d\n");
 				deleteArray( tempArray->array[i].nextWordArray);
+				//printf("i\n");
 				
 			}
+			//else
+			//	printf("gg\n");
+			//printf("e\n");
 			//else
 			//	printf("found null array\n");
 				
@@ -46,11 +54,13 @@ void deleteArray(arrayOfStructs* array_of_str){
 			deleteDataNode(&(tempArray->array[i]));
 			tempArray->position--;	
 		}
+		//printf("f\n");
 		free(tempArray->array);
 		tempArray->array=NULL;
 		free(tempArray);
 		tempArray=NULL;
 	}
+	//printf("g\n");
 	//else
 		//printf("Null array_of_str\n");	
 		
@@ -60,18 +70,10 @@ void deleteArray(arrayOfStructs* array_of_str){
 
 void deleteDataNode(dataNode* elem){
 	//printf("delete a\n");
-	if( elem->word!=NULL){
-		//printf("WORD IS NOT NYLL\n");
-		free(elem->word);
-		//printf("delete c\n");
-		elem->word = NULL;
+	if(elem!=NULL){
+		if( elem->word!=NULL){
+			free(elem->word);
+			elem->word = NULL;
+		}
 	}
-	//else
-		//printf("WOWWWWW WORD IS NYLL\n");
-	//printf("delete d pointer %p\n", elem);
-	//free(elem);
-	//printf("delete e\n");
-	//elem = NULL;
-	//printf("delete done\n");
-	
 }
