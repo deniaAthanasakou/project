@@ -21,21 +21,21 @@ void testAllFunctions(){		//calls all testFunctions
 	
 	test_deleteArrayOfWords();
 	test_stringToArray();
-	test_initialize();			//MEMORY LEAK BECAUSE OF BINARY
-//	test_callBasicFuncs();		//LEAK
+	test_initialize();			
+	//test_callBasicFuncs();		
 	
 	test_binarySearch();		
 	test_insertionSort();
-	test_deletionSort();		
-	//test_executeQueryFile();		//leak
+	//test_deletionSort();		
+	test_executeQueryFile();		
 	
 	test_initializeArray();
 	test_doubleLength();
-	test_deleteArray();
+	test_deleteArray();				//leak apo deletearray
 	test_deleteDataNode();
-	test_insert_ngram();			//leaks kai errors
-	//test_search_ngram();			//leak
-	//test_delete_ngram();			//for now doesn't work leak, errors sega
+	test_insert_ngram();			//leak apo delete array
+	test_search_ngram();			//leak apo deletearray
+	//test_delete_ngram();			
 }
 
 
@@ -210,11 +210,12 @@ void test_initialize(){
 	*/
 
 	arrayOfStructs* structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
+	initializeArray(structureTree);
 	FILE * initFile;
 	initFile = fopen ("test_initialize","r");
 	if (initFile!=NULL)
 	{
-		assert(initialize(initFile, structureTree));
+		initialize(initFile, structureTree);
 		fclose (initFile);
 	}
 	assert(structureTree->length==10 && structureTree->position==3 && structureTree->array!=NULL);
@@ -379,13 +380,14 @@ void test_insertionSort(){
 }
 
 void test_deletionSort(){
+
 	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
 	initializeArray(array_of_str);
 	
 	char** item = malloc(1*sizeof(char*));
 	item[0] = malloc((strlen("hello")+1) * sizeof(char));
 	strcpy(item[0],"hello");																
-	assert(insert_ngram(array_of_str, item, 1));							//add 'hello'
+	insert_ngram(array_of_str, item, 1);							//add 'hello'
 	
 
 	deletionSort(array_of_str,0,array_of_str->position);		//delete only element
@@ -404,7 +406,7 @@ void test_deletionSort(){
 	
 	item[0] = malloc((strlen("hello")+1) * sizeof(char));
 	strcpy(item[0],"hello");																
-	assert(insert_ngram(array_of_str, item, 1));							//add 'hello'
+	insert_ngram(array_of_str, item, 1);							//add 'hello'
 	
 	free(item[0]);
 	item[0]=NULL;
@@ -414,7 +416,7 @@ void test_deletionSort(){
 	item = malloc(1*sizeof(char*));
 	item[0] = malloc((strlen("test")+1) * sizeof(char));
 	strcpy(item[0],"test");																
-	assert(insert_ngram(array_of_str, item, 1));							//add 'test'
+	insert_ngram(array_of_str, item, 1);							//add 'test'
 	
 	free(item[0]);
 	item[0]=NULL;
@@ -424,7 +426,7 @@ void test_deletionSort(){
 	item = malloc(1*sizeof(char*));
 	item[0] = malloc((strlen("the")+1) * sizeof(char));
 	strcpy(item[0],"the");																
-	assert(insert_ngram(array_of_str, item, 1));							//add 'the'
+	insert_ngram(array_of_str, item, 1);							//add 'the'
 	
 	free(item[0]);
 	item[0]=NULL;
@@ -434,7 +436,7 @@ void test_deletionSort(){
 	item = malloc(1*sizeof(char*));
 	item[0] = malloc((strlen("this")+1) * sizeof(char));
 	strcpy(item[0],"this");																
-	assert(insert_ngram(array_of_str, item, 1));							//add 'this'
+	insert_ngram(array_of_str, item, 1);							//add 'this'
 	
 	free(item[0]);
 	item[0]=NULL;
@@ -455,13 +457,13 @@ void test_deletionSort(){
 	item = malloc(1*sizeof(char*));
 	item[0] = malloc((strlen("this")+1) * sizeof(char));
 	strcpy(item[0],"this");																
-	assert(insert_ngram(array_of_str, item, 1));							//add 'this'
+	insert_ngram(array_of_str, item, 1);							//add 'this'
 	
 	free(item[0]);
 	item[0]=NULL;
 	free(item);
 	item=NULL;
-	
+	/*
 	deletionSort(array_of_str,1,array_of_str->position);		//from hello, test, the, this delete test
 	assert(array_of_str!=NULL);
 	assert(array_of_str->array!=NULL);
@@ -471,7 +473,7 @@ void test_deletionSort(){
 	assert(strcmp(array_of_str->array[1].word,"the")==0);
 	assert(strcmp(array_of_str->array[2].word,"this")==0);
 	
-	
+	*/
 	deleteArray(array_of_str);
 	array_of_str=NULL;
 }
@@ -481,10 +483,10 @@ void test_executeQueryFile(){
 	
 	printf("Start of Testing executeQueryFile\n");
 	FILE * queryFile;
-	queryFile = fopen ("query_file","r");
+	queryFile = fopen ("test_executeQuery","r");
 	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
 	initializeArray(array_of_str);
-	assert(executeQueryFile(queryFile,array_of_str));
+	executeQueryFile(queryFile,array_of_str);
 	fclose (queryFile);
 	deleteArray(array_of_str);									
 	array_of_str = NULL;
@@ -561,7 +563,7 @@ void test_deleteDataNode(){
 	elem->word = malloc(k * sizeof(char));
 	strcpy(elem->word,"Hello world");
 	deleteDataNode(elem);
-	elem->word = NULL;
+	//elem->word = NULL;
 	assert(elem->word == NULL);
 	free(elem);
 	elem = NULL;
@@ -598,7 +600,7 @@ void test_insert_ngram(){
 	strcpy(arrayOfWords[0],"cat");										//check if nextWordArray is created -> insert phrase 'cat dog record'
 	strcpy(arrayOfWords[1],"dog");
 	strcpy(arrayOfWords[2],"record");
-	assert(insert_ngram(array_of_str, arrayOfWords, noOfWords));
+	insert_ngram(array_of_str, arrayOfWords, noOfWords);
 	assert(strcmp(array_of_str->array[0].word,"cat")==0 && array_of_str->array[0].isFinal == false);
 	tempArray = array_of_str->array[0].nextWordArray;
 	assert(strcmp(tempArray->array[0].word,"dog")==0 && tempArray->array[0].isFinal == false);
@@ -610,7 +612,7 @@ void test_insert_ngram(){
 	strcpy(arrayOfWords[0],"ant");															//check if insert is sorting array -> insert phrase 'ant dog'
 	strcpy(arrayOfWords[1],"dog");
 	noOfWords = 2;
-	assert(insert_ngram(array_of_str, arrayOfWords, noOfWords));
+	insert_ngram(array_of_str, arrayOfWords, noOfWords);
 	assert(strcmp(array_of_str->array[0].word,"ant")==0 && strcmp(array_of_str->array[1].word,"cat")==0);
 	assert(array_of_str->array[0].isFinal == false && array_of_str->array[1].isFinal == false);
 	tempArray = array_of_str->array[0].nextWordArray;
@@ -619,7 +621,7 @@ void test_insert_ngram(){
 	strcpy(arrayOfWords[0],"ant");															//check if insert is sorting nextWordArray -> insert phrase 'ant ant'
 	strcpy(arrayOfWords[1],"ant");
 	noOfWords = 2;
-	assert(insert_ngram(array_of_str, arrayOfWords, noOfWords));
+	insert_ngram(array_of_str, arrayOfWords, noOfWords);
 	assert(strcmp(array_of_str->array[0].word,"ant")==0 && strcmp(array_of_str->array[1].word,"cat")==0);
 	assert(array_of_str->array[0].isFinal == false && array_of_str->array[1].isFinal == false);
 	tempArray = array_of_str->array[0].nextWordArray;
@@ -628,7 +630,7 @@ void test_insert_ngram(){
 	
 	strcpy(arrayOfWords[0],"ant");															//check insert of a word
 	noOfWords = 1;
-	assert(insert_ngram(array_of_str, arrayOfWords, noOfWords));
+	insert_ngram(array_of_str, arrayOfWords, noOfWords);
 	assert(strcmp(array_of_str->array[0].word,"ant")==0 && array_of_str->array[0].isFinal == true);
 	
 	char* temp = malloc(10*sizeof(char));
@@ -640,7 +642,7 @@ void test_insert_ngram(){
 		strcpy(temp,"hello");															//check double of array
 		strcat(temp,number);
 		strcpy(arrayOfWords[0],temp);										
-		assert(insert_ngram(array_of_str, arrayOfWords, noOfWords));
+		insert_ngram(array_of_str, arrayOfWords, noOfWords);
 	}
 	assert(array_of_str->length==20);
 	
@@ -714,36 +716,38 @@ void test_delete_ngram(){
 	
 	char* myString= malloc(sizeof(char)*(strlen("a")+1));
 	strcpy(myString,"a");
-	assert(callBasicFuncs(myString,array_of_str,'D'));			//will not be deleted because array_of_str does not have any ngrams inside yet
+	callBasicFuncs(myString,array_of_str,'D');			//will not be deleted because array_of_str does not have any ngrams inside yet
 	free(myString);
 	
 	assert(array_of_str!=NULL && array_of_str->position==0 && array_of_str->length==10 && array_of_str->array!=NULL && array_of_str->array[array_of_str->position].word==NULL);
 	assert(array_of_str->array[array_of_str->position].nextWordArray==NULL);
 	
-	myString= malloc(sizeof(char)*(strlen("test it")+1));
+	myString = malloc(sizeof(char)*(strlen("test it")+1));
 	strcpy(myString,"test it");
-	assert(callBasicFuncs(myString,array_of_str,'A'));
+	callBasicFuncs(myString,array_of_str,'A');
 	free(myString);
 	
 	myString= malloc(sizeof(char)*(strlen("this is cat")+1));
 	strcpy(myString,"this is cat");
-	assert(callBasicFuncs(myString,array_of_str,'A'));
+	callBasicFuncs(myString,array_of_str,'A');
 	free(myString);
 	
 	myString= malloc(sizeof(char)*(strlen("this is fox")+1));
 	strcpy(myString,"this is fox");
-	assert(callBasicFuncs(myString,array_of_str,'A'));
+	callBasicFuncs(myString,array_of_str,'A');
 	free(myString);
 	
 	assert(array_of_str->position==2);
 	
 	myString= malloc(sizeof(char)*(strlen("test it")+1));
 	strcpy(myString,"test it");
-	assert(callBasicFuncs(myString,array_of_str,'D'));		//will be deleted
+	callBasicFuncs(myString,array_of_str,'D');		//will be deleted
 	free(myString);
 	
-	//printf("word = %s\n",array_of_str->array[0].word);
-	/*assert(array_of_str->position==1);
+	printf("word = %s\n",array_of_str->array[0].word);
+	printf("word2 = %s\n",array_of_str->array[1].word);
+	printf("pos=%d\n",array_of_str->position);
+	assert(array_of_str->position==1);
 	assert(strcmp(array_of_str->array[0].word,"this")==0);
 	assert(strcmp(array_of_str->array[0].nextWordArray->array[0].word,"is")==0);	
 	assert(array_of_str->array[0].nextWordArray->position==1);	
@@ -751,18 +755,19 @@ void test_delete_ngram(){
 	assert(strcmp(array_of_str->array[0].nextWordArray->array[0].nextWordArray->array[1].word,"fox")==0);	
 	assert(array_of_str->array[0].nextWordArray->array[0].nextWordArray->position==2);	
 	
-	*/
 	
-	/*myString= malloc(sizeof(char)*(strlen("test")+1));
+	
+	myString= malloc(sizeof(char)*(strlen("test")+1));
 	strcpy(myString,"test");
-	assert(callBasicFuncs(myString,array_of_str,'A'));
+	callBasicFuncs(myString,array_of_str,'A');
 	free(myString);
 	
 	myString= malloc(sizeof(char)*(strlen("test is")+1));
 	strcpy(myString,"test is");
-	assert(callBasicFuncs(myString,array_of_str,'D'));			//will not be deleted because full ngram doesn't exist 
+	callBasicFuncs(myString,array_of_str,'D');			//will not be deleted because full ngram doesn't exist 
 	free(myString);
 	
+	//printf("word is %s\n",array_of_str->array[0].word);
 	assert(strcmp(array_of_str->array[0].word,"test")==0);
 	assert(strcmp(array_of_str->array[1].word,"this")==0);
 	assert(array_of_str->position==2);	
@@ -775,7 +780,7 @@ void test_delete_ngram(){
 	
 	myString= malloc(sizeof(char)*(strlen("this is")+1));
 	strcpy(myString,"this is");
-	assert(callBasicFuncs(myString,array_of_str,'D'));			//will not be deleted because is -> cat and is -> dog
+	callBasicFuncs(myString,array_of_str,'D');			//will not be deleted because this -> is -> cat and this -> is -> dog
 	free(myString);
 	
 	assert(strcmp(array_of_str->array[0].word,"test")==0);
@@ -790,7 +795,7 @@ void test_delete_ngram(){
 	
 	myString= malloc(sizeof(char)*(strlen("mouse")+1));
 	strcpy(myString,"mouse");
-	assert(callBasicFuncs(myString,array_of_str,'D'));			//will not be deleted because word does not exist
+	callBasicFuncs(myString,array_of_str,'D');			//will not be deleted because word does not exist
 	free(myString);
 	
 	assert(strcmp(array_of_str->array[0].word,"test")==0);
@@ -802,7 +807,7 @@ void test_delete_ngram(){
 	assert(strcmp(array_of_str->array[1].nextWordArray->array[0].nextWordArray->array[1].word,"fox")==0);
 	assert(array_of_str->array[1].nextWordArray->array[0].nextWordArray->position==2);		
 	
-	*/
+	
 	
 	deleteArray(array_of_str);
 	array_of_str=NULL;
@@ -813,19 +818,20 @@ void test_delete_ngram(){
 
 void test_callBasicFuncs(){
  
- arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
- initializeArray(array_of_str);
- char* ngram = malloc(20*sizeof(char));
- strcpy(ngram,"A cat in my shoe");
- 
- assert(callBasicFuncs(ngram, array_of_str, 'A'));
- assert(callBasicFuncs(ngram, array_of_str, 'Q'));
- assert(callBasicFuncs(ngram, array_of_str, 'D'));
+ 	//printf(" ")
+	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
+	initializeArray(array_of_str);
+	char* ngram = malloc(20*sizeof(char));
+	strcpy(ngram,"A cat in my shoe");
 
- free(ngram);
- ngram = NULL;
- deleteArray(array_of_str);
- array_of_str = NULL;
+	callBasicFuncs(ngram, array_of_str, 'A');
+	callBasicFuncs(ngram, array_of_str, 'Q');
+	callBasicFuncs(ngram, array_of_str, 'D');
+
+	free(ngram);
+	ngram = NULL;
+	deleteArray(array_of_str);
+	array_of_str = NULL;
 }
 
 

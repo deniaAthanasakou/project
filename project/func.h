@@ -1,12 +1,12 @@
-#ifndef _LIST_H_
-#define _LIST_H_
+#ifndef _FUNC_H_
+#define _FUNC_H_
 #include <stdbool.h>
 #include "struct.h"
 #include "auxMethods.h"
 
 
 //insert
-int insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords);
+void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords);
 
 //search
 void search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, int noOfWordsOriginal);

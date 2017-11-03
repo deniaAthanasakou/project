@@ -32,11 +32,12 @@ int main (int argc,char* argv[]){
 	
 	printf("\nstarting testing\n");
 	
-	testAllFunctions(); //test that all functions are working properly
+	//testAllFunctions(); //test that all functions are working properly
 	
 	printf("ending testing\n\n\n");
 	
-	/*arrayOfStructs* structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
+	arrayOfStructs* structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
+	initializeArray(structureTree);
 	
 	//initialize
 	FILE * initFile;
@@ -44,14 +45,10 @@ int main (int argc,char* argv[]){
 	if (initFile!=NULL)
 	{
 		//printf ("Before initializeList\n");
-		int init = initialize(initFile, structureTree);
-		//printf ("After initializeList\n");
-		if (!init){			//error with initializeList
-			printf("Error with initializing file\n");
-			exit(1); 
-		}
+		initialize(initFile, structureTree);
 		fclose (initFile);
 	}
+	
 	
 	
 	printf("\n\n\nPRINTING FULL TREE before query\n\n\n");
@@ -64,13 +61,7 @@ int main (int argc,char* argv[]){
 	if (queryFile!=NULL)
 	{
 		//printf ("Before query\n");
-		int query = executeQueryFile(queryFile,structureTree);
-		//printf ("After query\n");
-		if (!query){			//error with query
-			printf("Error with query file\n");
-			exit(1); 
-		}
-		//printf("queryfile before\n");
+		executeQueryFile(queryFile,structureTree);
 		fclose (queryFile);
 		//printf("queryfile after\n");
 	}
@@ -80,7 +71,7 @@ int main (int argc,char* argv[]){
 	
 	printf("\n\n\nBEFORE DELETE\n\n\n");
 	deleteArray(structureTree);
-	structureTree=NULL;*/
+	structureTree=NULL;
 
 	return 0;
 }

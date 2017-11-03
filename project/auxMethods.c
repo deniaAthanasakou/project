@@ -5,34 +5,23 @@
 #include "struct.h"
 
 
-int initialize(FILE* file, arrayOfStructs* structureTree){
+void initialize(FILE* file, arrayOfStructs* structureTree){
 	
 
-	initializeArray(structureTree);
+	
 
 	char *line = NULL;
 	size_t len = 0;
 	char read;
 
 	if (file == NULL)
-		return 1;
-	
-	
-	int insert=0;
+		return;
 	while ((read = getline(&line, &len, file)) != -1) {
 	
 		//printf("%s",line);
 	
 		char* ngram = strtok(line, "\n");
-		
-		
-		insert = callBasicFuncs(ngram,structureTree,'A');
-		
-		if (!insert){
-			fprintf( stderr, "%s\n","Insert was unsuccessful");	
-			break;
-		}
-			
+		callBasicFuncs(ngram,structureTree,'A');
 	}
 	//found eof
 
@@ -40,38 +29,26 @@ int initialize(FILE* file, arrayOfStructs* structureTree){
 		free(line);
 		line=NULL;
 	}
-	
-		
-	if (!insert)
-		return 0;	
-
-	return 1;
-
 }
 
 
-int callBasicFuncs(char* ngram, arrayOfStructs* array, char query){
+void callBasicFuncs(char* ngram, arrayOfStructs* array, char query){
+
+	printf("ngram is '%s' query '%c' \n",ngram, query);
 
 	arrayWords* arrayW = stringToArray(ngram);
 	int noOfWords = arrayW->length;
 	char** arrayOfWords = arrayW->words;
 	if(query == 'A'){
-		if(!insert_ngram(array, arrayOfWords,noOfWords)){
-			deleteArrayOfWords(arrayOfWords,noOfWords);
-			if(arrayOfWords!=NULL){
-				free(arrayOfWords);
-				arrayOfWords=NULL;
-				free(arrayW);
-				arrayW = NULL;
-			}
-			return 0;
-		}	
+		insert_ngram(array, arrayOfWords,noOfWords);
 	}
 	else if(query == 'Q'){
 		search_ngram(array, arrayOfWords,noOfWords);
 	}
 	else if(query == 'D'){
+		//printf("before\n");
 		delete_ngram(array, arrayOfWords,noOfWords);
+	//	printf("after\n");
 	}
 	
 	deleteArrayOfWords(arrayOfWords,noOfWords);
@@ -81,7 +58,6 @@ int callBasicFuncs(char* ngram, arrayOfStructs* array, char query){
 		free(arrayW);
 		arrayW = NULL;
 	}
-	return 1;
 	
 }
 
@@ -224,6 +200,7 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
     while (j >= loc)
     {
         array_of_str->array[j+1] = array_of_str->array[j];
+    
         j--;
     }
    // printf("pos10 %d\n",array_of_str->position);
@@ -248,29 +225,38 @@ void deletionSort(arrayOfStructs* array_of_str,	int position, int lastElement){
 	// delete item in position	'position'
 	//printf("del sort %d\n",position);
 	//printf("last %d\n", lastElement);
+	
+	
+	
+
 	while (position < lastElement -1)
 	{
-	   //array_of_str->array[position] = array_of_str->array[position+1];
-	   free(array_of_str->array[position].word);
-	   array_of_str->array[position].word=NULL;
-	   
-	  // deleteArray( array_of_str->array[position].nextWordArray);
-	   
-	   array_of_str->array[position].word=malloc(sizeof(char)*(strlen(array_of_str->array[position+1].word)+1));
-	   strcpy(array_of_str->array[position].word,array_of_str->array[position+1].word);
-	   array_of_str->array[position].nextWordArray = array_of_str->array[position+1].nextWordArray;
-	   array_of_str->array[position].isFinal = array_of_str->array[position+1].isFinal;
-	    
+		if(array_of_str->array[position].word!=NULL){
+			free(array_of_str->array[position].word);
+			array_of_str->array[position].word=NULL;
+		}
+		if(array_of_str->array[position].nextWordArray!=NULL){
+			deleteArray(array_of_str->array[position].nextWordArray);
+			//free( array_of_str->array[position].nextWordArray);
+			array_of_str->array[position].nextWordArray=NULL;
+		}
+	    array_of_str->array[position]=array_of_str->array[position+1];
 	    position++;
 	}
 	
-	free(array_of_str->array[position].word);
-	array_of_str->array[position].word=NULL;
-	//free(array_of_str->array[position].nextWordArray);				//ADDED
-	//array_of_str->array[position].nextWordArray=NULL;				//ADDED
+	printf("element in position %d is %s\n",position-1,array_of_str->array[position-1].word);
+	printf("element in position %d is %s\n",position,array_of_str->array[position].word);
+	/*if(array_of_str->array[position].word!=NULL){
+		free(array_of_str->array[position].word);
+		array_of_str->array[position].word=NULL;
+	}
+	//deleteDataNode(&(array_of_str->array[position]));
+	*/
 	
-	
+	printf("ppppppooooooooooossssss %d\n",position);
+	printf(" before : %d\n",array_of_str->position);
 	array_of_str->position--;
+	printf(" after : %d\n",array_of_str->position );
      
 }
 
@@ -337,19 +323,15 @@ void printArrayFinalWords(arrayOfStructs* array_of_str, int position){
 
 
 //insert from query file
-int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
+void executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 
 	char *line = NULL;
 	size_t len = 0;
 	char read;
 
 	if (file == NULL)
-		return 1;
-	
-	
-	int insert=0;
-	int search = 0;
-	int delete = 0;
+		return;
+
 	while ((read = getline(&line, &len, file)) != -1) {
 	
 		//printf("%s",line);
@@ -362,27 +344,15 @@ int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 
 		//printf("remaining:%s\n",remainingLine);
 		if(strcmp(wordCase,"A")==0){	
-			//printf("INSERT\n");
-			insert = callBasicFuncs(remainingLine,structureTree,'A');
-			if (!insert){
-				fprintf( stderr, "%s\n","Insert was unsuccessful");	
-				break;
-			}
+			printf("INSERT\n");
+			callBasicFuncs(remainingLine,structureTree,'A');
 		}
 		else if(strcmp(wordCase,"Q")==0){
 			//printf("SEARCH\n");
-			search = callBasicFuncs(remainingLine,structureTree,'Q');		//isws na nai void
-			if (!search){
-				fprintf( stderr, "%s\n","Search was unsuccessful");	
-				break;
-			}
+			callBasicFuncs(remainingLine,structureTree,'Q');		//isws na nai void
 		}
 		else if(strcmp(wordCase,"D")==0){
-			delete = callBasicFuncs(remainingLine,structureTree,'D');
-			if (!delete){
-				fprintf( stderr, "%s\n","Delete was unsuccessful");	
-				break;
-			}
+			callBasicFuncs(remainingLine,structureTree,'D');
 		}
 		else if(strcmp(wordCase,"F")==0){
 			//printf("END\n");
@@ -398,13 +368,6 @@ int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 		free(line);
 		line=NULL;
 	}
-	
-		
-	if (!insert && !delete && !search){
-		return 0;	
-	}
-
-	return 1;
 
 }
 

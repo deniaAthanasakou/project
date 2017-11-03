@@ -32,42 +32,39 @@ void doubleLength(arrayOfStructs* array_of_str){
 
 void deleteArray(arrayOfStructs* array_of_str){	
 
-	//printf("h\n");
 	arrayOfStructs* tempArray = array_of_str;
-	
-	if(tempArray != NULL){
-		//printf("b\n");
-		int lastElement = tempArray->length;
-		printf("lastElement = %d\n",lastElement);
+	if(tempArray != NULL){	
+		if(tempArray->array==NULL){
+			free(tempArray);
+			tempArray=NULL;
+			return;
+		}
+		int lastElement = tempArray->length;	
+		//printf("hsgfgs  pointer %p\n",tempArray->array);
+		//printf("lastElement = %d\n",lastElement);
 	
 		for(int i=0; i < lastElement; i++){
-		//	printf("'%s' is in position %d\n ", tempArray->array[i].word, i);
-			//printf("c\n");
-			if( tempArray->array[i].nextWordArray!=NULL){
-			//printf("d\n");
-				deleteArray( tempArray->array[i].nextWordArray);
-				//printf("i\n");
-				
+			//printf("gsajgd\n");
+			//printf("POINTER dsadas array %p\n",tempArray->array);
+			//printf("POINTER array %p\n",&(tempArray->array[i]));
+		//printf("'%s' is in position %d\n ", tempArray->array[i].word, i);
+			if( &(tempArray->array[i])!=NULL){
+				deleteArray(tempArray->array[i].nextWordArray);
+				if(tempArray->array[i].word!=NULL)
+					deleteDataNode(&(tempArray->array[i]));
 			}
-			//else
-			//	printf("gg\n");
-			//printf("e\n");
-			//else
-			//	printf("found null array\n");
-				
-			//printf("delete '%s'\n",tempArray->array[i].word);
-			deleteDataNode(&(tempArray->array[i]));
-			tempArray->position--;	
+			else
+				break;
+			
+			//tempArray->position--;	
 		}
-		//printf("f\n");
+		//printf("POINTER temparray %p\n",tempArray);
+		
 		free(tempArray->array);
 		tempArray->array=NULL;
 		free(tempArray);
 		tempArray=NULL;
-	}
-	//printf("g\n");
-	//else
-		//printf("Null array_of_str\n");	
+	}	
 		
 }
 
@@ -77,8 +74,13 @@ void deleteDataNode(dataNode* elem){
 	//printf("delete a\n");
 	if(elem!=NULL){
 		if( elem->word!=NULL){
+			//printf("delete word '%s'\n", elem->word);
+			//printf("a pointer %p\n",elem->word);
 			free(elem->word);
+			//printf("b\n");
 			elem->word = NULL;
 		}
+		//else
+			//printf("NULLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL\n");
 	}
 }

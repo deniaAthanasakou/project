@@ -17,29 +17,15 @@ freeEverything:
 
 unitTesting:
 		problhma me:
-			Denia:
-				delete_ngram
+			deletionSort:
+				(call basic functions, delete ngram)
+				[a, hi] -> delete a
 			
-			Stefania:
-				search_ngram		-> 	parametro na mhn emfanizetai to idio
-				insertion sort
-				callFunctions search
-				
-				
-				
-				deleteArray
+			search	->   parametros, return (na mhn epistrefei to idio pragma)
 			
-				leaks
-				
-	
-		
-		
-		
-		delete ngram:
-		A test it
-		A this is cat
-		A this is fox
-		D test it
-		A test
-		D this is
-		
+			double insertion sort
+			
+			agnohse ta polla kena
+			
+			readMe
+			
