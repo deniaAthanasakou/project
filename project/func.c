@@ -49,6 +49,8 @@ void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 			initializeArray(tempArray->array[getPosition->position].nextWordArray);
 		}
 		
+		//printf("pointer in insert '%s' is %p\n",arrayOfWords[i],tempArray->array[tempArray->position-1].word);
+		
 		//deleteDataNode(tempElement);
 		free(tempElement);
 		tempElement=NULL;
@@ -56,7 +58,13 @@ void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 		tempArray = tempArray->array[getPosition->position].nextWordArray;
 		free(getPosition);
 		getPosition = NULL;
+		
+		
+		
 	}
+	
+	
+	//printf("pointer2 in insert '%s' is %p\n",tempArray->array[1].word,tempArray->array[1].word);
 	//printArray(array_of_structs, array_of_structs->position-1);
 	//printf("ENDING INSERT\n	\n\n");
 }
@@ -64,7 +72,7 @@ void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 //search
 void search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, int noOfWordsOriginal){		//is called for a single query
 	//printf("<-------------------------SEARCH BEGINNING------------------------->\n");
-	
+	printf("\n\n");
 	
 	int found = 0;
 	int noOfWords=noOfWordsOriginal;
@@ -170,7 +178,7 @@ void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 		//printf("i=%d\n",i);
 	
 		//printArray(tempArray,tempArray->position-1);
-		printf("Must delete word '%s'\n",arrayOfWords[i]);
+		//printf("Must delete word '%s'\n",arrayOfWords[i]);
 		int position = tempArray->position;
 		
 		dataNode* tempElement = malloc(sizeof(dataNode));
@@ -240,7 +248,7 @@ void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 		//printf("WHILE\n");
 		//root of trie
 		tempArray = array_of_structs;
-		displayStack(myStack);
+		//displayStack(myStack);
 		
 		//get last element of stack
 		for(int i=0;i < myStack->top ;i++){
@@ -252,12 +260,12 @@ void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 			}
 		}
 	///	printf("after for\n");
-		printf("word is %s\n",tempArray->array[0].word);
-		
+		//printf("word is %s\n",tempArray->array[0].word);
+		//
 		if(flagIfElementWasDeleted==1 && tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray->position==0) {
 			//deleteArray
-			deleteArray(tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray);
-			tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray=NULL;
+			//deleteArray(tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray);			-> auto vgazei sega
+			//tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray=NULL;					-> auto vgazei sega
 			
 		}
 		
@@ -269,7 +277,7 @@ void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 			flagIfElementWasDeleted=1;
 			//tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray = NULL;
 		}else{	
-		printf("children\n");																					//has children
+		//printf("children\n");																					//has children
 			tempArray->array[myStack->positionsToDelete[myStack->top]].isFinal = false;
 			break;																			//final word -> not final and exit
 		}
@@ -284,9 +292,9 @@ void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 	}
 	
 	
-	//printf("\n\n\nPRINTING FULL TREE after delete \n\n\n");
-	
-	//printFullArray(array_of_structs,array_of_structs->position);
+//	printf("\n\n\nPRINTING FULL TREE after delete \n\n\n");
+//	
+//printFullArray(array_of_structs,array_of_structs->position);
 	
 	
 	//printf("\n\n\nPRINTING FINAL after delete \n\n\n");

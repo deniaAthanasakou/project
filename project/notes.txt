@@ -29,3 +29,111 @@ unitTesting:
 			
 			readMe
 			
+			
+			
+			
+			
+			sto delete_ngram tou func.c
+			opws blepeis ta sxoliasa.... tsekare an exoume thema
+			
+			if(flagIfElementWasDeleted==1 && tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray->position==0) {			
+				//deleteArray
+				//deleteArray(tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray);			-> auto vgazei sega
+				//tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray=NULL;					-> auto vgazei sega
+			
+			}
+		
+		sto deletioSort tou auxMethods.c
+		an auta mpoun mesa sth while ginetai xalia h lexh
+		
+		if(array_of_str->array[position].word!=NULL){				//an auta mpoun mesa sth while ginetai xalia h lexh
+			free(array_of_str->array[position].word);
+			array_of_str->array[position].word=NULL;
+		}
+		if(array_of_str->array[position].nextWordArray!=NULL){
+			deleteArray(array_of_str->array[position].nextWordArray);
+			//free( array_of_str->array[position].nextWordArray);
+			array_of_str->array[position].nextWordArray=NULL;
+		}
+	
+	
+		sto delete array toy struct.c
+		int lastElement = tempArray->position;	evala auto anti gia tempArray->length kai douleuei komple
+		
+		
+		
+		
+		
+		
+		Delete: 
+			init: test it
+			Query D test			(works)
+			
+			init: test
+			Query D test it			(works)
+			
+			
+			init:   a
+					hi
+					test
+					the
+			Query D hi			(works)
+			
+					
+		
+		
+		
+		Den douleuei to :
+		
+		init: test it is
+		Query: D test it is
+		 
+		 ousiastika diagrafei mono to is dld to teleutaio
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+		
+		
+			 	   
+			 	   
+this is a dog
+this is a cat
+the fox is bad
+the car is red
+this is the test
+this is a	
+	
+	
+			 	   
+			 	   
+Q this is a cat and a dog
+Q this is not the test
+A test
+Q this is not the test
+A fast car
+D the car is red
+Q the car is red and fast
+F		 	   
+			 	
+			 	
+			 	
+fast -> car
+test
+this -> is -> a -> dog
+	 		 	-> cat
+	 	   -> the ->  test	
+			 		 	
+	

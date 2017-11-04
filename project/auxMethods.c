@@ -34,7 +34,7 @@ void initialize(FILE* file, arrayOfStructs* structureTree){
 
 void callBasicFuncs(char* ngram, arrayOfStructs* array, char query){
 
-	printf("ngram is '%s' query '%c' \n",ngram, query);
+	//printf("ngram is '%s' query '%c' \n",ngram, query);
 
 	arrayWords* arrayW = stringToArray(ngram);
 	int noOfWords = arrayW->length;
@@ -226,37 +226,38 @@ void deletionSort(arrayOfStructs* array_of_str,	int position, int lastElement){
 	//printf("del sort %d\n",position);
 	//printf("last %d\n", lastElement);
 	
-	
+	if(array_of_str->array[position].word!=NULL){				//an auta mpoun mesa sth while ginetai xalia h lexh
+		free(array_of_str->array[position].word);
+		array_of_str->array[position].word=NULL;
+	}
+	if(array_of_str->array[position].nextWordArray!=NULL){
+		deleteArray(array_of_str->array[position].nextWordArray);
+		//free( array_of_str->array[position].nextWordArray);
+		array_of_str->array[position].nextWordArray=NULL;
+	}
 	
 
 	while (position < lastElement -1)
 	{
-		if(array_of_str->array[position].word!=NULL){
-			free(array_of_str->array[position].word);
-			array_of_str->array[position].word=NULL;
-		}
-		if(array_of_str->array[position].nextWordArray!=NULL){
-			deleteArray(array_of_str->array[position].nextWordArray);
-			//free( array_of_str->array[position].nextWordArray);
-			array_of_str->array[position].nextWordArray=NULL;
-		}
+		
+		
 	    array_of_str->array[position]=array_of_str->array[position+1];
 	    position++;
 	}
 	
-	printf("element in position %d is %s\n",position-1,array_of_str->array[position-1].word);
-	printf("element in position %d is %s\n",position,array_of_str->array[position].word);
+	//printf("element in position %d is %s\n",position-1,array_of_str->array[position-1].word);
+	//printf("element in position %d is %s\n",position,array_of_str->array[position].word);
 	/*if(array_of_str->array[position].word!=NULL){
 		free(array_of_str->array[position].word);
 		array_of_str->array[position].word=NULL;
 	}
 	//deleteDataNode(&(array_of_str->array[position]));
 	*/
-	
-	printf("ppppppooooooooooossssss %d\n",position);
-	printf(" before : %d\n",array_of_str->position);
+	//
+	//printf("ppppppooooooooooossssss %d\n",position);
+	//printf(" before : %d\n",array_of_str->position);
 	array_of_str->position--;
-	printf(" after : %d\n",array_of_str->position );
+	//printf(" after : %d\n",array_of_str->position );
      
 }
 
@@ -344,7 +345,7 @@ void executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 
 		//printf("remaining:%s\n",remainingLine);
 		if(strcmp(wordCase,"A")==0){	
-			printf("INSERT\n");
+			//printf("INSERT\n");
 			callBasicFuncs(remainingLine,structureTree,'A');
 		}
 		else if(strcmp(wordCase,"Q")==0){

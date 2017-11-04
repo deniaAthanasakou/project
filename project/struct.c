@@ -39,7 +39,7 @@ void deleteArray(arrayOfStructs* array_of_str){
 			tempArray=NULL;
 			return;
 		}
-		int lastElement = tempArray->length;	
+		int lastElement = tempArray->position;	
 		//printf("hsgfgs  pointer %p\n",tempArray->array);
 		//printf("lastElement = %d\n",lastElement);
 	
@@ -50,7 +50,7 @@ void deleteArray(arrayOfStructs* array_of_str){
 		//printf("'%s' is in position %d\n ", tempArray->array[i].word, i);
 			if( &(tempArray->array[i])!=NULL){
 				deleteArray(tempArray->array[i].nextWordArray);
-				if(tempArray->array[i].word!=NULL)
+				if(tempArray->array[i].word!=NULL)				//isws prepei na vgei
 					deleteDataNode(&(tempArray->array[i]));
 			}
 			else
@@ -75,7 +75,7 @@ void deleteDataNode(dataNode* elem){
 	if(elem!=NULL){
 		if( elem->word!=NULL){
 			//printf("delete word '%s'\n", elem->word);
-			//printf("a pointer %p\n",elem->word);
+			//printf("pointer in delete data node is %p\n",elem->word);
 			free(elem->word);
 			//printf("b\n");
 			elem->word = NULL;
