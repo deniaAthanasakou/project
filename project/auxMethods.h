@@ -32,4 +32,19 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
 void deletionSort(arrayOfStructs* array_of_str, int position, int lastElement);
 void deleteArrayOfWords(char** array,int length);
 
+
+
+
+
+
+
+
+int checkIfStringExists(char** array, int noOfWords, char* str);
+
+
+
+
+
+
+
 #endif

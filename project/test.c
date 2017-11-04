@@ -23,18 +23,19 @@ void testAllFunctions(){		//calls all testFunctions
 	test_stringToArray();
 	test_initialize();			
 	test_callBasicFuncs();		
-	
 	test_binarySearch();		
 	test_insertionSort();
 	test_deletionSort();		
-	test_executeQueryFile();		
+	test_executeQueryFile();	
+	test_checkIfStringExists();	
 	
 	test_initializeArray();
 	test_doubleLength();
-	test_deleteArray();				//leak apo deletearray
+	test_deleteArray();				
 	test_deleteDataNode();
-	test_insert_ngram();			//leak apo delete array
-	test_search_ngram();			//leak apo deletearray
+	
+	test_insert_ngram();			
+	test_search_ngram();			
 	test_delete_ngram();			
 }
 
@@ -463,7 +464,7 @@ void test_deletionSort(){
 	item[0]=NULL;
 	free(item);
 	item=NULL;
-	/*
+	
 	deletionSort(array_of_str,1,array_of_str->position);		//from hello, test, the, this delete test
 	assert(array_of_str!=NULL);
 	assert(array_of_str->array!=NULL);
@@ -473,7 +474,7 @@ void test_deletionSort(){
 	assert(strcmp(array_of_str->array[1].word,"the")==0);
 	assert(strcmp(array_of_str->array[2].word,"this")==0);
 	
-	*/
+	
 	deleteArray(array_of_str);
 	array_of_str=NULL;
 }
@@ -493,6 +494,52 @@ void test_executeQueryFile(){
 	printf("End of Testing executeQueryFile\n");
 
 }
+
+void test_checkIfStringExists(){
+
+	int noOfWords=0;
+	char** array=NULL;
+	char* str = malloc((strlen("")+1)* sizeof(char));
+	assert(checkIfStringExists(array, noOfWords, str)==0);			//checking null array
+	
+	noOfWords=0;
+	array=malloc(noOfWords * sizeof(char*));
+	str = realloc(str,(strlen("")+1)* sizeof(char));
+	strcpy(str,"");
+	assert(checkIfStringExists(array, noOfWords, str)==0);			//checking array with no elements
+	
+	noOfWords=4;
+	array=realloc(array,noOfWords * sizeof(char*));
+	array[0]=malloc((strlen("cat")+1) * sizeof(char));
+	strcpy(array[0],"cat");
+	array[1]=malloc((strlen("dog")+1) * sizeof(char));
+	strcpy(array[1],"dog");
+	array[2]=malloc((strlen("mouse")+1) * sizeof(char));
+	strcpy(array[2],"mouse");
+	array[3]=malloc((strlen("fox")+1) * sizeof(char));
+	strcpy(array[3],"fox");
+	
+	str = realloc(str,(strlen("pigeon")+1)* sizeof(char));
+	strcpy(str,"pigeon");
+	assert(checkIfStringExists(array, noOfWords, str)==0);			//checking array with word that does not exist inside it
+	
+	str = realloc(str,(strlen("dog")+1)* sizeof(char));
+	strcpy(str,"dog");
+	assert(checkIfStringExists(array, noOfWords, str)==1);			//checking array with word that does exist inside it
+	
+	free(str);
+	str=NULL;
+	
+	for(int i=0; i<noOfWords; i++){
+		free(array[i]);
+		array[i]=NULL;
+	}
+	free(array);
+	array=NULL;
+
+}
+
+
 
 //test struct.c methods
 
@@ -748,9 +795,9 @@ void test_delete_ngram(){
 	callBasicFuncs(myString,array_of_str,'D');		//will be deleted
 	free(myString);
 	
-	printf("word = %s\n",array_of_str->array[0].word);
-	printf("word2 = %s\n",array_of_str->array[1].word);
-	printf("pos=%d\n",array_of_str->position);
+	//printf("word = %s\n",array_of_str->array[0].word);
+	//printf("word2 = %s\n",array_of_str->array[1].word);
+	//printf("pos=%d\n",array_of_str->position);
 	assert(array_of_str->position==1);
 	assert(strcmp(array_of_str->array[0].word,"this")==0);
 	assert(strcmp(array_of_str->array[0].nextWordArray->array[0].word,"is")==0);	

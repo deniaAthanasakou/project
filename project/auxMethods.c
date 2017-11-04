@@ -64,6 +64,14 @@ void callBasicFuncs(char* ngram, arrayOfStructs* array, char query){
 	
 }
 
+int checkIfStringExists(char** array, int noOfWords, char* str){
+	for(int i=0; i<noOfWords; i++){
+		if(strcmp(str,array[i])==0)
+			return 1;
+	}
+	return 0;
+}
+
 
 
 arrayWords* stringToArray(char* ngram){

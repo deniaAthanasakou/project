@@ -11,14 +11,13 @@ delete:
 	
 	
 freeEverything:
-	me to valgrind vlepoume oti dn ginontai free ola. 
-	An prolavoume to ksanaprospathoume
+	done
 	
 
 unitTesting:
 		problhma me:
 			
-			search	->   parametros (na mhn epistrefei to idio pragma)
+			search	->   dn vgazei kapoia apotelesmata
 			
 			double insertion sort
 			
@@ -130,13 +129,28 @@ unitTesting:
 			these 
 			of the|of the|of the|of the|of the|of the|of the 
 			-1
+			
+			
+			twra einai
+			of the|university|using 
+			of the|these 
+			these 
+			of the 
+			-1
 
 
 
-			prepei se mia klhsh ths search na mhn ksanaemfanistei to finalString an yparxei hdh se enan pinaka finalStringArray
+
+			prepei se mia klhsh ths search na mhn ksanaemfanistei to finalString an yparxei hdh se enan pinaka finalStringArray (done)
+			eftiaksa kai allh mia synarthsh thn checkfinalStringArray kai thn testara kai douleuei komple. 
+			ousiatika epistrefei 1 an vrei to string mesa sto array alliws 0
 			
 			
-			
+			Symperasma: gia kapoio logo dn vghkan ta:
+			 
+			of the|yield|using				->den vghke
+			these							->den vghke
+			of the|probe|these				->den vghke
 				
 		
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	

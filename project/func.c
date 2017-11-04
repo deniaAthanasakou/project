@@ -73,7 +73,8 @@ void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, int noOfWordsOriginal){		//is called for a single query
 	//printf("<-------------------------SEARCH BEGINNING------------------------->\n");
 	//printf("\n\n");
-	
+	char** finalStringArray=malloc(0*sizeof(char*));
+	int itemsOffinalStringArray=0;
 	char* returningString=malloc(1*sizeof(char));
 	strcpy(returningString,"");			//initialization
 	int returningStringLength=0;
@@ -116,18 +117,23 @@ char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal
 				if(tempArray->array[getPosition->position].isFinal == true){
 					found=1;
 					//printf("FINAL STRING  WITH ALLOCATED LENGTH %d IS : %s|\n", strLength, finalString);
-					printf("%s|", finalString);
 					
 					
-					returningStringLength += strlen(finalString)+2;
-					returningString=realloc(returningString,returningStringLength *sizeof(char));
-					strcat(returningString,finalString);
-					returningString= realloc(returningString, (strlen(returningString)+1 +2)*sizeof(char));
-					strcat(returningString,"|");
+					if(!checkIfStringExists(finalStringArray,itemsOffinalStringArray, finalString)){		//finalString does not exist in finalStringArray
 					
-		
+						printf("%s|", finalString);
+						itemsOffinalStringArray++;
+						finalStringArray=realloc(finalStringArray, itemsOffinalStringArray * sizeof(char*));
+						finalStringArray[itemsOffinalStringArray-1]=malloc((strlen(finalString)+1)* sizeof(char));
+						strcpy(finalStringArray[itemsOffinalStringArray-1], finalString);
 					
-					
+						returningStringLength += strlen(finalString)+2;
+						returningString=realloc(returningString,returningStringLength *sizeof(char));
+						strcat(returningString,finalString);
+						returningString= realloc(returningString, (strlen(returningString)+1 +2)*sizeof(char));
+						strcat(returningString,"|");
+					}
+						
 					
 				}
 				finalString = realloc(finalString,(strlen(finalString)+2)*sizeof(char));
@@ -178,6 +184,16 @@ char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal
 	
 	
 	printf("\n");
+	
+	
+	for(int i=0; i<itemsOffinalStringArray; i++){
+		free(finalStringArray[i]);
+		finalStringArray[i] = NULL;
+	}
+	free(finalStringArray);
+	finalStringArray = NULL;
+	
+	
 	
 	return returningString;
 	//printf("<-------------------------SEARCH ENDING------------------------->\n");

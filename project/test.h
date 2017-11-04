@@ -20,7 +20,8 @@ void test_binarySearch();
 void test_insertionSort();
 void test_deletionSort();
 void test_executeQueryFile();
-//call functions
+
+void test_checkIfStringExists();
 
 //test struct.c methods
 void test_initializeArray();
