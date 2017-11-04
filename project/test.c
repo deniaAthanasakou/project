@@ -66,7 +66,7 @@ void test_deleteStack(){
   	
   	myStack = malloc(sizeof(stack));
   	initializeStack(myStack);
-  	deleteStack(myStack);			//delete when stack is not null
+  	deleteStack(myStack);			//delete when stack is not null and is initialized
   	free(myStack);
 	myStack = NULL;
   	assert(myStack==NULL);
@@ -269,7 +269,7 @@ void test_binarySearch(){
 		
 	strcpy(item->word,"hello");																//non existing word
 	getPosition = binarySearch(array_of_str,item,0,array_of_str->position,NULL);
-	assert(getPosition->position==-1 && getPosition->exists==false);						//kanonika eprepe getPosition->position==2
+	assert(getPosition->position==-1 && getPosition->exists==false);				
 	
 	free(getPosition);
 	getPosition = NULL;
@@ -289,7 +289,6 @@ void test_insertionSort(){
 
 	dataNode *item = malloc(sizeof(dataNode));
 	item->word=NULL;
-	//checkItemExists* getPosition = malloc(sizeof(checkItemExists));         //HERE WAS LEAK
 	checkItemExists* getPosition = insertionSort(array_of_str,item,array_of_str->position);   //array is empty  
 	assert(getPosition->position==0 && getPosition->exists==false);
 	
@@ -511,7 +510,7 @@ void test_executeQueryFile(){
 	queryFile = fopen ("testingFiles/IncorrectLetter","r");
 	array_of_str = malloc(sizeof(arrayOfStructs));
 	initializeArray(array_of_str);
-	assert(executeQueryFile(queryFile,array_of_str)==0);					//query of file starts with sth else than A,D,Q,F
+	assert(executeQueryFile(queryFile,array_of_str)==0);					//query of file starts with sth else other than A,D,Q,F
 	fclose (queryFile);
 	array_of_str = NULL;
 	assert(array_of_str==NULL);
@@ -635,7 +634,6 @@ void test_deleteDataNode(){
 	elem->word = malloc(k * sizeof(char));
 	strcpy(elem->word,"Hello world");
 	deleteDataNode(elem);
-	//elem->word = NULL;
 	assert(elem->word == NULL);
 	free(elem);
 	elem = NULL;
@@ -820,9 +818,6 @@ void test_delete_ngram(){
 	callBasicFuncs(myString,array_of_str,'D');		//will be deleted
 	free(myString);
 	
-	//printf("word = %s\n",array_of_str->array[0].word);
-	//printf("word2 = %s\n",array_of_str->array[1].word);
-	//printf("pos=%d\n",array_of_str->position);
 	assert(array_of_str->position==1);
 	assert(strcmp(array_of_str->array[0].word,"this")==0);
 	assert(strcmp(array_of_str->array[0].nextWordArray->array[0].word,"is")==0);	
@@ -843,7 +838,6 @@ void test_delete_ngram(){
 	callBasicFuncs(myString,array_of_str,'D');			//will not be deleted because full ngram doesn't exist 
 	free(myString);
 	
-	//printf("word is %s\n",array_of_str->array[0].word);
 	assert(strcmp(array_of_str->array[0].word,"test")==0);
 	assert(strcmp(array_of_str->array[1].word,"this")==0);
 	assert(array_of_str->position==2);	
@@ -856,7 +850,7 @@ void test_delete_ngram(){
 	
 	myString= malloc(sizeof(char)*(strlen("this is")+1));
 	strcpy(myString,"this is");
-	callBasicFuncs(myString,array_of_str,'D');			//will not be deleted because this -> is -> cat and this -> is -> dog
+	callBasicFuncs(myString,array_of_str,'D');			//will not be deleted because this -> is -> cat and this -> is -> dog exist
 	free(myString);
 	
 	assert(strcmp(array_of_str->array[0].word,"test")==0);
@@ -894,7 +888,6 @@ void test_delete_ngram(){
 
 void test_callBasicFuncs(){
  
- 	//printf(" ")
 	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
 	initializeArray(array_of_str);
 	char* ngram = malloc(20*sizeof(char));

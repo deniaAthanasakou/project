@@ -15,9 +15,8 @@ typedef struct arrayWords{
 	char** words;			//array of strings
 }arrayWords;
 
-
 void initialize(FILE* file, arrayOfStructs* structureTree);
-int executeQueryFile(FILE* file,arrayOfStructs* structureTree);
+int executeQueryFile(FILE* file, arrayOfStructs* structureTree);
 
 void callBasicFuncs(char* ngram, arrayOfStructs* array, char query);
 arrayWords* stringToArray(char* ngram);
@@ -26,24 +25,13 @@ void printArray(arrayOfStructs* tempArray, int position);
 void printArrayFinalWords(arrayOfStructs* array_of_str, int position);
 void printFullArray(arrayOfStructs* array_of_str, int position);
 
+int checkIfStringExists(char** array, int noOfWords, char* str);
+
 checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last, checkItemExists* check);
 
 checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForInsert, int lastElement);
 void deletionSort(arrayOfStructs* array_of_str, int position, int lastElement);
 void deleteArrayOfWords(char** array,int length);
-
-
-
-
-
-
-
-
-int checkIfStringExists(char** array, int noOfWords, char* str);
-
-
-
-
 
 
 

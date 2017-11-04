@@ -18,7 +18,6 @@ void doubleLengthOfStack(stack* myStack){
 void push(stack* myStack, int item){
     if (myStack->top == (myStack->length - 1))
     {
-       // printf ("prepei na diplasiastei h stoiva\n");
         doubleLengthOfStack(myStack);
     }
     myStack->top++;
@@ -28,7 +27,6 @@ void push(stack* myStack, int item){
 int pop(stack* myStack){
     if (isEmpty(myStack))
     {
-        //printf ("Stack is Empty\n");
         return 0;
     }
     myStack->top--;
@@ -68,8 +66,6 @@ void deleteStack(stack* myStack){
 			myStack->positionsToDelete = NULL;
 			
 		}
-		//free(myStack);
-		//myStack = NULL;
 	}
 }
 

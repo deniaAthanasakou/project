@@ -40,25 +40,18 @@ void deleteArray(arrayOfStructs* array_of_str){
 			return;
 		}
 		int lastElement = tempArray->position;	
-		//printf("hsgfgs  pointer %p\n",tempArray->array);
-		//printf("lastElement = %d\n",lastElement);
-	
+
 		for(int i=0; i < lastElement; i++){
-			//printf("gsajgd\n");
-			//printf("POINTER dsadas array %p\n",tempArray->array);
-			//printf("POINTER array %p\n",&(tempArray->array[i]));
-		//printf("'%s' is in position %d\n ", tempArray->array[i].word, i);
+
 			if( &(tempArray->array[i])!=NULL){
 				deleteArray(tempArray->array[i].nextWordArray);
-				if(tempArray->array[i].word!=NULL)				//isws prepei na vgei
+				if(tempArray->array[i].word!=NULL)				
 					deleteDataNode(&(tempArray->array[i]));
 			}
 			else
 				break;
 			
-			//tempArray->position--;	
 		}
-		//printf("POINTER temparray %p\n",tempArray);
 		
 		free(tempArray->array);
 		tempArray->array=NULL;
@@ -71,16 +64,10 @@ void deleteArray(arrayOfStructs* array_of_str){
 
 
 void deleteDataNode(dataNode* elem){
-	//printf("delete a\n");
 	if(elem!=NULL){
 		if( elem->word!=NULL){
-			//printf("delete word '%s'\n", elem->word);
-			//printf("pointer in delete data node is %p\n",elem->word);
 			free(elem->word);
-			//printf("b\n");
 			elem->word = NULL;
 		}
-		//else
-			//printf("NULLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL\n");
 	}
 }

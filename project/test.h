@@ -20,7 +20,6 @@ void test_binarySearch();
 void test_insertionSort();
 void test_deletionSort();
 void test_executeQueryFile();
-
 void test_checkIfStringExists();
 
 //test struct.c methods

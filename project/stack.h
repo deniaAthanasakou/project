@@ -21,6 +21,4 @@ void displayStack(stack* myStack);
 void deleteStack(stack* myStack);
 
 
-
-
 #endif
