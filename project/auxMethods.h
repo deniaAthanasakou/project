@@ -17,7 +17,7 @@ typedef struct arrayWords{
 
 
 void initialize(FILE* file, arrayOfStructs* structureTree);
-void executeQueryFile(FILE* file,arrayOfStructs* structureTree);
+int executeQueryFile(FILE* file,arrayOfStructs* structureTree);
 
 void callBasicFuncs(char* ngram, arrayOfStructs* array, char query);
 arrayWords* stringToArray(char* ngram);

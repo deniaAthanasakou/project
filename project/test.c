@@ -213,7 +213,7 @@ void test_initialize(){
 	arrayOfStructs* structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
 	initializeArray(structureTree);
 	FILE * initFile;
-	initFile = fopen ("test_initialize","r");
+	initFile = fopen ("testingFiles/test_initialize","r");
 	if (initFile!=NULL)
 	{
 		initialize(initFile, structureTree);
@@ -484,13 +484,38 @@ void test_executeQueryFile(){
 	
 	printf("Start of Testing executeQueryFile\n");
 	FILE * queryFile;
-	queryFile = fopen ("test_executeQuery","r");
+	queryFile = fopen ("testingFiles/correct1batch","r");
 	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
 	initializeArray(array_of_str);
-	executeQueryFile(queryFile,array_of_str);
+	assert(executeQueryFile(queryFile,array_of_str)==1);					//correct file
 	fclose (queryFile);
-	deleteArray(array_of_str);									
 	array_of_str = NULL;
+	assert(array_of_str==NULL);
+	
+	queryFile = fopen ("testingFiles/correctMultipleBatches","r");
+	array_of_str = malloc(sizeof(arrayOfStructs));
+	initializeArray(array_of_str);
+	assert(executeQueryFile(queryFile,array_of_str)==1);					//correct file with multiple batches
+	fclose (queryFile);
+	array_of_str = NULL;
+	assert(array_of_str==NULL);
+	
+	queryFile = fopen ("testingFiles/incorrectNoF","r");
+	array_of_str = malloc(sizeof(arrayOfStructs));
+	initializeArray(array_of_str);
+	assert(executeQueryFile(queryFile,array_of_str)==0);					//file does not end with F
+	fclose (queryFile);
+	array_of_str = NULL;
+	assert(array_of_str==NULL);
+	
+	queryFile = fopen ("testingFiles/IncorrectLetter","r");
+	array_of_str = malloc(sizeof(arrayOfStructs));
+	initializeArray(array_of_str);
+	assert(executeQueryFile(queryFile,array_of_str)==0);					//query of file starts with sth else than A,D,Q,F
+	fclose (queryFile);
+	array_of_str = NULL;
+	assert(array_of_str==NULL);
+	
 	printf("End of Testing executeQueryFile\n");
 
 }

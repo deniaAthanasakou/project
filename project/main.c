@@ -32,7 +32,7 @@ int main (int argc,char* argv[]){
 	
 	printf("\nstarting testing\n");
 	
-	//testAllFunctions(); //test that all functions are working properly
+	testAllFunctions(); //test that all functions are working properly
 	
 	printf("ending testing\n\n\n");
 	
@@ -61,7 +61,11 @@ int main (int argc,char* argv[]){
 	if (queryFile!=NULL)
 	{
 		//printf ("Before query\n");
-		executeQueryFile(queryFile,structureTree);
+		int query = executeQueryFile(queryFile,structureTree);
+		if(query==0){
+			printf("Error in file of queries\n");
+			exit(1);
+		}
 		fclose (queryFile);
 		//printf("queryfile after\n");
 	}
@@ -70,8 +74,8 @@ int main (int argc,char* argv[]){
 	//printFullArray(structureTree,structureTree->position);
 	
 	//printf("\n\n\nBEFORE DELETE\n\n\n");
-	deleteArray(structureTree);
-	structureTree=NULL;
+	//deleteArray(structureTree);
+	//structureTree=NULL;
 
 	return 0;
 }

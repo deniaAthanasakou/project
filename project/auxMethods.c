@@ -335,18 +335,37 @@ void printArrayFinalWords(arrayOfStructs* array_of_str, int position){
 
 
 //insert from query file
-void executeQueryFile(FILE* file,arrayOfStructs* structureTree){
+int executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 
 	char *line = NULL;
 	size_t len = 0;
 	char read;
 
 	if (file == NULL)
-		return;
+		return 1;
+		
+	int counter = 1;	
+	char startingLetter = 'F';			//initialization			
+	int queryNum=1;
+	
+	printf("Starting execution of batch '%d'\n\n", counter);
+	//printf("Starting execution of batch '%d'\n\n", counter);
 
 	while ((read = getline(&line, &len, file)) != -1) {
 	
 		//printf("%s",line);
+		
+		if(queryNum==0){
+			printf("Starting execution of batch '%d'\n\n", counter);
+			if(structureTree==NULL){
+				//printf("Initialize it\n");
+				structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
+				initializeArray(structureTree);
+			}
+		}
+		
+		
+		
 	
 		char* ngram = strtok(line, "\n");
 		
@@ -356,23 +375,62 @@ void executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 
 		//printf("remaining:%s\n",remainingLine);
 		if(strcmp(wordCase,"A")==0){	
-			//printf("INSERT\n");
+			printf("INSERT\n");
+			queryNum++;
+			startingLetter = 'A';
 			callBasicFuncs(remainingLine,structureTree,'A');
 		}
 		else if(strcmp(wordCase,"Q")==0){
-			//printf("SEARCH\n");
+			printf("SEARCH\n");
+			queryNum++;
+			startingLetter = 'Q';
 			callBasicFuncs(remainingLine,structureTree,'Q');		//isws na nai void
 		}
 		else if(strcmp(wordCase,"D")==0){
+		printf("DELETE\n");
+			queryNum++;
+			startingLetter = 'D';
 			callBasicFuncs(remainingLine,structureTree,'D');
 		}
 		else if(strcmp(wordCase,"F")==0){
-			//printf("END\n");
-		}
-		else{
-			printf("Error in query_file structure.\n");
-		}
+			printf("\n\nEnd of batch '%d'\n", counter);
+			counter++;
+			queryNum=0;
 			
+			startingLetter = 'F';
+			
+			deleteArray(structureTree);
+			structureTree=NULL;
+			//return 1;
+			
+			//deleteArray
+			//newArray gia epomenh riph
+		}
+		else{			//different letter
+			deleteArray(structureTree);
+			structureTree=NULL;
+			if (line){
+				free(line);
+				line=NULL;
+			}
+			printf("different letter\n");
+			return 0;
+		}
+		
+			
+	}
+	
+	printf("end of while\n");
+	
+	if(startingLetter !='F'){
+		deleteArray(structureTree);
+		structureTree=NULL;
+		if (line){
+			free(line);
+			line=NULL;
+		}
+		printf("startingLetter !='F'\n");
+		return 0;
 	}
 	//found eof
 
@@ -380,6 +438,7 @@ void executeQueryFile(FILE* file,arrayOfStructs* structureTree){
 		free(line);
 		line=NULL;
 	}
+	return 1;
 
 }
 
