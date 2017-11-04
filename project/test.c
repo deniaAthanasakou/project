@@ -22,11 +22,11 @@ void testAllFunctions(){		//calls all testFunctions
 	test_deleteArrayOfWords();
 	test_stringToArray();
 	test_initialize();			
-	//test_callBasicFuncs();		
+	test_callBasicFuncs();		
 	
 	test_binarySearch();		
 	test_insertionSort();
-	//test_deletionSort();		
+	test_deletionSort();		
 	test_executeQueryFile();		
 	
 	test_initializeArray();
@@ -35,7 +35,7 @@ void testAllFunctions(){		//calls all testFunctions
 	test_deleteDataNode();
 	test_insert_ngram();			//leak apo delete array
 	test_search_ngram();			//leak apo deletearray
-	//test_delete_ngram();			
+	test_delete_ngram();			
 }
 
 

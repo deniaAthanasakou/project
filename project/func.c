@@ -264,8 +264,8 @@ void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 		//
 		if(flagIfElementWasDeleted==1 && tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray->position==0) {
 			//deleteArray
-			//deleteArray(tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray);			-> auto vgazei sega
-			//tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray=NULL;					-> auto vgazei sega
+			deleteArray(tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray);			//-> auto vgazei sega	//telika mallon dn evgaze
+			tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray=NULL;					//-> auto vgazei sega	//telika mallon dn evgaze
 			
 		}
 		

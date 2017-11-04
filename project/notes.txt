@@ -89,20 +89,38 @@ unitTesting:
 		Query: D test it is
 		 
 		 ousiastika diagrafei mono to is dld to teleutaio
+		 
+		 to eftiaksa ksanavazontas sto delete ngram to 
+		
+		
+		if(flagIfElementWasDeleted==1 && tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray->position==0) {			
+				//deleteArray
+				deleteArray(tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray);			
+				tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray=NULL;					
+			
+			}
+		
+		to opoio gia kapoio logo twra douleuei
 		
 		
 		
 		
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
+		Sumperasma:
+			Sta test douleuoun ola
+			insert, delete douleuoun komple
+			paw sth search
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
+	Search:
+			
+			
+			
+			
+			
+			
+			
+				
 		
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 		
