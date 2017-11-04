@@ -25,6 +25,8 @@ unitTesting:
 			
 			readMe
 			
+			tha prepei na mporei na dexetai to query file ripes
+			
 			
 			
 			
