@@ -43,7 +43,10 @@ void callBasicFuncs(char* ngram, arrayOfStructs* array, char query){
 		insert_ngram(array, arrayOfWords,noOfWords);
 	}
 	else if(query == 'Q'){
-		search_ngram(array, arrayOfWords,noOfWords);
+		char* searchString = search_ngram(array, arrayOfWords,noOfWords);
+		//printf("STRING IS '%s'\n",searchString);
+		free(searchString);
+		searchString=NULL;
 	}
 	else if(query == 'D'){
 		//printf("before\n");

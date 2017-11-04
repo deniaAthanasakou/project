@@ -684,13 +684,17 @@ void test_search_ngram(){
 
 	insert_ngram(array_of_str, arrayOfWords, noOfWords);
 	
-	search_ngram(array_of_str, arrayOfWords, noOfWords);
+	char* searchString = search_ngram(array_of_str, arrayOfWords, noOfWords);
 	
 	
 	for(int i=0;i<3;i++){												//free 
 		free(arrayOfWords[i]);
 		arrayOfWords[i] = NULL;
 	}
+	
+	free(searchString);
+	searchString=NULL;
+	
 	free(arrayOfWords);
 	arrayOfWords = NULL;
 	deleteArray(array_of_str);

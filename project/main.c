@@ -32,11 +32,11 @@ int main (int argc,char* argv[]){
 	
 	printf("\nstarting testing\n");
 	
-	testAllFunctions(); //test that all functions are working properly
+	//testAllFunctions(); //test that all functions are working properly
 	
 	printf("ending testing\n\n\n");
 	
-	/*arrayOfStructs* structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
+	arrayOfStructs* structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
 	initializeArray(structureTree);
 	
 	//initialize
@@ -51,10 +51,10 @@ int main (int argc,char* argv[]){
 	
 	
 	
-	printf("\n\n\nPRINTING FULL TREE before query\n\n\n");
+	//printf("\n\n\nPRINTING FULL TREE before query\n\n\n");
 	
-	printFullArray(structureTree,structureTree->position);
-	
+	//printFullArray(structureTree,structureTree->position);
+	//printf("\n\n");
 	//query
 	FILE * queryFile;
 	queryFile = fopen (query,"r");
@@ -65,13 +65,13 @@ int main (int argc,char* argv[]){
 		fclose (queryFile);
 		//printf("queryfile after\n");
 	}
-	printf("\n\n\nPRINTING FULL TREE after query\n\n\n");
+//	printf("\n\n\nPRINTING FULL TREE after query\n\n\n");
 	
-	printFullArray(structureTree,structureTree->position);
+	//printFullArray(structureTree,structureTree->position);
 	
-	printf("\n\n\nBEFORE DELETE\n\n\n");
+	//printf("\n\n\nBEFORE DELETE\n\n\n");
 	deleteArray(structureTree);
-	structureTree=NULL;*/
+	structureTree=NULL;
 
 	return 0;
 }

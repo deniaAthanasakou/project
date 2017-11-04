@@ -17,11 +17,8 @@ freeEverything:
 
 unitTesting:
 		problhma me:
-			deletionSort:
-				(call basic functions, delete ngram)
-				[a, hi] -> delete a
 			
-			search	->   parametros, return (na mhn epistrefei to idio pragma)
+			search	->   parametros (na mhn epistrefei to idio pragma)
 			
 			double insertion sort
 			
@@ -113,10 +110,30 @@ unitTesting:
 			paw sth search
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 	Search:
+			Eftiaksa na epistrefetai to String. Bgainei swsta. Ara ftiakse to test_search_ngram etsi wste na testareis an vrhke auto pou eprepe
 			
 			
-			
-			
+			of the|university|using
+			of the|these
+			these
+			of the
+			-1
+			of the|yield|using				->den vghke
+			these							->den vghke
+			of the|probe|these				->den vghke
+
+
+
+			//my results
+			of the|university|university|university|of the|using|using 
+			of the|these|of the|of the|of the 
+			these 
+			of the|of the|of the|of the|of the|of the|of the 
+			-1
+
+
+
+			prepei se mia klhsh ths search na mhn ksanaemfanistei to finalString an yparxei hdh se enan pinaka finalStringArray
 			
 			
 			

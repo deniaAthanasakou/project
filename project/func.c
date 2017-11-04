@@ -70,10 +70,13 @@ void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 }
 
 //search
-void search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, int noOfWordsOriginal){		//is called for a single query
+char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, int noOfWordsOriginal){		//is called for a single query
 	//printf("<-------------------------SEARCH BEGINNING------------------------->\n");
-	printf("\n\n");
+	//printf("\n\n");
 	
+	char* returningString=malloc(1*sizeof(char));
+	strcpy(returningString,"");			//initialization
+	int returningStringLength=0;
 	int found = 0;
 	int noOfWords=noOfWordsOriginal;
 	for(int j=0; j < noOfWordsOriginal; j++){	//for each word of query starting as first Word
@@ -114,6 +117,18 @@ void search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal,
 					found=1;
 					//printf("FINAL STRING  WITH ALLOCATED LENGTH %d IS : %s|\n", strLength, finalString);
 					printf("%s|", finalString);
+					
+					
+					returningStringLength += strlen(finalString)+2;
+					returningString=realloc(returningString,returningStringLength *sizeof(char));
+					strcat(returningString,finalString);
+					returningString= realloc(returningString, (strlen(returningString)+1 +2)*sizeof(char));
+					strcat(returningString,"|");
+					
+		
+					
+					
+					
 				}
 				finalString = realloc(finalString,(strlen(finalString)+2)*sizeof(char));
 				finalString[strlen(finalString)] = '\0';
@@ -145,17 +160,26 @@ void search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal,
 			getPosition = NULL;
 			
 		}
+		
 		free(finalString);
 		finalString = NULL;
 		noOfWords--;
 	}
-	if(found==0)
-		printf("-1\n");
-	else	
+	if(found==0){
+		printf("-1");
+		returningString = realloc(returningString, 3*sizeof(char));
+		strcpy(returningString,"-1");
+	}
+	else{	
 		printf("\b ");				//remove last "|" 
+		strcat(returningString,"\b");
+	}
+	
 	
 	
 	printf("\n");
+	
+	return returningString;
 	//printf("<-------------------------SEARCH ENDING------------------------->\n");
 }
 
