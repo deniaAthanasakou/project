@@ -53,10 +53,12 @@ int main (int argc,char* argv[]){
 		int query = executeQueryFile(queryFile,structureTree);
 		if(query==0){
 			printf("Error in file of queries\n");
+			printf("\n");
 			exit(1);
 		}
 		fclose (queryFile);
 	}
+	printf("\n");
 
 	return 0;
 }

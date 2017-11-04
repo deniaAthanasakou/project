@@ -21,7 +21,7 @@ void testAllFunctions(){		//calls all testFunctions
 	
 	test_deleteArrayOfWords();
 	test_stringToArray();
-	test_initialize();			
+	test_initialize();		
 	test_callBasicFuncs();		
 	test_binarySearch();		
 	test_insertionSort();
@@ -36,7 +36,7 @@ void testAllFunctions(){		//calls all testFunctions
 	
 	test_insert_ngram();			
 	test_search_ngram();			
-	test_delete_ngram();			
+	test_delete_ngram();		
 }
 
 
@@ -348,6 +348,86 @@ void test_insertionSort(){
 	free(getPosition);
 	getPosition = NULL;
 	
+	int lengthBefore = array_of_str->length;
+	
+	
+	//add in order to double array
+	//5th
+	dataNode *item5 = malloc(sizeof(dataNode));
+	item5->word = malloc((strlen("hi")+1) * sizeof(char));
+	strcpy(item5->word,"hi");     
+	item5->nextWordArray=NULL;
+	
+	getPosition = insertionSort(array_of_str,item5,array_of_str->position);
+	array_of_str->position++;
+	
+	free(getPosition);
+	getPosition = NULL;
+	
+	//6th
+	dataNode *item6 = malloc(sizeof(dataNode));
+	item6->word = malloc((strlen("testing")+1) * sizeof(char));
+	strcpy(item6->word,"testing");     
+	item6->nextWordArray=NULL;
+	
+	getPosition = insertionSort(array_of_str,item6,array_of_str->position);
+	array_of_str->position++;
+	
+	free(getPosition);
+	getPosition = NULL;
+	
+	//7th
+	dataNode *item7 = malloc(sizeof(dataNode));
+	item7->word = malloc((strlen("before")+1) * sizeof(char));
+	strcpy(item7->word,"before");     
+	item7->nextWordArray=NULL;
+	
+	getPosition = insertionSort(array_of_str,item7,array_of_str->position);
+	array_of_str->position++;
+	
+	free(getPosition);
+	getPosition = NULL;
+	
+	//8th
+	dataNode *item8 = malloc(sizeof(dataNode));
+	item8->word = malloc((strlen("those")+1) * sizeof(char));
+	strcpy(item8->word,"those");     
+	item8->nextWordArray=NULL;
+	
+	getPosition = insertionSort(array_of_str,item8,array_of_str->position);
+	array_of_str->position++;
+	
+	free(getPosition);
+	getPosition = NULL;
+	
+	//9th
+	dataNode *item9 = malloc(sizeof(dataNode));
+	item9->word = malloc((strlen("what")+1) * sizeof(char));
+	strcpy(item9->word,"what");     
+	item9->nextWordArray=NULL;
+	
+	getPosition = insertionSort(array_of_str,item9,array_of_str->position);
+	array_of_str->position++;
+	
+	free(getPosition);
+	getPosition = NULL;
+	
+	//10th
+	dataNode *item10 = malloc(sizeof(dataNode));
+	item10->word = malloc((strlen("myy")+1) * sizeof(char));
+	strcpy(item10->word,"myy");     
+	item10->nextWordArray=NULL;
+	
+	getPosition = insertionSort(array_of_str,item10,array_of_str->position);
+	array_of_str->position++;
+	
+	free(getPosition);
+	getPosition = NULL;
+	
+	//check if array has been doubled
+	
+	assert(array_of_str->length == 2*lengthBefore);
+	
 	
 	deleteDataNode(item);
 	free(item);
@@ -370,6 +450,31 @@ void test_insertionSort(){
 	deleteDataNode(item4);
 	free(item4);
 	item4=NULL;
+	
+	deleteDataNode(item5);
+	free(item5);
+	item5=NULL;
+	
+	deleteDataNode(item6);
+	free(item6);
+	item6=NULL;
+	
+	deleteDataNode(item7);
+	free(item7);
+	item7=NULL;
+	
+	deleteDataNode(item8);
+	free(item8);
+	item8=NULL;
+	
+	deleteDataNode(item9);
+	free(item9);
+	item9=NULL;
+	
+	deleteDataNode(item10);
+	free(item10);
+	item10=NULL;
+	
 	
 	free(array_of_str->array);
 	array_of_str->array = NULL;
@@ -480,6 +585,7 @@ void test_deletionSort(){
 
 
 void test_executeQueryFile(){
+	
 	
 	printf("Start of Testing executeQueryFile\n");
 	FILE * queryFile;
@@ -748,23 +854,84 @@ void test_search_ngram(){
 	
 	
 	noOfWords = 3;
-	strcpy(arrayOfWords[0],"cat");										//get search phrase
+	strcpy(arrayOfWords[0],"cat");										//get search phrase ->found
 	strcpy(arrayOfWords[1],"dog");
 	strcpy(arrayOfWords[2],"record");
 
 	insert_ngram(array_of_str, arrayOfWords, noOfWords);
 	
-	char* searchString = search_ngram(array_of_str, arrayOfWords, noOfWords);
+	char* searchString;
+	searchString = search_ngram(array_of_str, arrayOfWords, noOfWords);
 	
+	assert(strcmp(searchString,"cat dog record|\b")==0);
+	free(searchString);
+	searchString=NULL;
 	
-	for(int i=0;i<3;i++){												//free 
+	for(int i=0;i<noOfWords;i++){												//free 
 		free(arrayOfWords[i]);
 		arrayOfWords[i] = NULL;
 	}
 	
+	noOfWords = 1;
+	arrayOfWords[0] = malloc(10* sizeof(char));														//not found
+	strcpy(arrayOfWords[0],"init");
+	searchString = search_ngram(array_of_str, arrayOfWords, noOfWords);
+	assert(strcmp(searchString,"-1")==0);
 	free(searchString);
 	searchString=NULL;
 	
+												//free 
+	free(arrayOfWords[0]);
+	arrayOfWords[0] = NULL;
+
+	
+	
+	arrayOfWords[0] = malloc(10* sizeof(char));
+
+	noOfWords = 1;
+	strcpy(arrayOfWords[0],"cat");										//get search phrase ->found
+	insert_ngram(array_of_str, arrayOfWords, 1);
+	free(arrayOfWords[0]);
+	arrayOfWords[0] = NULL;
+	
+	arrayOfWords[0] = malloc(10* sizeof(char));
+	strcpy(arrayOfWords[0],"dog");
+	insert_ngram(array_of_str, arrayOfWords, 1);
+	free(arrayOfWords[0]);
+	arrayOfWords[0] = NULL;
+	
+	arrayOfWords[0] = malloc(10* sizeof(char));
+	strcpy(arrayOfWords[0],"record");
+	insert_ngram(array_of_str, arrayOfWords, 1);
+	free(arrayOfWords[0]);
+	arrayOfWords[0] = NULL;
+	
+	char** temp = malloc(3*sizeof(char*));
+	temp[0] =  malloc(10* sizeof(char));
+	temp[1] =  malloc(10* sizeof(char));
+	temp[2] =  malloc(10* sizeof(char));
+	strcpy(temp[0],"cat");
+	strcpy(temp[1],"is");
+	strcpy(temp[2],"dog");
+	
+	searchString = search_ngram(array_of_str, temp, 3);
+	
+	//found multiple ones
+
+	assert(strcmp(searchString,"cat|dog|\b")==0);
+	free(searchString);
+	searchString=NULL;
+	
+
+	
+	for(int i=0;i<3;i++){
+		free(temp[i]);												//free 
+		temp[i] = NULL;
+	}
+	
+	
+	free(temp);
+	temp = NULL;
 	free(arrayOfWords);
 	arrayOfWords = NULL;
 	deleteArray(array_of_str);
@@ -888,19 +1055,33 @@ void test_delete_ngram(){
 
 void test_callBasicFuncs(){
  
+ 	printf("Start testing callBasicFunctions\n");
+ 	
 	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
 	initializeArray(array_of_str);
 	char* ngram = malloc(20*sizeof(char));
 	strcpy(ngram,"A cat in my shoe");
-
+	
 	callBasicFuncs(ngram, array_of_str, 'A');
-	callBasicFuncs(ngram, array_of_str, 'Q');
-	callBasicFuncs(ngram, array_of_str, 'D');
-
 	free(ngram);
 	ngram = NULL;
+	
+	ngram = malloc(20*sizeof(char));
+	strcpy(ngram,"A cat in my shoe");
+	callBasicFuncs(ngram, array_of_str, 'Q');
+	free(ngram);
+	ngram = NULL;
+	
+	ngram = malloc(20*sizeof(char));
+	strcpy(ngram,"A cat in my shoe"); 
+	callBasicFuncs(ngram, array_of_str, 'D');
+	free(ngram);
+	ngram = NULL;
+	
 	deleteArray(array_of_str);
 	array_of_str = NULL;
+	
+	printf("End of testing callBasicFunctions\n");
 }
 
 
