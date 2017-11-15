@@ -9,7 +9,7 @@ void initialize(FILE* file, arrayOfStructs* structureTree){
 
 	char *line = NULL;
 	size_t len = 0;
-	char read;
+	int read;
 
 	if (file == NULL)
 		return;
@@ -182,7 +182,12 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
     
         j--;
     }
-    array_of_str->array[j+1] = *itemForInsert;
+	/*printf("before + %d with loc=%d and j=%d\n",loc-j-1,loc,j);
+	if(j>=loc){
+		memmove(&array_of_str->array[j+1], &array_of_str->array[j], (loc-j-1)*sizeof(array_of_str->array));
+	}
+    printf("after\n");*/
+	array_of_str->array[j+1] = *itemForInsert;
     getPosition->position=j+1;
     
     return getPosition;
@@ -269,7 +274,7 @@ int executeQueryFile(FILE* file ,arrayOfStructs* structureTree){
 
 	char *line = NULL;
 	size_t len = 0;
-	char read;
+	int read;
 
 	if (file == NULL)
 		return 1;
@@ -327,6 +332,19 @@ int executeQueryFile(FILE* file ,arrayOfStructs* structureTree){
 	
 
 	return 1;
+
+}
+
+void printQuery(char** items, int iterNum){
+	
+	for(int i=0;i<iterNum;i++){
+		if(i==iterNum-1){
+			printf("%s\n",items[i]);
+		}
+		else{
+			printf("%s|",items[i]);
+		}		
+	}
 
 }
 

@@ -102,7 +102,7 @@ char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal
 
 					if(!checkIfStringExists(finalStringArray,itemsOffinalStringArray, finalString)){		//finalString does not exist in finalStringArray
 					
-						printf("%s|", finalString);
+						//printf("%s|", finalString);
 						itemsOffinalStringArray++;
 						finalStringArray=realloc(finalStringArray, itemsOffinalStringArray * sizeof(char*));
 						finalStringArray[itemsOffinalStringArray-1]=malloc((strlen(finalString)+1)* sizeof(char));
@@ -111,8 +111,8 @@ char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal
 						returningStringLength += strlen(finalString)+2;
 						returningString=realloc(returningString,returningStringLength *sizeof(char));
 						strcat(returningString,finalString);
-						returningString= realloc(returningString, (strlen(returningString)+1 +2)*sizeof(char));
-						strcat(returningString,"|");
+						//returningString= realloc(returningString, (strlen(returningString)+1 +2)*sizeof(char));
+						//strcat(returningString,"|");
 					}
 						
 					
@@ -122,6 +122,7 @@ char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal
 				strcat(finalString, " ");
 			}
 			else{
+				
 				deleteDataNode(tempElement);
 				free(tempElement);
 				tempElement=NULL;
@@ -153,19 +154,15 @@ char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal
 		noOfWords--;
 	}
 	if(found==0){
-		printf("-1");
+		printf("-1\n");
 		returningString = realloc(returningString, 3*sizeof(char));
 		strcpy(returningString,"-1");
 	}
 	else{	
-		printf("\b ");				//remove last "|" 
-		strcat(returningString,"\b");
-	}
-	
-	
-	
-	printf("\n");
-	
+		//printf("\b ");				//remove last "|" 
+		//strcat(returningString,"\b");
+		printQuery(finalStringArray, itemsOffinalStringArray);
+	}	
 	
 	for(int i=0; i<itemsOffinalStringArray; i++){
 		free(finalStringArray[i]);

@@ -1,0 +1,3 @@
+FIXES
+-memmove as to doume mazi
+-memmove isos ki se deletionSort
