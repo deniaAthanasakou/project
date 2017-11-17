@@ -1,0 +1,27 @@
+Η Στεφανία Πάτσου υλοποίησε τα εξής:
+
+-void test_initializeArray();
+-void test_doubleLength();
+-void test_deleteArray();
+-void test_deleteDataNode();
+-void test_insert_ngram();
+-void test_search_ngram();
+-void test_binarySearch();
+-void test_insertionSort();
+-void test_callBasicFuncs();
+
+Η Αντωνία Αθανασάκου υλοποίησε τα εξής:
+
+[done]-void test_initializeStack();
+[done]-void test_doubleLengthOfStack();
+[done]-void test_push();
+[done]-void test_isEmpty();
+[done]-void test_pop();
+[done]-void test_deleteStack();
+[done]-void test_delete_ngram();
+[done]-void test_checkIfStringExists();
+[done]-void test_deleteArrayOfWords();
+[done]-void test_stringToArray();
+[done]-void test_initialize();
+[done]-void test_deletionSort();
+[done]-void test_executeQueryFile();
