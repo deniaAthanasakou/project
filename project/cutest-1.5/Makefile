@@ -1,8 +1,8 @@
 CC = gcc -g
-FILES = AllTests.c CuTest.c CuTestStack.c CuTestAuxMethods.c CuTestFunc.c ../struct.c ../func.c ../auxMethods.c ../stack.c 
-OBJECTS = AllTests.o CuTest.o CuTestStack.o CuTestAuxMethods.o CuTestFunc.o struct.o func.o auxMethods.o stack.o
+FILES = AllTests.c CuTest.c CuTestStack.c CuTestAuxMethods.c CuTestFunc.c CuTestStruct.c ../struct.c ../func.c ../auxMethods.c ../stack.c 
+OBJECTS = AllTests.o CuTest.o CuTestStack.o CuTestAuxMethods.o CuTestFunc.o CuTestStruct.o struct.o func.o auxMethods.o stack.o
 OUT = test
-HEADERS = CuTest.h CuTestStack.h CuTestAuxMethods.h CuTestFunc.h  ../struct.h ../func.h ../auxMethods.h ../stack.h
+HEADERS = CuTest.h CuTestStack.h CuTestAuxMethods.h CuTestFunc.h CuTestStruct.h ../struct.h ../func.h ../auxMethods.h ../stack.h
 
 all: $(OBJECTS) $(HEADERS)
 	$(CC) -o $(OUT) $(FILES)
@@ -22,6 +22,10 @@ CuTestAuxMethods.o: CuTestAuxMethods.c
 	
 CuTestFunc.o: CuTestFunc.c
 	$(CC) -c CuTestFunc.c		
+
+CuTestStruct.o: CuTestStruct.c
+	$(CC) -c CuTestStruct.c
+
 
 struct.o: ../struct.c
 	$(CC) -c ../struct.c

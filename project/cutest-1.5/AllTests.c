@@ -4,6 +4,7 @@
 #include "CuTestStack.h"
 #include "CuTestAuxMethods.h"
 #include "CuTestFunc.h"
+#include "CuTestStruct.h"
 
 CuSuite* CuGetSuite();
 CuSuite* CuStringGetSuite();
@@ -19,6 +20,7 @@ void RunAllTests(void)
 	CuSuiteAddSuite(suite, StackGetSuite());
 	CuSuiteAddSuite(suite, AuxMethodsGetSuite());
 	CuSuiteAddSuite(suite, FuncGetSuite());
+	CuSuiteAddSuite(suite, StructGetSuite());
 
 	CuSuiteRun(suite);
 	CuSuiteSummary(suite, output);

@@ -6,9 +6,12 @@
 void TestDeleteArrayOfWords(CuTest *tc);
 void TestStringToArray(CuTest *tc);
 void TestInitialize(CuTest *tc);
+void TestBinarySearch(CuTest* tc);
+void TestInsertionSort(CuTest* tc);
 void TestExecuteQueryFile(CuTest *tc);
 void TestCheckIfStringExists(CuTest *tc);
 void TestDeletionSort(CuTest *tc);
+void TestCallBasicFuncs(CuTest *tc);
 
 
 CuSuite* AuxMethodsGetSuite();
