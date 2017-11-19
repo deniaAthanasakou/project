@@ -54,6 +54,7 @@ void callBasicFuncs(char* ngram, arrayOfStructs* array, char query){
 }
 
 int checkIfStringExists(char** array, int noOfWords, char* str){
+	
 	for(int i=0; i<noOfWords; i++){
 		if(strcmp(str,array[i])==0)
 			return 1;
@@ -220,35 +221,47 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
     loc=getPosition->position;
     
     // Move all elements after location to create space
-    while (j >= loc)
-    {
-        array_of_str->array[j+1] = array_of_str->array[j];
-    
-        j--;
-    }
-	/*printf("before + %d with loc=%d and j=%d\n",loc-j-1,loc,j);
-	if(j>=loc){
-		memmove(&array_of_str->array[j+1], &array_of_str->array[j], (loc-j-1)*sizeof(array_of_str->array));
+    size_t moveSize=0;
+	int startingPoint = j;
+	if( j>=loc){
+		while (j >= loc)
+		{
+		    array_of_str->array[j+1] = array_of_str->array[j];
+			moveSize+=sizeof(array_of_str->array[j]);
+		    j--;
+		    
+		}
+		/*printf("BEFOOOOOOOOOORE word %s with loc=%d and j=%d movesize %ld\n",itemForInsert->word,loc,startingPoint, moveSize);
+		printFullArray(array_of_str,array_of_str->position);
+		memmove(&(array_of_str->array[startingPoint+1]), &(array_of_str->array[startingPoint]), moveSize);
+		printf("AFTEEEEEEEEEEER\n");*/
+
 	}
-    printf("after\n");*/
 	array_of_str->array[j+1] = *itemForInsert;
     getPosition->position=j+1;
+   /* if(startingPoint >=loc){
+    	printFullArray(array_of_str,(array_of_str->position)+1);
+    	printf("\n");
+    }*/
     
     return getPosition;
 }
 
 void deletionSort(arrayOfStructs* array_of_str,	int position, int lastElement){
 	
+
+	
 	if(array_of_str->array[position].dynamicWord!=NULL){		
 		free(array_of_str->array[position].dynamicWord);
 		array_of_str->array[position].dynamicWord=NULL;
+	}
+	else{
+		array_of_str->array[position].word[0] = '\0';
 	}
 	if(array_of_str->array[position].nextWordArray!=NULL){
 		deleteArray(array_of_str->array[position].nextWordArray);
 		array_of_str->array[position].nextWordArray=NULL;
 	}
-	
-
 	while (position < lastElement -1)
 	{
 	    array_of_str->array[position]=array_of_str->array[position+1];

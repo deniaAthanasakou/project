@@ -79,7 +79,6 @@ char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal
 			arrayOfWords[k]=arrayOfWordsOriginal[counter];
 			counter++;
 		}
-	
 		for(int i=0; i < noOfWords; i++){				//for each word of query
 		
 			dataNode* tempElement = malloc(sizeof(dataNode));
@@ -106,6 +105,7 @@ char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal
 					free(word);
 					word = NULL;
 				}
+
 					
 				if(tempArray->array[getPosition->position].isFinal == true){
 					found=1;
