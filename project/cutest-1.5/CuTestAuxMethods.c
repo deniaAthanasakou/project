@@ -580,7 +580,7 @@ void TestDeletionSort(CuTest *tc){
 	array_of_str=NULL;
 }
 
-void TestCallBasicFuncs(CuTest *tc){
+/*void TestCallBasicFuncs(CuTest *tc){
  
  	printf("Start testing callBasicFunctions\n");
  	
@@ -609,7 +609,7 @@ void TestCallBasicFuncs(CuTest *tc){
 	array_of_str = NULL;
 	
 	printf("End of testing callBasicFunctions\n");
-}
+}*/
 
 
 CuSuite* AuxMethodsGetSuite() {		//adding TestAuxMethods Functions into suite
@@ -623,7 +623,7 @@ CuSuite* AuxMethodsGetSuite() {		//adding TestAuxMethods Functions into suite
     SUITE_ADD_TEST(suite, TestExecuteQueryFile);
     SUITE_ADD_TEST(suite, TestCheckIfStringExists);
     SUITE_ADD_TEST(suite, TestDeletionSort);
-	SUITE_ADD_TEST(suite, TestCallBasicFuncs);
+	//SUITE_ADD_TEST(suite, TestCallBasicFuncs);
     
     return suite;
 }
