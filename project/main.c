@@ -3,7 +3,6 @@
 #include <string.h>
 #include "func.h"
 #include "auxMethods.h"
-#include "test.h"
 
 
 int main (int argc,char* argv[]){
@@ -25,6 +24,7 @@ int main (int argc,char* argv[]){
 		printf("Error! Wrong Arguments\n");
 		exit(1);
 	}
+	
 	
 	arrayOfStructs* structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
 	initializeArray(structureTree);

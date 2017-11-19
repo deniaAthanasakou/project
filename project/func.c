@@ -17,10 +17,13 @@ void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 			tempElement->isFinal=true;
 		else
 			tempElement->isFinal=false;
+		
+		insertString (tempElement, arrayOfWords[i]);
+
 			
-		tempElement->word= (char*)malloc((strlen(arrayOfWords[i]) + 1) * sizeof(char));
+		//tempElement->word= (char*)malloc((strlen(arrayOfWords[i]) + 1) * sizeof(char));
 		tempElement->nextWordArray=NULL;
-		strcpy(tempElement->word,arrayOfWords[i]);	
+		//strcpy(tempElement->word,arrayOfWords[i]);	
 		
 		checkItemExists* getPosition = insertionSort(tempArray, tempElement, tempArray->position); 
 		
@@ -81,8 +84,9 @@ char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal
 		
 			dataNode* tempElement = malloc(sizeof(dataNode));
 		
-			tempElement->word= (char*)malloc((strlen(arrayOfWords[i])+1) * sizeof(char));
-			strcpy(tempElement->word,arrayOfWords[i]);
+			insertString (tempElement, arrayOfWords[i]);
+			//tempElement->word= (char*)malloc((strlen(arrayOfWords[i])+1) * sizeof(char));
+			//strcpy(tempElement->word,arrayOfWords[i]);
 		
 			checkItemExists* getPosition = binarySearch(tempArray, tempElement, 0 ,tempArray->position,NULL); 
 			if(getPosition->exists==true){
@@ -90,11 +94,17 @@ char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal
 				finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
 				
 				if(i==0){
-					strcpy(finalString, tempArray->array[getPosition->position].word);						
+					char* word = getString(&(tempArray->array[getPosition->position]));
+					strcpy(finalString, word);	
+					free(word);
+					word = NULL;					
 				}
 				else{
 					finalString[strlen(finalString)] = '\0';
-					strcat(finalString,tempArray->array[getPosition->position].word);
+					char* word = getString(&(tempArray->array[getPosition->position]));
+					strcat(finalString, word);	
+					free(word);
+					word = NULL;
 				}
 					
 				if(tempArray->array[getPosition->position].isFinal == true){
@@ -187,9 +197,10 @@ void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 		int position = tempArray->position;
 		
 		dataNode* tempElement = malloc(sizeof(dataNode));
-		tempElement->word= (char*)malloc((strlen(arrayOfWords[i])+1) * sizeof(char));
+		insertString (tempElement, arrayOfWords[i]);
+		//tempElement->word= (char*)malloc((strlen(arrayOfWords[i])+1) * sizeof(char));
 		tempElement->nextWordArray=NULL;
-		strcpy(tempElement->word,arrayOfWords[i]);	
+		//strcpy(tempElement->word,arrayOfWords[i]);	
 		
 		
 		//find out if word exists in array and if it does return position

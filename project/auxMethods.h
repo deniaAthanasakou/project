@@ -34,5 +34,9 @@ void deletionSort(arrayOfStructs* array_of_str, int position, int lastElement);
 void deleteArrayOfWords(char** array,int length);
 void printQuery(char** items, int iterNum);
 
+char* getString(dataNode* node);
+void insertString (dataNode* node, char* word);
+
+
 
 #endif

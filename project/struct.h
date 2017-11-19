@@ -8,8 +8,12 @@ typedef struct arrayOfStructs arrayOfStructs;
 
 struct dataNode{
 	arrayOfStructs* nextWordArray;	//pointer se array apo dataNodes
-	char* word;						//leksh
+	char word[20];						//leksh
 	bool isFinal;					//final or not
+	bool isDynamic;					//if true strlen(word)>20
+	char* dynamicWord;				//at first is null
+	int noOfChars;
+	
 };
 
 

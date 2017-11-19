@@ -109,38 +109,82 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 	dataNode* array = array_of_str->array;
     if (last < first){
     	check->exists=false;
-		if(array[first].word!=NULL){
-			if(strcmp(item->word,array[first].word)>0){
-    			check->position=first + 1;
-    		}
-    		else{
-    			check->position=first;
-    		}
+    	if(array[first].noOfChars!=-1){
+			char* wordFirst = getString(&(array[first]));
+			char* wordItem = getString(item);
+			
+		//	printf("wordFirst %s %d \n ", wordFirst,array[first].noOfChars );
+		//	printf("wordItem %s %d\n ", wordItem ,item->noOfChars);
+			
+			if(wordFirst!=NULL){
+				if(strcmp(wordItem,wordFirst)>0){
+					check->position=first + 1;
+				}
+				else{
+					check->position=first;
+				}
 		
-		}else{
+			}else{
+				check->position = first+1;
+			}
+		
+			free(wordFirst);
+			wordFirst = NULL;
+			free (wordItem);
+			wordItem=NULL;
+			
+    	}
+    	else{
 			check->position = first+1;
 		}
+	
     	return 	check;
-    	
      }
+     
+    
 
  	int mid = (first+last)/2;
+		
 
- 	if(array[mid].word==NULL){			
+ 	if(array[mid].noOfChars==-1){			
  		check->exists=false;
  		check->position=-1;
+ 		
 		return check;
  	}
-    if(strcmp(item->word ,array[mid].word)==0){
+ 	
+ 	char* wordMid = getString(&(array[mid]));
+	char* wordItem = getString(item);
+ 	
+	if(strcmp(wordItem ,wordMid)==0){
 		check->position=mid;
 		check->exists=true;
-        return check;
-     }
+	
+		free(wordMid);
+		wordMid = NULL;
+		free (wordItem);
+		wordItem=NULL;
+	
+	    return check;
+	 }
  
-    if(strcmp(item->word,array[mid].word)>0){
-        return binarySearch(array_of_str, item, mid+1, last, check);
-    }
-    return binarySearch(array_of_str, item, first, mid-1, check);
+	if(strcmp(wordItem,wordMid)>0){
+	
+		free(wordMid);
+		wordMid = NULL;
+		free (wordItem);
+		wordItem=NULL;
+	
+	    return binarySearch(array_of_str, item, mid+1, last, check);
+	}
+	
+	free(wordMid);
+	wordMid = NULL;
+	free (wordItem);
+	wordItem=NULL;
+	
+	return binarySearch(array_of_str, item, first, mid-1, check);
+
 }
  
  
@@ -195,9 +239,9 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
 
 void deletionSort(arrayOfStructs* array_of_str,	int position, int lastElement){
 	
-	if(array_of_str->array[position].word!=NULL){		
-		free(array_of_str->array[position].word);
-		array_of_str->array[position].word=NULL;
+	if(array_of_str->array[position].dynamicWord!=NULL){		
+		free(array_of_str->array[position].dynamicWord);
+		array_of_str->array[position].dynamicWord=NULL;
 	}
 	if(array_of_str->array[position].nextWordArray!=NULL){
 		deleteArray(array_of_str->array[position].nextWordArray);
@@ -222,7 +266,10 @@ void printFullArray(arrayOfStructs* array_of_str, int position){	//prints all la
 		int lastElement = tempArray->position;
 	
 		for(int i=0; i < lastElement; i++){
-			printf("'%s' is in position %d, ", tempArray->array[i].word, i);
+			char* word = getString(&( tempArray->array[i]));
+			printf("'%s' is in position %d, ", word, i);
+			free(word);
+			word=NULL;
 			if(i==lastElement-1){				//print only once
 				printf("\b\b: ");
 				printArray(tempArray,(tempArray->position-1));
@@ -236,12 +283,18 @@ void printFullArray(arrayOfStructs* array_of_str, int position){	//prints all la
 		
 }
 
+
+
+
 void printArray(arrayOfStructs* array_of_str, int position){		//prints layer
 
 	printf("ELEMENTS ARE: [");
 	for(int k=0; k<= position;k++){
-
-		printf("%s ",  array_of_str->array[k].word);
+		char* word = getString(& (array_of_str->array[k]));
+		printf("%s ",  word);
+		
+		free(word);
+		word=NULL;
 		
 		if(k!=position)
 			printf(", ");
@@ -256,7 +309,11 @@ void printArrayFinalWords(arrayOfStructs* array_of_str, int position){
 	printf("FINAL ELEMENTS ARE: [");
 	for(int k=0; k<= position;k++){
 		if(array_of_str->array[k].isFinal){
-			printf("%s ",  array_of_str->array[k].word);
+			char* word = getString(& (array_of_str->array[k]));
+			printf("%s ",  word);
+		
+			free(word);
+			word=NULL;
 		
 			if(k!=position)
 				printf(", ");
@@ -348,6 +405,47 @@ void printQuery(char** items, int iterNum){
 
 }
 
+
+void insertString (dataNode* node, char* word){
+
+	//printf("WORD IS %s %ld\n", word, strlen(word));
+	
+	node->noOfChars = strlen(word) +1 ;
+	
+	if(strlen(word)<20){
+		int i;
+		for(i=0; i<strlen(word); i++){
+			node->word[i] = word[i];
+		}
+		node->word[i]='\0';
+		node->isDynamic = false;	
+		node->dynamicWord = NULL;	
+	}
+	else{
+		node->isDynamic = true;
+		node->dynamicWord = malloc(sizeof(char) * (strlen(word)+1));
+		strcpy(node->dynamicWord,word);
+	}
+	
+}
+
+char* getString(dataNode* node){
+	char* returnWord = NULL;
+	if(node->isDynamic){
+		returnWord = malloc((strlen(node->dynamicWord)+1)*sizeof(char));
+		strcpy(	returnWord,  node->dynamicWord);
+		return returnWord;
+	}	
+	
+	returnWord = malloc(node->noOfChars*sizeof(char));	
+	//sprintf(returnWord,"%s",node->word);
+	//printf("%s %ld\n", node->word, strlen(node->word));
+	for(int i=0; i<node->noOfChars; i++){
+		returnWord[i] = node->word[i];
+	}
+//	printf("WOOOORD : %s , chars:%d\n",node->word,node->noOfChars);
+	return returnWord;	
+}
 
 
 
