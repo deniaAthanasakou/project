@@ -114,9 +114,6 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 			char* wordFirst = getString(&(array[first]));
 			char* wordItem = getString(item);
 			
-		//	printf("wordFirst %s %d \n ", wordFirst,array[first].noOfChars );
-		//	printf("wordItem %s %d\n ", wordItem ,item->noOfChars);
-			
 			if(wordFirst!=NULL){
 				if(strcmp(wordItem,wordFirst)>0){
 					check->position=first + 1;
@@ -221,22 +218,22 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
     loc=getPosition->position;
     
     // Move all elements after location to create space
-    size_t moveSize=0;
-	int startingPoint = j;
-	if( j>=loc){
-		while (j >= loc)
-		{
-		    array_of_str->array[j+1] = array_of_str->array[j];
-			moveSize+=sizeof(array_of_str->array[j]);
-		    j--;
-		    
-		}
+   // size_t moveSize=0;
+	//int startingPoint = j;
+	//if( j>=loc){
+	while (j >= loc)
+	{
+	    array_of_str->array[j+1] = array_of_str->array[j];
+		//moveSize+=sizeof(array_of_str->array[j]);
+	    j--;
+	    
+	}
 		/*printf("BEFOOOOOOOOOORE word %s with loc=%d and j=%d movesize %ld\n",itemForInsert->word,loc,startingPoint, moveSize);
 		printFullArray(array_of_str,array_of_str->position);
 		memmove(&(array_of_str->array[startingPoint+1]), &(array_of_str->array[startingPoint]), moveSize);
 		printf("AFTEEEEEEEEEEER\n");*/
 
-	}
+	//}
 	array_of_str->array[j+1] = *itemForInsert;
     getPosition->position=j+1;
    /* if(startingPoint >=loc){
@@ -436,8 +433,9 @@ void insertString (dataNode* node, char* word){
 	}
 	else{
 		node->isDynamic = true;
-		node->dynamicWord = malloc(sizeof(char) * (strlen(word)+1));
+		node->dynamicWord = malloc(sizeof(char) * node->noOfChars);
 		strcpy(node->dynamicWord,word);
+		node->word[0]='\0';
 	}
 	
 }

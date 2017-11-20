@@ -14,6 +14,7 @@ void initializeArray(arrayOfStructs* array_of_str){
 		array_of_str->array[i].nextWordArray = NULL;
 		array_of_str->array[i].isDynamic=false;
 		array_of_str->array[i].noOfChars = -1;
+		array_of_str->array[i].word[0]='\0';
 	}
 	
 }
@@ -28,6 +29,7 @@ void doubleLength(arrayOfStructs* array_of_str){
 		array_of_str->array[i].nextWordArray = NULL;
 		array_of_str->array[i].isDynamic=false;
 		array_of_str->array[i].noOfChars = -1;
+		array_of_str->array[i].word[0]='\0';
 	}
 	
 }

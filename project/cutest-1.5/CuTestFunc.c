@@ -16,7 +16,7 @@ void TestInsert_ngram(CuTest *tc){
 	
 	arrayOfWords[0] = malloc(10* sizeof(char));
 	arrayOfWords[1] = malloc(10* sizeof(char));
-	arrayOfWords[2] = malloc(10* sizeof(char));
+	arrayOfWords[2] = malloc(40* sizeof(char));
 	arrayOfWords[3] = malloc(10* sizeof(char));
 	arrayOfWords[4] = malloc(10* sizeof(char));
 	arrayOfWords[5] = malloc(10* sizeof(char));
@@ -28,19 +28,30 @@ void TestInsert_ngram(CuTest *tc){
 	arrayOfWords[11] = malloc(10* sizeof(char));
 	
 	noOfWords = 3;
-	strcpy(arrayOfWords[0],"cat");										//check if nextWordArray is created -> insert phrase 'cat dog record'
+	strcpy(arrayOfWords[0],"cat");										//check if nextWordArray is created -> insert phrase 'cat dog "big phrase"'
 	strcpy(arrayOfWords[1],"dog");
-	strcpy(arrayOfWords[2],"record");
+	strcpy(arrayOfWords[2],"whatagreatworldthatisiamflattered");
 	insert_ngram(array_of_str, arrayOfWords, noOfWords);
 	CuAssertStrEquals(tc,"cat",array_of_str->array[0].word);
+	CuAssertPtrEquals(tc,NULL,array_of_str->array[0].dynamicWord);
+	CuAssertIntEquals(tc,strlen(array_of_str->array[0].word)+1,array_of_str->array[0].noOfChars);
+	CuAssertTrue(tc,!array_of_str->array[0].isDynamic);
 	CuAssertTrue(tc,!array_of_str->array[0].isFinal);
+	
+	
+	tempArray = array_of_str->array[0].nextWordArray->array[0].nextWordArray;					//check for big word insertion
+	CuAssertStrEquals(tc,"\0",tempArray->array[0].word);
+	CuAssertStrEquals(tc,"whatagreatworldthatisiamflattered",tempArray->array[0].dynamicWord);
+	CuAssertIntEquals(tc,strlen(tempArray->array[0].dynamicWord)+1,tempArray->array[0].noOfChars);
+	CuAssertTrue(tc,tempArray->array[0].isDynamic);
+	CuAssertTrue(tc,tempArray->array[0].isFinal);
+	
+	
 	
 	tempArray = array_of_str->array[0].nextWordArray;
 	CuAssertStrEquals(tc,"dog",tempArray->array[0].word);
 	CuAssertTrue(tc,!tempArray->array[0].isFinal);
-	tempArray = tempArray->array[0].nextWordArray;
-	CuAssertStrEquals(tc,"record",tempArray->array[0].word);
-	CuAssertTrue(tc,tempArray->array[0].isFinal);
+	
 	
 	
 	strcpy(arrayOfWords[0],"ant");															//check if insert is sorting array -> insert phrase 'ant dog'
@@ -113,13 +124,13 @@ void TestSearch_ngram(CuTest *tc){
 	int noOfWords;
 	
 	arrayOfWords[0] = malloc(10* sizeof(char));
-	arrayOfWords[1] = malloc(10* sizeof(char));
+	arrayOfWords[1] = malloc(40* sizeof(char));
 	arrayOfWords[2] = malloc(10* sizeof(char));
 	
 	
 	noOfWords = 3;
 	strcpy(arrayOfWords[0],"cat");										//get search phrase ->found
-	strcpy(arrayOfWords[1],"dog");
+	strcpy(arrayOfWords[1],"dogisthebestpetexceptforcats");
 	strcpy(arrayOfWords[2],"record");
 
 	insert_ngram(array_of_str, arrayOfWords, noOfWords);
@@ -127,7 +138,7 @@ void TestSearch_ngram(CuTest *tc){
 	char* searchString;
 	searchString = search_ngram(array_of_str, arrayOfWords, noOfWords);
 	
-	CuAssertStrEquals(tc,"cat dog record",searchString);
+	CuAssertStrEquals(tc,"cat dogisthebestpetexceptforcats record",searchString);
 	free(searchString);
 	searchString=NULL;
 	
@@ -158,8 +169,8 @@ void TestSearch_ngram(CuTest *tc){
 	free(arrayOfWords[0]);
 	arrayOfWords[0] = NULL;
 	
-	arrayOfWords[0] = malloc(10* sizeof(char));
-	strcpy(arrayOfWords[0],"dog");
+	arrayOfWords[0] = malloc(40* sizeof(char));
+	strcpy(arrayOfWords[0],"dogisthebestpetexceptforcats");
 	insert_ngram(array_of_str, arrayOfWords, 1);
 	free(arrayOfWords[0]);
 	arrayOfWords[0] = NULL;
@@ -173,15 +184,15 @@ void TestSearch_ngram(CuTest *tc){
 	char** temp = malloc(3*sizeof(char*));
 	temp[0] =  malloc(10* sizeof(char));
 	temp[1] =  malloc(10* sizeof(char));
-	temp[2] =  malloc(10* sizeof(char));
+	temp[2] =  malloc(40* sizeof(char));
 	strcpy(temp[0],"cat");
 	strcpy(temp[1],"is");
-	strcpy(temp[2],"dog");
+	strcpy(temp[2],"dogisthebestpetexceptforcats");
 	
 	searchString = search_ngram(array_of_str, temp, 3);
 	
 	//found multiple ones
-	CuAssertStrEquals(tc,"catdog",searchString);
+	CuAssertStrEquals(tc,"catdogisthebestpetexceptforcats",searchString);
 	free(searchString);
 	searchString=NULL;
 	
@@ -228,8 +239,8 @@ void TestDelete_ngram(CuTest *tc){
 	CuAssertIntEquals(tc,0,array_of_str->position);	
 	CuAssertIntEquals(tc,10,array_of_str->length);	
 	CuAssertPtrNotNull(tc,array_of_str->array);
-	CuAssertPtrEquals(tc,NULL,array_of_str->array[array_of_str->position].word);
-	
+	CuAssertPtrEquals(tc,NULL,array_of_str->array[array_of_str->position].dynamicWord);
+	CuAssertIntEquals(tc,0,strlen(array_of_str->array[array_of_str->position].word));
 	CuAssertPtrEquals(tc,NULL,array_of_str->array[array_of_str->position].nextWordArray);
 	
 	
@@ -320,12 +331,18 @@ void TestDelete_ngram(CuTest *tc){
 	CuAssertIntEquals(tc,2,array_of_str->array[1].nextWordArray->array[0].nextWordArray->position);		
 		
 	
+	myString= malloc(sizeof(char)*(strlen("whataworldandanimecommunity")+1));
+	strcpy(myString,"whataworldandanimecommunity");
+	callBasicFuncs(myString,array_of_str,'A');
+	CuAssertStrEquals(tc,"whataworldandanimecommunity",array_of_str->array[2].dynamicWord); 
+	callBasicFuncs(myString,array_of_str,'D');
+	CuAssertPtrEquals(tc,NULL,array_of_str->array[2].dynamicWord); 	
+	free(myString);
 	
 	deleteArray(array_of_str);
 	array_of_str=NULL;
 	CuAssertPtrEquals(tc,NULL,array_of_str);
 
-	
 }
 
 

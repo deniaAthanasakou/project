@@ -5,21 +5,20 @@
 
 void TestInitializeArray(CuTest *tc){
 	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
-	array_of_str->position=0;
-	array_of_str->length=10;
-	array_of_str->array=malloc(array_of_str->length * sizeof(dataNode));
-	
-	for(int i=0;i<array_of_str->length;i++){
-		array_of_str->array[i].word = NULL;
-		array_of_str->array[i].nextWordArray = NULL;
-	}
+	initializeArray(array_of_str);
 	
 	CuAssertIntEquals(tc,10,array_of_str->length);
 	CuAssertIntEquals(tc,0,array_of_str->position);
 	CuAssertPtrNotNull(tc,array_of_str->array);
+	
 	for(int i=0;i<array_of_str->length;i++){
-		CuAssertPtrEquals(tc,NULL,array_of_str->array[i].word);
+		CuAssertPtrEquals(tc,NULL,array_of_str->array[i].dynamicWord);
 		CuAssertPtrEquals(tc,NULL,array_of_str->array[i].nextWordArray);
+		CuAssertTrue(tc,!array_of_str->array[i].isDynamic);
+		CuAssertIntEquals(tc,-1,array_of_str->array[i].noOfChars);
+		CuAssertIntEquals(tc,20,sizeof(array_of_str->array[i].word));
+		CuAssertIntEquals(tc,0,strlen(array_of_str->array[i].word));
+		
 	}
 	
 	deleteArray(array_of_str);
@@ -64,17 +63,17 @@ void TestDeleteDataNode(CuTest *tc){
 	
 	int k = 15;											//word null
 	dataNode* elem = malloc(sizeof(dataNode));
-	elem->word = NULL;
+	elem->dynamicWord = NULL;
 	deleteDataNode(elem);
-	CuAssertPtrEquals(tc,NULL,elem->word);
+	CuAssertPtrEquals(tc,NULL,elem->dynamicWord);
 	free(elem);
 	elem = NULL;
 
 	elem = malloc(sizeof(dataNode));					//word not null
-	elem->word = malloc(k * sizeof(char));
-	strcpy(elem->word,"Hello world");
+	elem->dynamicWord = malloc(k * sizeof(char));
+	strcpy(elem->dynamicWord,"Hello world");
 	deleteDataNode(elem);
-	CuAssertPtrEquals(tc,NULL,elem->word);
+	CuAssertPtrEquals(tc,NULL,elem->dynamicWord);
 	free(elem);
 	elem = NULL;
 	
@@ -83,7 +82,7 @@ void TestDeleteDataNode(CuTest *tc){
 
 
 
-CuSuite* StructGetSuite() {		//adding TestStack Functions into suite
+CuSuite* StructGetSuite() {		//adding TestStruct Functions into suite
     CuSuite* suite = CuSuiteNew();
   
     SUITE_ADD_TEST(suite, TestInitializeArray);

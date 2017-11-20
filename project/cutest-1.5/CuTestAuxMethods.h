@@ -11,7 +11,9 @@ void TestInsertionSort(CuTest* tc);
 void TestExecuteQueryFile(CuTest *tc);
 void TestCheckIfStringExists(CuTest *tc);
 void TestDeletionSort(CuTest *tc);
-void TestCallBasicFuncs(CuTest *tc);
+void TestGetString(CuTest *tc);
+void TestInsertString (CuTest *tc);
+
 
 
 CuSuite* AuxMethodsGetSuite();

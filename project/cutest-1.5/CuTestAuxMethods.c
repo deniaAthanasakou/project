@@ -88,7 +88,7 @@ void TestStringToArray(CuTest *tc){
 void TestInitialize(CuTest *tc){
 	/*text inside test_initialize:
 		test
-		hi
+		heterotransplantation
 		this dog
 		this cat
 	*/
@@ -107,17 +107,21 @@ void TestInitialize(CuTest *tc){
 	CuAssertIntEquals(tc,3,structureTree->position);      
 	CuAssertPtrNotNull(tc,structureTree->array);
 	
-	CuAssertStrEquals(tc,"hi",structureTree->array[0].word); 
+	CuAssertStrEquals(tc,"heterotransplantation",structureTree->array[0].dynamicWord); 
 	CuAssertPtrEquals(tc,NULL,structureTree->array[0].nextWordArray);
 	CuAssertTrue(tc, structureTree->array[0].isFinal);
+	CuAssertTrue(tc, structureTree->array[0].isDynamic);
+	CuAssertStrEquals(tc,"\0",structureTree->array[0].word);  
 	
 	CuAssertStrEquals(tc,"test",structureTree->array[1].word); 
 	CuAssertPtrEquals(tc,NULL,structureTree->array[1].nextWordArray);
 	CuAssertTrue(tc, structureTree->array[1].isFinal);
+	CuAssertTrue(tc, !structureTree->array[1].isDynamic);
 	
 	CuAssertStrEquals(tc,"this",structureTree->array[2].word); 
 	CuAssertPtrNotNull(tc,structureTree->array[2].nextWordArray);
 	CuAssertTrue(tc, !structureTree->array[2].isFinal);
+	CuAssertTrue(tc, !structureTree->array[2].isDynamic);
 	
 	
 	arrayOfStructs* nextArray = structureTree->array[2].nextWordArray; 
@@ -129,17 +133,18 @@ void TestInitialize(CuTest *tc){
 	CuAssertStrEquals(tc,"cat",nextArray->array[0].word); 
 	CuAssertPtrEquals(tc,NULL,nextArray->array[0].nextWordArray);
 	CuAssertTrue(tc, nextArray->array[0].isFinal);
+	CuAssertTrue(tc, !nextArray->array[0].isDynamic);
 	
 	CuAssertStrEquals(tc,"dog",nextArray->array[1].word); 
 	CuAssertPtrEquals(tc,NULL,nextArray->array[1].nextWordArray);
 	CuAssertTrue(tc, nextArray->array[1].isFinal);
+	CuAssertTrue(tc, !nextArray->array[1].isDynamic);
 	
 	
 	deleteArray(structureTree);
 	structureTree=NULL;
 	CuAssertPtrEquals(tc,NULL,structureTree);
 }
-
 void TestBinarySearch(CuTest* tc){
 
 	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
@@ -147,7 +152,6 @@ void TestBinarySearch(CuTest* tc){
 	checkItemExists* getPosition;
 	
 	dataNode *item = malloc(sizeof(dataNode));
-	item->word = malloc(10 * sizeof(char));
 	getPosition = binarySearch(array_of_str,item,0,array_of_str->position,NULL);			//array is empty
 	CuAssertIntEquals(tc,-1,getPosition->position);
 	CuAssertTrue(tc,!getPosition->exists);
@@ -156,24 +160,42 @@ void TestBinarySearch(CuTest* tc){
 	getPosition = NULL;
 	
 		
-	strcpy(item->word,"cat");										//existing word
-	array_of_str->array[0].word = malloc(10*sizeof(char));
-	strcpy(array_of_str->array[0].word,"cat");
+	insertString(item,"cat");										//existing word
+	insertString(&array_of_str->array[0],"cat");
 	array_of_str->position++;
-	array_of_str->array[1].word = malloc(10*sizeof(char));
-	strcpy(array_of_str->array[1].word,"dog");
+	insertString(&array_of_str->array[1],"dog");
+	array_of_str->position++;
+	insertString(&array_of_str->array[2],"whatabeautifuldaywego");
 	array_of_str->position++;
 	
-	getPosition = binarySearch(array_of_str,item,0,array_of_str->position,NULL);
+	getPosition = binarySearch(array_of_str,item,0,array_of_str->position,NULL);		//binarySeach cat
 	CuAssertIntEquals(tc,0,getPosition->position);
+	CuAssertTrue(tc,getPosition->exists);
+	
+	free(getPosition);
+	getPosition = NULL;	
+	
+	deleteDataNode(item);
+	free(item);
+	item = NULL;
+	
+	item = malloc(sizeof(dataNode));
+	insertString(item,"whatabeautifuldaywego");
+	getPosition = binarySearch(array_of_str,item,0,array_of_str->position,NULL);
+	CuAssertIntEquals(tc,2,getPosition->position);
 	CuAssertTrue(tc,getPosition->exists);
 		
 	free(getPosition);
 	getPosition = NULL;	
-		
-	strcpy(item->word,"hello");																//non existing word
+	
+	deleteDataNode(item);
+	free(item);
+	item = NULL;
+	
+	item = malloc(sizeof(dataNode));
+	insertString(item,"hello");	
 	getPosition = binarySearch(array_of_str,item,0,array_of_str->position,NULL);
-	CuAssertIntEquals(tc,-1,getPosition->position);
+	CuAssertIntEquals(tc,2,getPosition->position);
 	CuAssertTrue(tc,!getPosition->exists);
 	
 	free(getPosition);
@@ -191,33 +213,26 @@ void TestInsertionSort(CuTest* tc){
 
 	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
 	initializeArray(array_of_str);
-
-	dataNode *item = malloc(sizeof(dataNode));
-	item->word=NULL;
-	checkItemExists* getPosition = insertionSort(array_of_str,item,array_of_str->position);   //array is empty  
-	CuAssertIntEquals(tc,0,getPosition->position);
-	CuAssertTrue(tc,!getPosition->exists);
+	dataNode* item = malloc(sizeof(dataNode));
+	item->word[0] = '\0';
+	item->nextWordArray = NULL;
+	item->isDynamic=false;
+	item->dynamicWord = NULL;
 	
-	free(getPosition);
-	getPosition = NULL;
 
-	dataNode *item1 = malloc(sizeof(dataNode));
-	item1->word = malloc((strlen("cat")+1) * sizeof(char));
-	strcpy(item1->word,"cat");     
-	item1->nextWordArray=NULL;
-	array_of_str->array[0]= *item1;
+	insertString(item,"cat");
+
+	array_of_str->array[0]= *item;
 	array_of_str->position++;
 	
 	
-	dataNode *item2 = malloc(sizeof(dataNode));
-	item2->word = malloc((strlen("dog")+1) * sizeof(char));
-	strcpy(item2->word,"dog");     
-	item2->nextWordArray=NULL;
-	array_of_str->array[1]= *item2;
+
+	insertString(item,"dog");    
+	array_of_str->array[1]= *item;
 	array_of_str->position++;
 	
 	
-	getPosition = insertionSort(array_of_str,item1,array_of_str->position);		//try to insert cat
+	checkItemExists* getPosition = insertionSort(array_of_str,item,array_of_str->position);		//try to insert cat
 	CuAssertTrue(tc,getPosition->position!=-1);
 	CuAssertTrue(tc,getPosition->exists);
 	
@@ -225,12 +240,9 @@ void TestInsertionSort(CuTest* tc){
 	getPosition = NULL;
 	
 	
-	dataNode *item3 = malloc(sizeof(dataNode));
-	item3->word = malloc((strlen("hello")+1) * sizeof(char));
-	strcpy(item3->word,"hello");     
-	item3->nextWordArray=NULL;
+	insertString(item,"hello"); 
 	
-	getPosition = insertionSort(array_of_str,item3,array_of_str->position);
+	getPosition = insertionSort(array_of_str,item,array_of_str->position);
 	array_of_str->position++;               //non existing word
 	CuAssertIntEquals(tc,2,getPosition->position);
 	CuAssertTrue(tc,!getPosition->exists);
@@ -239,17 +251,14 @@ void TestInsertionSort(CuTest* tc){
 	getPosition = NULL;
 	
 	
-	dataNode *item4 = malloc(sizeof(dataNode));
-	item4->word = malloc((strlen("ant")+1) * sizeof(char));
-	strcpy(item4->word,"ant");     
-	item4->nextWordArray=NULL;
+	insertString(item,"antidisestablishmentarianism");      
 	
-	getPosition = insertionSort(array_of_str,item4,array_of_str->position);
+	getPosition = insertionSort(array_of_str,item,array_of_str->position);
 	array_of_str->position++;               	//non existing word
 
 	CuAssertIntEquals(tc,0,getPosition->position);
 	CuAssertTrue(tc,!getPosition->exists);
-	CuAssertStrEquals(tc,"ant",array_of_str->array[0].word);
+	CuAssertStrEquals(tc,"antidisestablishmentarianism",array_of_str->array[0].dynamicWord);
 	CuAssertStrEquals(tc,"cat",array_of_str->array[1].word);
 	CuAssertStrEquals(tc,"dog",array_of_str->array[2].word);
 	CuAssertStrEquals(tc,"hello",array_of_str->array[3].word);
@@ -262,72 +271,55 @@ void TestInsertionSort(CuTest* tc){
 	
 	//add in order to double array
 	//5th
-	dataNode *item5 = malloc(sizeof(dataNode));
-	item5->word = malloc((strlen("hi")+1) * sizeof(char));
-	strcpy(item5->word,"hi");     
-	item5->nextWordArray=NULL;
+	insertString(item,"hi");      
 	
-	getPosition = insertionSort(array_of_str,item5,array_of_str->position);
+	getPosition = insertionSort(array_of_str,item,array_of_str->position);
 	array_of_str->position++;
 	
 	free(getPosition);
 	getPosition = NULL;
 	
 	//6th
-	dataNode *item6 = malloc(sizeof(dataNode));
-	item6->word = malloc((strlen("testing")+1) * sizeof(char));
-	strcpy(item6->word,"testing");     
-	item6->nextWordArray=NULL;
 	
-	getPosition = insertionSort(array_of_str,item6,array_of_str->position);
+	insertString(item,"testing");     
+	
+	getPosition = insertionSort(array_of_str,item,array_of_str->position);
 	array_of_str->position++;
 	
 	free(getPosition);
 	getPosition = NULL;
 	
 	//7th
-	dataNode *item7 = malloc(sizeof(dataNode));
-	item7->word = malloc((strlen("before")+1) * sizeof(char));
-	strcpy(item7->word,"before");     
-	item7->nextWordArray=NULL;
+	insertString(item,"before");  
 	
-	getPosition = insertionSort(array_of_str,item7,array_of_str->position);
+	getPosition = insertionSort(array_of_str,item,array_of_str->position);
 	array_of_str->position++;
 	
 	free(getPosition);
 	getPosition = NULL;
 	
 	//8th
-	dataNode *item8 = malloc(sizeof(dataNode));
-	item8->word = malloc((strlen("those")+1) * sizeof(char));
-	strcpy(item8->word,"those");     
-	item8->nextWordArray=NULL;
+	insertString(item,"those");  
 	
-	getPosition = insertionSort(array_of_str,item8,array_of_str->position);
+	getPosition = insertionSort(array_of_str,item,array_of_str->position);
 	array_of_str->position++;
 	
 	free(getPosition);
 	getPosition = NULL;
 	
 	//9th
-	dataNode *item9 = malloc(sizeof(dataNode));
-	item9->word = malloc((strlen("what")+1) * sizeof(char));
-	strcpy(item9->word,"what");     
-	item9->nextWordArray=NULL;
+	insertString(item,"what");  
 	
-	getPosition = insertionSort(array_of_str,item9,array_of_str->position);
+	getPosition = insertionSort(array_of_str,item,array_of_str->position);
 	array_of_str->position++;
 	
 	free(getPosition);
 	getPosition = NULL;
 	
 	//10th
-	dataNode *item10 = malloc(sizeof(dataNode));
-	item10->word = malloc((strlen("myy")+1) * sizeof(char));
-	strcpy(item10->word,"myy");     
-	item10->nextWordArray=NULL;
+	insertString(item,"myy");  
 	
-	getPosition = insertionSort(array_of_str,item10,array_of_str->position);
+	getPosition = insertionSort(array_of_str,item,array_of_str->position);
 	array_of_str->position++;
 	
 	free(getPosition);
@@ -341,52 +333,7 @@ void TestInsertionSort(CuTest* tc){
 	free(item);
 	item=NULL;
 	
-	
-	deleteDataNode(item1);
-	free(item1);
-	item1=NULL;
-	
-	
-	deleteDataNode(item2);
-	free(item2);
-	item2=NULL;
-	
-	deleteDataNode(item3);
-	free(item3);
-	item3=NULL;
-	
-	deleteDataNode(item4);
-	free(item4);
-	item4=NULL;
-	
-	deleteDataNode(item5);
-	free(item5);
-	item5=NULL;
-	
-	deleteDataNode(item6);
-	free(item6);
-	item6=NULL;
-	
-	deleteDataNode(item7);
-	free(item7);
-	item7=NULL;
-	
-	deleteDataNode(item8);
-	free(item8);
-	item8=NULL;
-	
-	deleteDataNode(item9);
-	free(item9);
-	item9=NULL;
-	
-	deleteDataNode(item10);
-	free(item10);
-	item10=NULL;
-	
-	
-	free(array_of_str->array);
-	array_of_str->array = NULL;
-	free(array_of_str);
+	deleteArray(array_of_str);
 	array_of_str = NULL;
 	
 
@@ -514,9 +461,9 @@ void TestDeletionSort(CuTest *tc){
 	item=NULL;
 	
 	item = malloc(1*sizeof(char*));
-	item[0] = malloc((strlen("test")+1) * sizeof(char));
-	strcpy(item[0],"test");																
-	insert_ngram(array_of_str, item, 1);							//add 'test'
+	item[0] = malloc((strlen("heterotransplantation")+1) * sizeof(char));
+	strcpy(item[0],"heterotransplantation");																
+	insert_ngram(array_of_str, item, 1);							//add 'heterotransplantation'
 	
 	free(item[0]);
 	item[0]=NULL;
@@ -543,7 +490,7 @@ void TestDeletionSort(CuTest *tc){
 	free(item);
 	item=NULL;
 	
-	deletionSort(array_of_str,3,array_of_str->position);		//from hello, test, the, this delete this
+	deletionSort(array_of_str,3,array_of_str->position);		//from hello, heterotransplantation, the, this delete this
 	
 	CuAssertPtrNotNull(tc,array_of_str);
 	CuAssertPtrNotNull(tc,array_of_str->array);
@@ -551,7 +498,11 @@ void TestDeletionSort(CuTest *tc){
 	CuAssertIntEquals(tc,3,array_of_str->position);	
 	
 	CuAssertStrEquals(tc,"hello",array_of_str->array[0].word); 
-	CuAssertStrEquals(tc,"test",array_of_str->array[1].word); 
+	
+	CuAssertStrEquals(tc,"heterotransplantation",array_of_str->array[1].dynamicWord); 
+	CuAssertTrue(tc, array_of_str->array[1].isDynamic);
+	CuAssertStrEquals(tc,"\0",array_of_str->array[1].word); 
+	
 	CuAssertStrEquals(tc,"the",array_of_str->array[2].word); 
 	
 	item = malloc(1*sizeof(char*));
@@ -564,7 +515,7 @@ void TestDeletionSort(CuTest *tc){
 	free(item);
 	item=NULL;
 	
-	deletionSort(array_of_str,1,array_of_str->position);		//from hello, test, the, this delete test
+	deletionSort(array_of_str,1,array_of_str->position);		//from hello, heterotransplantation, the, this delete heterotransplantation
 	CuAssertPtrNotNull(tc,array_of_str);
 	CuAssertPtrNotNull(tc,array_of_str->array);
 	CuAssertIntEquals(tc,10,array_of_str->length);	
@@ -580,36 +531,78 @@ void TestDeletionSort(CuTest *tc){
 	array_of_str=NULL;
 }
 
-/*void TestCallBasicFuncs(CuTest *tc){
- 
- 	printf("Start testing callBasicFunctions\n");
- 	
-	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
-	initializeArray(array_of_str);
-	char* ngram = malloc(20*sizeof(char));
-	strcpy(ngram,"A cat in my shoe");
+
+void TestInsertString (CuTest *tc){
+	dataNode* node = malloc(sizeof(dataNode));
 	
-	callBasicFuncs(ngram, array_of_str, 'A');
-	free(ngram);
-	ngram = NULL;
+	char* word = malloc (sizeof(char) *(strlen("hello")+1));
+	strcpy(word,"hello");
 	
-	ngram = malloc(20*sizeof(char));
-	strcpy(ngram,"A cat in my shoe");
-	callBasicFuncs(ngram, array_of_str, 'Q');
-	free(ngram);
-	ngram = NULL;
+	insertString(node, word);
+	CuAssertStrEquals(tc,word,node->word);
+	CuAssertIntEquals(tc, strlen(word) +1,node->noOfChars);
+	CuAssertTrue(tc,!node->isDynamic);
+	CuAssertPtrEquals(tc, NULL ,node->dynamicWord);
 	
-	ngram = malloc(20*sizeof(char));
-	strcpy(ngram,"A cat in my shoe"); 
-	callBasicFuncs(ngram, array_of_str, 'D');
-	free(ngram);
-	ngram = NULL;
+	free(word);
+	word=NULL;
+	deleteDataNode(node);
+	free(node);
+	node=NULL;
 	
-	deleteArray(array_of_str);
-	array_of_str = NULL;
+	node = malloc(sizeof(dataNode));
 	
-	printf("End of testing callBasicFunctions\n");
-}*/
+	word = malloc (sizeof(char) *(strlen("heterotransplantation")+1));
+	strcpy(word,"heterotransplantation");
+	
+	insertString(node, word);
+	CuAssertStrEquals(tc,word,node->dynamicWord);
+	CuAssertIntEquals(tc, strlen(word) +1,node->noOfChars);
+	CuAssertTrue(tc,node->isDynamic);
+	CuAssertStrEquals(tc,"\0",node->word);
+	
+	free(word);
+	word=NULL;
+	deleteDataNode(node);
+	free(node);
+	node=NULL;
+	
+	
+}
+
+
+void TestGetString (CuTest *tc){
+	dataNode* node = malloc(sizeof(dataNode));
+	strcpy(node->word, "hello");
+	node->isDynamic = false;
+	node->dynamicWord=NULL;
+	node->noOfChars = strlen("hello")+1;
+	
+	char* myStr = getString(node);
+	
+	CuAssertStrEquals(tc,"hello",myStr);
+	free(myStr);
+	myStr=NULL;
+	
+	node->dynamicWord = malloc(sizeof(char)* (strlen("heterotransplantation")+1));
+	strcpy(node->dynamicWord, "heterotransplantation");
+	node->noOfChars = strlen("heterotransplantation")+1;
+	node->isDynamic = true;
+	
+	myStr = getString(node);
+	
+	CuAssertStrEquals(tc,"heterotransplantation",myStr);
+	free(myStr);
+	myStr=NULL;
+	
+	deleteDataNode(node);
+	free(node);
+	node=NULL; 
+	
+	
+}
+
+
 
 
 CuSuite* AuxMethodsGetSuite() {		//adding TestAuxMethods Functions into suite
@@ -623,7 +616,8 @@ CuSuite* AuxMethodsGetSuite() {		//adding TestAuxMethods Functions into suite
     SUITE_ADD_TEST(suite, TestExecuteQueryFile);
     SUITE_ADD_TEST(suite, TestCheckIfStringExists);
     SUITE_ADD_TEST(suite, TestDeletionSort);
-	//SUITE_ADD_TEST(suite, TestCallBasicFuncs);
+    SUITE_ADD_TEST(suite, TestGetString);
+    SUITE_ADD_TEST(suite, TestInsertString);
     
     return suite;
 }

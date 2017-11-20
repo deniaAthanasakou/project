@@ -6,9 +6,9 @@
 -void test_deleteDataNode();	->OK
 -void test_insert_ngram();	->OK
 -void test_search_ngram();	->OK
+
 -void test_binarySearch();	->OK
 -void test_insertionSort();	->OK
--void test_callBasicFuncs();	->OK
 
 Η Αντωνία Αθανασάκου υλοποίησε τα εξής:
 
@@ -18,10 +18,13 @@
 [done]-void test_isEmpty();
 [done]-void test_pop();
 [done]-void test_deleteStack();
-[done]-void test_delete_ngram();
-[done]-void test_checkIfStringExists();
 [done]-void test_deleteArrayOfWords();
 [done]-void test_stringToArray();
+[done]-void test_checkIfStringExists();
+[done]-void test_executeQueryFile();
 [done]-void test_initialize();
 [done]-void test_deletionSort();
-[done]-void test_executeQueryFile();
+[done]-void test_delete_ngram();
+
+
+
