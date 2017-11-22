@@ -3,12 +3,13 @@
 #include <string.h>
 #include "func.h"
 #include "stack.h"
+#include "bloomfilter.h"
 
-
-void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords){		//same layer
+void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords,BloomFilter* filter){		//same layer
 	arrayOfStructs* tempArray = array_of_structs;
 	int i=0;
 
+	
 	for(i=0; i<noOfWords; i++){				//different layers
 		int position = tempArray->position;
 		
@@ -58,7 +59,7 @@ void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 }
 
 //search
-char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, int noOfWordsOriginal){		//is called for a single query
+char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, int noOfWordsOriginal, BloomFilter* filter){		//is called for a single query
 
 	char** finalStringArray=malloc(0*sizeof(char*));
 	int itemsOffinalStringArray=0;
@@ -110,8 +111,8 @@ char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal
 				if(tempArray->array[getPosition->position].isFinal == true){
 					found=1;
 
-					if(!checkIfStringExists(finalStringArray,itemsOffinalStringArray, finalString)){		//finalString does not exist in finalStringArray
-					
+					//if(!checkIfStringExists(finalStringArray,itemsOffinalStringArray, finalString)){		//finalString does not exist in finalStringArray
+					if(possiblyContains(filter,finalString,strlen(finalString))){
 						//printf("%s|", finalString);
 						itemsOffinalStringArray++;
 						finalStringArray=realloc(finalStringArray, itemsOffinalStringArray * sizeof(char*));
@@ -187,7 +188,7 @@ char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal
 }
 
 //delete
-void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords){
+void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords,BloomFilter* filter){
 	
 	arrayOfStructs* tempArray = array_of_structs;
 	stack* myStack = malloc(sizeof(stack));

@@ -1,3 +1,16 @@
 FIXES
 -memmove as to doume mazi
 -memmove isos ki se deletionSort
+
+BloomFilter:
+-eftiaksa mia domh bloomfilter sto bloomfilter.h
+-implementations sto .c arxeio
+-init tou bloomfilter sthn main.c
+-allaksa tis dhloseis gia n mpainei ki ena bloomfilter mesa, dn hksera pos allios na to kano
+-m bgainoun ola an kaleso to possiblyContains mesa sto search_ngram anti gia to checkifitem
+-m bgainei -1 an kaleso thn synarthsh "bloomFilterSeach"
+-exo pros8esei addFilter mesa se auxMethods-> callBasicFuncs otan ginetai eisagogh sto filter ki m bgazei alla apotelesmata
+sto search_ngram alla fainontai la8os :/ prepei n einai ola diaforetika metaksu tous :/
+-gia thn ulopoihsh t bloomfilter xrhsimopoihsa auto: http://blog.michaelschmatz.com/2016/04/11/how-to-write-a-bloom-filter-cpp/
+-exo sxoliasmeno ena kommati kodika sto bloomfilter.c, me auto ola ta apotelesmata ebgainan diaforetika alla dn nmzo n einai kalh
+ulopoihsh gia bloomfilter :p
