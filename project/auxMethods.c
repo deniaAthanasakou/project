@@ -3,10 +3,9 @@
 #include <string.h>
 #include "auxMethods.h"
 #include "struct.h"
-#include "bloomfilter.h"
 
 
-void initialize(FILE* file, arrayOfStructs* structureTree,BloomFilter* filter){
+void initialize(FILE* file, arrayOfStructs* structureTree){
 
 	char *line = NULL;
 	size_t len = 0;
@@ -16,7 +15,7 @@ void initialize(FILE* file, arrayOfStructs* structureTree,BloomFilter* filter){
 		return;
 	while ((read = getline(&line, &len, file)) != -1) {	
 		char* ngram = strtok(line, "\n");
-		callBasicFuncs(ngram,structureTree,'A',filter);
+		callBasicFuncs(ngram,structureTree,'A');
 	}
 	//found eof
 
@@ -27,22 +26,22 @@ void initialize(FILE* file, arrayOfStructs* structureTree,BloomFilter* filter){
 }
 
 
-void callBasicFuncs(char* ngram, arrayOfStructs* array, char query, BloomFilter* filter){
+void callBasicFuncs(char* ngram, arrayOfStructs* array, char query){
 
 	arrayWords* arrayW = stringToArray(ngram);
 	int noOfWords = arrayW->length;
 	char** arrayOfWords = arrayW->words;
 	if(query == 'A'){
-		addFilter(filter,ngram,strlen(ngram));
-		insert_ngram(array, arrayOfWords,noOfWords,filter);
+		//addFilter(filter,ngram,strlen(ngram));
+		insert_ngram(array, arrayOfWords,noOfWords);
 	}
 	else if(query == 'Q'){
-		char* searchString = search_ngram(array, arrayOfWords,noOfWords,filter);
+		char* searchString = search_ngram(array, arrayOfWords,noOfWords);
 		free(searchString);
 		searchString=NULL;
 	}
 	else if(query == 'D'){
-		delete_ngram(array, arrayOfWords,noOfWords,filter);
+		delete_ngram(array, arrayOfWords,noOfWords);
 	}
 	
 	deleteArrayOfWords(arrayOfWords,noOfWords);
@@ -339,7 +338,7 @@ void printArrayFinalWords(arrayOfStructs* array_of_str, int position){
 
 
 //insert from query file
-int executeQueryFile(FILE* file ,arrayOfStructs* structureTree, BloomFilter* filter){
+int executeQueryFile(FILE* file ,arrayOfStructs* structureTree){
 
 	char *line = NULL;
 	size_t len = 0;
@@ -360,15 +359,15 @@ int executeQueryFile(FILE* file ,arrayOfStructs* structureTree, BloomFilter* fil
 
 		if(strcmp(wordCase,"A")==0){	
 			startingLetter = 'A';
-			callBasicFuncs(remainingLine,structureTree,'A',filter);
+			callBasicFuncs(remainingLine,structureTree,'A');
 		}
 		else if(strcmp(wordCase,"Q")==0){
 			startingLetter = 'Q';
-			callBasicFuncs(remainingLine,structureTree,'Q',filter);		
+			callBasicFuncs(remainingLine,structureTree,'Q');		
 		}
 		else if(strcmp(wordCase,"D")==0){
 			startingLetter = 'D';
-			callBasicFuncs(remainingLine,structureTree,'D',filter);
+			callBasicFuncs(remainingLine,structureTree,'D');
 		}
 		else if(strcmp(wordCase,"F")==0){
 			

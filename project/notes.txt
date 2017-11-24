@@ -14,3 +14,26 @@ sto search_ngram alla fainontai la8os :/ prepei n einai ola diaforetika metaksu 
 -gia thn ulopoihsh t bloomfilter xrhsimopoihsa auto: http://blog.michaelschmatz.com/2016/04/11/how-to-write-a-bloom-filter-cpp/
 -exo sxoliasmeno ena kommati kodika sto bloomfilter.c, me auto ola ta apotelesmata ebgainan diaforetika alla dn nmzo n einai kalh
 ulopoihsh gia bloomfilter :p
+
+
+
+
+Ntenia:
+1)to bloom filter prepei na ylopoieitai gia kathe Q, ara giati na kaleitai sth main h initialize kai na to pairname sta functions? 
+den tha mporouse na kaleitai sto search?													[done]
+2)giati initialize me 4?
+3)to small vgazei arketa lathi. Sygkekrimena dn ektupwnontai pragmata
+4)na dokimasoume to sxoliasmeno kwdika mhpws sumferei
+5) must free memory																			[done]
+6) must initialize bit vector pros to paron to kanw me false oti dld tipota dn yparxei mesa	[done]
+
+Eisagwgh sto filter:																		[done]
+	katarxas sto filter tha eisaxthoun mono ta FinalStrings, oxi ta ngrams
+	paragoume k hash numbers pou oles mazi antistoixoun sto finalString
+	phgainoume se autes tis theseis kai vazoume true
+	
+	
+Elegxos:																					[done]
+	prepei na ektupwnontai ta finalStrings pou den einai mesa sto filter, giati sto filter mpainoun auta pou exoun hdh tupwthei
+			
+	

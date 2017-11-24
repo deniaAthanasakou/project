@@ -7,13 +7,13 @@
 
 
 //insert
-void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords,BloomFilter* filter);
+void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords);
 
 //search
-char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, int noOfWordsOriginal, BloomFilter* filter);
+char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, int noOfWordsOriginal);
 
 //delete
-void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords,BloomFilter* filter);
+void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords);
 
 
 #endif

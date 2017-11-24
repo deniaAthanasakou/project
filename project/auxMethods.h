@@ -16,10 +16,10 @@ typedef struct arrayWords{
 	char** words;			//array of strings
 }arrayWords;
 
-void initialize(FILE* file, arrayOfStructs* structureTree,BloomFilter* filter);
-int executeQueryFile(FILE* file, arrayOfStructs* structureTree, BloomFilter* filter);
+void initialize(FILE* file, arrayOfStructs* structureTree);
+int executeQueryFile(FILE* file, arrayOfStructs* structureTree);
 
-void callBasicFuncs(char* ngram, arrayOfStructs* array, char query, BloomFilter* filter);
+void callBasicFuncs(char* ngram, arrayOfStructs* array, char query);
 arrayWords* stringToArray(char* ngram);
 
 void printArray(arrayOfStructs* tempArray, int position);

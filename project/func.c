@@ -5,7 +5,7 @@
 #include "stack.h"
 #include "bloomfilter.h"
 
-void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords,BloomFilter* filter){		//same layer
+void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords){		//same layer
 	arrayOfStructs* tempArray = array_of_structs;
 	int i=0;
 
@@ -59,8 +59,10 @@ void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 }
 
 //search
-char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, int noOfWordsOriginal, BloomFilter* filter){		//is called for a single query
+char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, int noOfWordsOriginal){		//is called for a single query
 
+	BloomFilter* filter = initializeFilter(4);		//initialize bloomFilter here
+	
 	char** finalStringArray=malloc(0*sizeof(char*));
 	int itemsOffinalStringArray=0;
 	char* returningString=malloc(1*sizeof(char));
@@ -89,7 +91,7 @@ char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal
 			//strcpy(tempElement->word,arrayOfWords[i]);
 		
 			checkItemExists* getPosition = binarySearch(tempArray, tempElement, 0 ,tempArray->position,NULL); 
-			if(getPosition->exists==true){
+			if(getPosition->exists==true){		//if word was found
 				strLength += strlen(arrayOfWords[i]) + 2;
 				finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
 				
@@ -108,12 +110,12 @@ char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal
 				}
 
 					
-				if(tempArray->array[getPosition->position].isFinal == true){
+				if(tempArray->array[getPosition->position].isFinal == true){		//if true check whether finalString should be printed
 					found=1;
-
+					
 					//if(!checkIfStringExists(finalStringArray,itemsOffinalStringArray, finalString)){		//finalString does not exist in finalStringArray
-					if(possiblyContains(filter,finalString,strlen(finalString))){
-						//printf("%s|", finalString);
+					if(!bloomFilterSeach(filter,finalString)){			//if finalString should be printed (is not in filter)
+						addFilter(filter,finalString,strlen(finalString));		//add finalString in filter
 						itemsOffinalStringArray++;
 						finalStringArray=realloc(finalStringArray, itemsOffinalStringArray * sizeof(char*));
 						finalStringArray[itemsOffinalStringArray-1]=malloc((strlen(finalString)+1)* sizeof(char));
@@ -183,12 +185,12 @@ char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal
 	finalStringArray = NULL;
 	
 	
-	
+	freeFilter(filter);
 	return returningString;
 }
 
 //delete
-void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords,BloomFilter* filter){
+void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords){
 	
 	arrayOfStructs* tempArray = array_of_structs;
 	stack* myStack = malloc(sizeof(stack));

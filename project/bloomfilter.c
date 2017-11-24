@@ -5,9 +5,14 @@
 #include "bloomfilter.h"
 
 
+
 BloomFilter* initializeFilter(uint8_t numHashes){
 	BloomFilter *filter = malloc(sizeof(struct BloomFilter));
 	filter->numHashes = numHashes;
+	//filter->size = HASH_SIZE;
+	//must initialize bitVector
+	for(int i=0; i<HASH_SIZE; i++)
+		filter->bitVector[i] = false;
 	return filter;
 }
 
@@ -24,10 +29,12 @@ uint64_t kthHash(uint8_t k,uint64_t hashA,uint64_t hashB,uint64_t filterSize) {
 
 void addFilter(BloomFilter* filter,const char* data, size_t len) {
   uint64_t* hashValues = getHashesMurmur(data, len);
-
+  //printf("addFilter phrase: '%s' \n",data);
   for (int n = 0; n < sizeof(filter->bitVector) ; n++) {
       filter->bitVector[kthHash(n, hashValues[0], hashValues[1], sizeof(filter->bitVector))] = true;
   }
+  free(hashValues);
+  hashValues=NULL;
 }
 
 bool possiblyContains(BloomFilter* filter,const char* data, size_t len) {
@@ -35,20 +42,29 @@ bool possiblyContains(BloomFilter* filter,const char* data, size_t len) {
 
   for (int n = 0; n < sizeof(filter->bitVector); n++) {
       if (!filter->bitVector[kthHash(n, hashValues[0], hashValues[1], sizeof(filter->bitVector))]) {
+      	  free(hashValues);
+  		  hashValues=NULL;
           return false;
       }
   }
+  free(hashValues);
+  hashValues=NULL;
   return true;
 }
  
 bool bloomFilterSeach(BloomFilter* filter,const char* data){
 	
 	//edo h sto insert ngram??
-	addFilter(filter,data,strlen(data));
+	//addFilter(filter,data,strlen(data));
 	
 	//anti gia checkifitemexists
 	return possiblyContains(filter,data,sizeof(data));
 
+}
+
+void freeFilter(BloomFilter* filter){
+	free(filter);
+	filter = NULL;
 }
 
 
