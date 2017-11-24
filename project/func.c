@@ -61,7 +61,7 @@ void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 //search
 char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, int noOfWordsOriginal){		//is called for a single query
 
-	BloomFilter* filter = initializeFilter(4);		//initialize bloomFilter here
+	BloomFilter* filter = initializeFilter(5);		//initialize bloomFilter here
 	
 	char** finalStringArray=malloc(0*sizeof(char*));
 	int itemsOffinalStringArray=0;
@@ -115,6 +115,7 @@ char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal
 					
 					//if(!checkIfStringExists(finalStringArray,itemsOffinalStringArray, finalString)){		//finalString does not exist in finalStringArray
 					if(!bloomFilterSeach(filter,finalString)){			//if finalString should be printed (is not in filter)
+					//if(!bloomFilterSearch(finalString)){			//if finalString should be printed (is not in filter)
 						addFilter(filter,finalString,strlen(finalString));		//add finalString in filter
 						itemsOffinalStringArray++;
 						finalStringArray=realloc(finalStringArray, itemsOffinalStringArray * sizeof(char*));
@@ -191,7 +192,8 @@ char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal
 
 //delete
 void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords){
-	
+	//printf("Before\n");
+	//printFullArray(array_of_structs,array_of_structs->position);
 	arrayOfStructs* tempArray = array_of_structs;
 	stack* myStack = malloc(sizeof(stack));
 	initializeStack(myStack);
@@ -251,6 +253,7 @@ void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 
 	
 	int flagIfElementWasDeleted=0;
+	int flagLastElementDeleted = 0;
 	while(!isEmpty(myStack)){
 		//root of trie
 		tempArray = array_of_structs;
@@ -269,12 +272,19 @@ void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 			tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray=NULL;					
 			
 		}
+		//if element not last && element.isFinal()
 		
+		if (flagLastElementDeleted ==1 && tempArray->array[myStack->positionsToDelete[myStack->top]].isFinal){
+			break;
+		}
 		
 		
 		if(tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray == NULL){			//hasnt got children
+		//if(tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray == NULL){			//hasnt got children
+			//printf("worddd: %s\n",tempArray->array[myStack->positionsToDelete[myStack->top]].word);
 			deletionSort(tempArray,myStack->positionsToDelete[myStack->top], tempArray->position);
 			flagIfElementWasDeleted=1;
+			flagLastElementDeleted = 1;
 		}else{	
 			tempArray->array[myStack->positionsToDelete[myStack->top]].isFinal = false;
 			break;																			//final word -> not final and break
@@ -288,7 +298,8 @@ void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 		}
 		
 	}
-
+	//printf("After\n");
+	//printFullArray(array_of_structs,array_of_structs->position);
 	
 	deleteStack(myStack);
 	free(myStack);

@@ -9,7 +9,7 @@
 typedef struct BloomFilter{
 	bool bitVector[HASH_SIZE];
 	uint8_t numHashes;
-	//int size;
+	//int noOfElementsInserted;
 }BloomFilter;
 
 BloomFilter* initializeFilter(uint8_t numHashes);
@@ -19,8 +19,11 @@ void addFilter(BloomFilter* filter,const char* data, size_t len);
 bool possiblyContains(BloomFilter* filter,const char* data, size_t len);
 bool bloomFilterSeach(BloomFilter* filter,const char* data);
 //bool bloomfilterSearch(char* string);
-//void printHash();
+void printHash();
 void freeFilter(BloomFilter* filter);
+
+
+bool bloomfilterSearch2(char* string);
 
 
 #endif

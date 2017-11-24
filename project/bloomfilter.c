@@ -9,7 +9,7 @@
 BloomFilter* initializeFilter(uint8_t numHashes){
 	BloomFilter *filter = malloc(sizeof(struct BloomFilter));
 	filter->numHashes = numHashes;
-	//filter->size = HASH_SIZE;
+	//filter->noOfElementsInserted = 0;
 	//must initialize bitVector
 	for(int i=0; i<HASH_SIZE; i++)
 		filter->bitVector[i] = false;
@@ -30,9 +30,11 @@ uint64_t kthHash(uint8_t k,uint64_t hashA,uint64_t hashB,uint64_t filterSize) {
 void addFilter(BloomFilter* filter,const char* data, size_t len) {
   uint64_t* hashValues = getHashesMurmur(data, len);
   //printf("addFilter phrase: '%s' \n",data);
-  for (int n = 0; n < sizeof(filter->bitVector) ; n++) {
-      filter->bitVector[kthHash(n, hashValues[0], hashValues[1], sizeof(filter->bitVector))] = true;
+  for (int k = 0; k < filter->numHashes ; k++) {
+      filter->bitVector[kthHash(k, hashValues[0], hashValues[1], sizeof(filter->bitVector))] = true;
+      //filter->noOfElementsInserted++;
   }
+  
   free(hashValues);
   hashValues=NULL;
 }
@@ -40,8 +42,8 @@ void addFilter(BloomFilter* filter,const char* data, size_t len) {
 bool possiblyContains(BloomFilter* filter,const char* data, size_t len) {
   uint64_t* hashValues = getHashesMurmur(data, len);
 
-  for (int n = 0; n < sizeof(filter->bitVector); n++) {
-      if (!filter->bitVector[kthHash(n, hashValues[0], hashValues[1], sizeof(filter->bitVector))]) {
+  for (int k = 0; k < filter->numHashes; k++) {
+      if (!filter->bitVector[kthHash(k, hashValues[0], hashValues[1], sizeof(filter->bitVector))]) {
       	  free(hashValues);
   		  hashValues=NULL;
           return false;
@@ -69,20 +71,20 @@ void freeFilter(BloomFilter* filter){
 
 
 /*
-bool bloomfilterSearch(char* string){
+bool bloomfilterSearch2(char* string){
 	uint32_t hash[4];                // Output for the hash 
 	uint32_t seed = 1000;              //Seed value for hash 
 
 	//printf("Input: \"%s\"\n", string);
 
-	MurmurHash3_x86_32(string, strlen(string), seed, hashTable);
-	printf("x86_32:  %d\n", hashTable[0]);
+	//MurmurHash3_x86_32(string, strlen(string), seed, hashTable);
+	//printf("x86_32:  %d\n", hashTable[0]);
 	
 	MurmurHash3_x64_128(string, strlen(string), seed, hashTable);
-	printf("x64_128: %d %d %d %d\n",
-		 hashTable[0], hashTable[1], hashTable[2], hashTable[3]);
+	//printf("x64_128: %d %d %d %d\n",
+	//	 hashTable[0], hashTable[1], hashTable[2], hashTable[3]);
 
-	MurmurHash3_x86_128(string, strlen(string), seed, hash);
+	//MurmurHash3_x86_128(string, strlen(string), seed, hash);
 	//printf("x86_128: %u %u %u %u\n",
 		 //hash[0], hash[1], hash[2], hash[3]);
 	
