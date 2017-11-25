@@ -6,7 +6,7 @@ HEADERS = struct.h func.h auxMethods.h stack.h bloomfilter.h hashTable.h ./murmu
 
 
 all: $(OBJECTS) $(HEADERS)
-	$(CC) -o $(OUT) $(FILES)
+	$(CC) -o $(OUT) $(FILES) -lm
 	make clean
 	
 main.o: main.c

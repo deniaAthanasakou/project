@@ -9,3 +9,13 @@ LinearHashing:
 	Bucket* hashTable (size m)
 	datanode bucket[c] (static with ptr to Overflow) ->typos Bucket
 	
+	
+	
+	
+	
+1)Dynamic, Static	Denia
+2)test memmove		Stef
+
+-----------------------------------------------------------------
+3)TestFiles
+	

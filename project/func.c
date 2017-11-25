@@ -5,13 +5,15 @@
 #include "stack.h"
 #include "bloomfilter.h"
 
-void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords){		//same layer
+void insert_ngram(arrayOfStructs* array_of_structs, HashTable* hashTable, char** arrayOfWords, int noOfWords){		//same layer
 	arrayOfStructs* tempArray = array_of_structs;
 	int i=0;
 
 	
 	for(i=0; i<noOfWords; i++){				//different layers
 		int position = tempArray->position;
+		
+		
 		
 		dataNode* tempElement = malloc(sizeof(dataNode));
 		if(i==noOfWords -1)		//final word
@@ -20,7 +22,7 @@ void insert_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 			tempElement->isFinal=false;
 		
 		insertString (tempElement, arrayOfWords[i]);
-
+		insertTrieNode(tempElement, hashTable);
 			
 		//tempElement->word= (char*)malloc((strlen(arrayOfWords[i]) + 1) * sizeof(char));
 		tempElement->nextWordArray=NULL;

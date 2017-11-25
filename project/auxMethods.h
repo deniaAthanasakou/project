@@ -3,6 +3,7 @@
 #include "struct.h"
 #include "func.h"
 #include "bloomfilter.h"
+#include "hashTable.h"
 
 typedef struct checkItemExists checkItemExists;
 
@@ -16,10 +17,10 @@ typedef struct arrayWords{
 	char** words;			//array of strings
 }arrayWords;
 
-void initialize(FILE* file, arrayOfStructs* structureTree);
-int executeQueryFile(FILE* file, arrayOfStructs* structureTree);
+void initialize(FILE* file, arrayOfStructs* structureTree, HashTable* hashTable);
+int executeQueryFile(FILE* file, arrayOfStructs* structureTree, HashTable* hashTable);
 
-void callBasicFuncs(char* ngram, arrayOfStructs* array, char query);
+void callBasicFuncs(char* ngram, arrayOfStructs* array, char query , HashTable* hashTable);
 arrayWords* stringToArray(char* ngram);
 
 void printArray(arrayOfStructs* tempArray, int position);
@@ -37,6 +38,12 @@ void printQuery(char** items, int iterNum);
 
 char* getString(dataNode* node);
 void insertString (dataNode* node, char* word);
+
+
+
+checkItemExists* binarySearch2(dataNode* array, dataNode* item, int first, int last, checkItemExists* check);
+
+checkItemExists* insertionSort2(Bucket* bucket, dataNode* itemForInsert, int lastElement);
 
 
 

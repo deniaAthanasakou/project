@@ -4,6 +4,10 @@
 #include "func.h"
 #include "auxMethods.h"
 #include "bloomfilter.h"
+#include "hashTable.h" 
+
+#define NOOFBUCKETS 4
+#define NOOFCELLS 4
 
 
 int main (int argc,char* argv[]){
@@ -30,14 +34,16 @@ int main (int argc,char* argv[]){
 	arrayOfStructs* structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
 	initializeArray(structureTree);
 	
-	//BloomFilter* filter = initializeFilter(4);
+	HashTable* hashTable = createLinearHash(NOOFBUCKETS, NOOFCELLS);
+	
+	
 	
 	//initialize
 	FILE * initFile;
 	initFile = fopen (init,"r");
 	if (initFile!=NULL)
 	{
-		initialize(initFile, structureTree);
+		initialize(initFile, structureTree, hashTable);
 		
 		fclose (initFile);
 	}
@@ -47,7 +53,7 @@ int main (int argc,char* argv[]){
 	queryFile = fopen (query,"r");
 	if (queryFile!=NULL)
 	{
-		int query = executeQueryFile(queryFile,structureTree);
+		int query = executeQueryFile(queryFile,structureTree, hashTable);
 		if(query==0){
 			printf("Error in file of queries\n");
 			exit(1);
