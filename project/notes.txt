@@ -14,7 +14,10 @@ LinearHashing:
 	
 	
 1)Dynamic, Static	Denia
-2)test memmove		Stef
+2)test memmove		Stef	
+	-douleuei gia strings alla oxi gia structs
+	-exo grapsei ena sxolio pano apo to proto memmove mesa sto test_memmove.c
+	-exo ftiaksei ena makefile gia to test_memmove 'Makefile for mem', gia na to trekseis metonomase to se Makefile kai bgale to allo Makefile apo ekso apo ton fakelo
 
 -----------------------------------------------------------------
 3)TestFiles
