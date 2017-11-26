@@ -22,7 +22,7 @@ void insert_ngram(arrayOfStructs* array_of_structs, HashTable* hashTable, char**
 			tempElement->isFinal=false;
 		
 		insertString (tempElement, arrayOfWords[i]);
-		insertTrieNode(tempElement, hashTable);
+		//insertTrieNode(tempElement, hashTable);
 			
 		//tempElement->word= (char*)malloc((strlen(arrayOfWords[i]) + 1) * sizeof(char));
 		tempElement->nextWordArray=NULL;

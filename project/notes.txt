@@ -19,3 +19,16 @@ LinearHashing:
 -----------------------------------------------------------------
 3)TestFiles
 	
+	
+	
+1):
+	ALLAGES
+	initialize void->int return 0 if static else 1
+	int executeQueryFile(FILE* file, arrayOfStructs* structureTree, HashTable* hashTable, int staticDynamic);
+	
+	./ngrams -i small_dynamic/small_dynamic.init -q small_dynamic/small_dynamic.work >temp	9 removals 0 additions -> den ektupwnoume kapoia pragmata
+	./ngrams -i small_static/small_static.init -q small_static/small_static.work >temp      9 removals 1 addition:
+		exei sth grammh 51 'F 12' kai meta dn diavazei gia kapoio logo to epomeno query
+		na tsekaroume mhpws an meta to F dn ektelei thn prwth entolh
+
+

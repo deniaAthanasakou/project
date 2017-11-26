@@ -5,17 +5,30 @@
 #include "struct.h"
 
 
-void initialize(FILE* file, arrayOfStructs* structureTree, HashTable* hashTable){
+int initialize(FILE* file, arrayOfStructs* structureTree, HashTable* hashTable){
 
 	char *line = NULL;
 	size_t len = 0;
 	int read;
-
+	int counter = 0;
+	int returnValue = 1;		//default
 	if (file == NULL)
-		return;
+		return returnValue;
 	while ((read = getline(&line, &len, file)) != -1) {	
 		char* ngram = strtok(line, "\n");
+		if (counter == 0){
+			if(strcmp(ngram,"STATIC")==0)
+				returnValue = 0;
+			else if (strcmp(ngram,"DYNAMIC")==0)
+				returnValue = 1;
+			else{
+				printf("Error with init file!\n");
+				exit(1);
+			}
+				
+		}
 		callBasicFuncs(ngram,structureTree,'A',hashTable);
+		counter++;
 	}
 	//found eof
 
@@ -23,6 +36,7 @@ void initialize(FILE* file, arrayOfStructs* structureTree, HashTable* hashTable)
 		free(line);
 		line=NULL;
 	}
+	return returnValue;
 }
 
 
@@ -512,7 +526,7 @@ void printArrayFinalWords(arrayOfStructs* array_of_str, int position){
 
 
 //insert from query file
-int executeQueryFile(FILE* file ,arrayOfStructs* structureTree , HashTable* hashTable){
+int executeQueryFile(FILE* file ,arrayOfStructs* structureTree , HashTable* hashTable, int staticDynamic){
 
 	char *line = NULL;
 	size_t len = 0;
@@ -533,6 +547,16 @@ int executeQueryFile(FILE* file ,arrayOfStructs* structureTree , HashTable* hash
 
 		if(strcmp(wordCase,"A")==0){	
 			startingLetter = 'A';
+			if(staticDynamic==0){	//STATIC
+				printf("Error with init file! Add is not supported in Static version.\n");
+				deleteArray(structureTree);
+				structureTree=NULL;
+				if (line){
+					free(line);
+					line=NULL;
+				}
+				exit(1);
+			}
 			callBasicFuncs(remainingLine,structureTree,'A',hashTable);
 		}
 		else if(strcmp(wordCase,"Q")==0){
@@ -541,6 +565,16 @@ int executeQueryFile(FILE* file ,arrayOfStructs* structureTree , HashTable* hash
 		}
 		else if(strcmp(wordCase,"D")==0){
 			startingLetter = 'D';
+			if(staticDynamic==0){	//STATIC
+				printf("Error with init file! Delete is not supported in Static version.\n");
+				deleteArray(structureTree);
+				structureTree=NULL;
+				if (line){
+					free(line);
+					line=NULL;
+				}
+				exit(1);
+			}
 			callBasicFuncs(remainingLine,structureTree,'D',hashTable);
 		}
 		else if(strcmp(wordCase,"F")==0){

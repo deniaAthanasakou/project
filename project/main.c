@@ -41,10 +41,10 @@ int main (int argc,char* argv[]){
 	//initialize
 	FILE * initFile;
 	initFile = fopen (init,"r");
+	int staticDynamic = 1;
 	if (initFile!=NULL)
 	{
-		initialize(initFile, structureTree, hashTable);
-		
+		staticDynamic = initialize(initFile, structureTree, hashTable);
 		fclose (initFile);
 	}
 	
@@ -53,7 +53,7 @@ int main (int argc,char* argv[]){
 	queryFile = fopen (query,"r");
 	if (queryFile!=NULL)
 	{
-		int query = executeQueryFile(queryFile,structureTree, hashTable);
+		int query = executeQueryFile(queryFile,structureTree, hashTable, staticDynamic);
 		if(query==0){
 			printf("Error in file of queries\n");
 			exit(1);
