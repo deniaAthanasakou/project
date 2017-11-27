@@ -1,0 +1,29 @@
+seed 0, size = 10000
+vector size	787 removals 786 additions 
+
+initializeFilter(10): 345 removals 343 additions
+
+initializeFilter(4):	346 removals 344 additions 
+
+seed 100:
+
+initializeFilter(4):	346 removals 344 additions 
+
+
+
+
+seed 0, size 1000, k=10  -> 1337 removals 1334 additions
+
+seed 0, size 100000, k=10  -> 345 removals 343 additions
+
+seed 0, size 100000, k=100  -> 345 removals 343 additions
+
+seed 0, size 10000, k=5  -> 345 removals 343 additions
+
+seed 0, size 1000, k=3  -> 1452 removals 1449 additions
+
+seed 0, size 100000, k=3  -> 345 removals 343 additions
+
+seed 0, size 10000, k=1  -> 1019 removals1015 additions
+
+seed 0, size 10000, k=5  -> 1019 removals1015 additions
