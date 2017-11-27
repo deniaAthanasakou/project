@@ -43,7 +43,7 @@ void insertString (dataNode* node, char* word);
 
 checkItemExists* binarySearch2(dataNode* array, dataNode* item, int first, int last, checkItemExists* check);
 
-checkItemExists* insertionSort2(Bucket* bucket, dataNode* itemForInsert, int lastElement);
+checkItemExists* insertionSort2(HashTable* hashTable, Bucket* bucket, dataNode* itemForInsert, int lastElement);
 
 
 

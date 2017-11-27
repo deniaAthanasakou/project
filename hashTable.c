@@ -30,28 +30,36 @@ void initializeBucket(Bucket* bucket, int noOfCells, int noOfElements ){
 int insertTrieNode(dataNode* node, HashTable* hashTable){
 
 	char* word = getString(node);
-	int noOfbucket = 0;//= getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, word);	//LATHOS EPISTREFEI HASH FUNC OXI BUCKET
+	int noOfbucket = 0;//getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, word);	
 
 	Bucket* bucket = &(hashTable->buckets[noOfbucket]);
 	while(bucket!=NULL){					//go to last overflowed bucket
 		if(bucket->position==bucket->length){	//overflow
-			printf("inside overflow\n");
-			//bucket->nextBucket = malloc(sizeof(Bucket));
-			//initializeBucket(bucket->nextBucket,bucket->length,bucket->noOfElements);
-			printf("after init\n");
+			if(bucket->nextBucket==NULL){
+				printf("inside overflow\n");
+				bucket->nextBucket = malloc(sizeof(Bucket));
+				initializeBucket(bucket->nextBucket,bucket->length,bucket->noOfElements);
+				hashTable->bucketToBeSplit++;
+				printf("after init\n");
+			}
+			
+			
 		}
 		bucket=bucket->nextBucket;
 	}
 	
 	//insertion sort
 	printf("bucket %d elements %d\n",noOfbucket,hashTable->buckets[noOfbucket].noOfElements);
-	checkItemExists* check = insertionSort2(&(hashTable->buckets[noOfbucket]),node, hashTable->buckets[noOfbucket].noOfElements);
+	checkItemExists* check = insertionSort2(hashTable, &(hashTable->buckets[noOfbucket]),node, hashTable->buckets[noOfbucket].noOfElements);
 	if(!check->exists){
 	
 		printf("inserted item '%s' in position '%d'\n",word,check->position);
 	
 		hashTable->buckets[noOfbucket].noOfElements++;
 	}
+	
+	
+	printf("bucket to be split '%d'\n",hashTable->bucketToBeSplit);
 	
 	
 }

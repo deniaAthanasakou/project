@@ -342,7 +342,7 @@ checkItemExists* binarySearch2(dataNode* array, dataNode* item, int first, int l
  
 
 
-checkItemExists* insertionSort2(Bucket* bucket, dataNode* itemForInsert, int lastElement)
+checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* itemForInsert, int lastElement)
 {
 	
 	printf("/////////////////////////////////////////////inserting word '%s'\n", getString(itemForInsert));
@@ -352,7 +352,7 @@ checkItemExists* insertionSort2(Bucket* bucket, dataNode* itemForInsert, int las
 	int cellCounter=0;
 	while(tempBucket!=NULL){		
 		if(cellCounter == tempBucket->length){
-		printf("next temp\n");
+			printf("next temp\n");
 			tempBucket=tempBucket->nextBucket;
 			cellCounter = 0;
 		}
@@ -362,9 +362,10 @@ checkItemExists* insertionSort2(Bucket* bucket, dataNode* itemForInsert, int las
 		}
 		int position = tempBucket->position;
 		if(cellCounter >= position) {
+			printf("b\n");
 			break;
 		}	
-			
+		//printf("c\n");	
 		array[arrayCounter] = tempBucket->cells[cellCounter];
 		arrayCounter++;
 		cellCounter++;
@@ -449,16 +450,14 @@ checkItemExists* insertionSort2(Bucket* bucket, dataNode* itemForInsert, int las
 		printf("word in cell 2 '%s'\n",getString(&(bucketForInsert->cells[2])));
 		printf("word in cell 3 '%s'\n",getString(&(bucketForInsert->cells[3])));
 		
-		if(i==noOfExtraBucketsToBeUsed)
+		
+		
+		printf("bucketForInsert->position %d\n",bucketForInsert->position);
+		
+		if(i==noOfExtraBucketsToBeUsed){
 			bucketForInsert->position++;
-		
-		
-		if(bucketForInsert->position==bucketForInsert->length && bucketForInsert->nextBucket==NULL){	//overflow
-			printf("inside overflow\n");
-			bucketForInsert->nextBucket = malloc(sizeof(Bucket));
-			initializeBucket(bucketForInsert->nextBucket,bucketForInsert->length,bucketForInsert->noOfElements);
-			printf("after init\n");
-		}
+			printf("++\n");
+		}	
 		
 		bucketForInsert = bucketForInsert->nextBucket;
 		
