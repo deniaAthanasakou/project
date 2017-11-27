@@ -30,19 +30,21 @@ void initializeBucket(Bucket* bucket, int noOfCells, int noOfElements ){
 int insertTrieNode(dataNode* node, HashTable* hashTable){
 
 	char* word = getString(node);
-	int noOfbucket = getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, word);
+	int noOfbucket = 0;//= getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, word);	//LATHOS EPISTREFEI HASH FUNC OXI BUCKET
 
 	Bucket* bucket = &(hashTable->buckets[noOfbucket]);
 	while(bucket!=NULL){					//go to last overflowed bucket
 		if(bucket->position==bucket->length){	//overflow
-			initializeBucket(bucket->nextBucket,bucket->length,bucket->noOfElements);
+			printf("inside overflow\n");
+			//bucket->nextBucket = malloc(sizeof(Bucket));
+			//initializeBucket(bucket->nextBucket,bucket->length,bucket->noOfElements);
+			printf("after init\n");
 		}
 		bucket=bucket->nextBucket;
 	}
-	if(strcmp(word,"this")==0)
-		printf("already inserted item '%s' \n",hashTable->buckets[0].cells[0].word);
 	
 	//insertion sort
+	printf("bucket %d elements %d\n",noOfbucket,hashTable->buckets[noOfbucket].noOfElements);
 	checkItemExists* check = insertionSort2(&(hashTable->buckets[noOfbucket]),node, hashTable->buckets[noOfbucket].noOfElements);
 	if(!check->exists){
 	

@@ -345,37 +345,36 @@ checkItemExists* binarySearch2(dataNode* array, dataNode* item, int first, int l
 checkItemExists* insertionSort2(Bucket* bucket, dataNode* itemForInsert, int lastElement)
 {
 	
-	printf("/////////////////////////////////////////////inserting word '%s'\n",itemForInsert->word);
+	printf("/////////////////////////////////////////////inserting word '%s'\n", getString(itemForInsert));
 	dataNode* array = malloc((bucket->noOfElements)*sizeof(dataNode));
 	Bucket* tempBucket = bucket;
 	int arrayCounter=0;
 	int cellCounter=0;
 	while(tempBucket!=NULL){		
 		if(cellCounter == tempBucket->length){
+		printf("next temp\n");
 			tempBucket=tempBucket->nextBucket;
 			cellCounter = 0;
 		}
-		printf("pos %d\n",tempBucket->position);
-		if(tempBucket->position == 0) {
+		if(tempBucket == bucket && tempBucket->position == 0) {
+			printf("a\n");
 			break;
 		}
-		if(cellCounter >= tempBucket->position) {
+		int position = tempBucket->position;
+		if(cellCounter >= position) {
 			break;
 		}	
 			
-		//printf("noOfElements %d\n",bucket->noOfElements+1);
-		printf("arrayCounter %d\n", arrayCounter);
-		//printf("inner cell %")
 		array[arrayCounter] = tempBucket->cells[cellCounter];
 		arrayCounter++;
 		cellCounter++;
 	}
-	printf("printing array\n");
+	printf("printing array arrayCounter %d\n", arrayCounter);
 	for(int i =0; i <arrayCounter; i++){
 		printf("word '%s'\n", getString(&(array[i])));
 	}
 	
-	//printf("after array\n");
+	printf("after array\n");
 
 
     int i, loc, j;
@@ -385,19 +384,12 @@ checkItemExists* insertionSort2(Bucket* bucket, dataNode* itemForInsert, int las
     retPosition->exists=false;
     
 	if(lastElement==0){
-		bucket->cells[0] = *itemForInsert;
+		memmove(&(bucket->cells[0]),itemForInsert, sizeof(*itemForInsert));
 		bucket->position++;
-		array = realloc(array,(bucket->noOfElements +1 )*sizeof(dataNode));
-		array[0] = *itemForInsert;
-		printf("printing\n");
-		for(int k=0; k<bucket->noOfElements +1; k++){
-			printf("word '%s'\n", getString(&(bucket->cells[0])));
-		}
 		return retPosition;
 	}
 	free(retPosition);
 	retPosition=NULL;
-	//i=lastElement;
     j = lastElement - 1;
 
     // find location where selected sould be inseretd
@@ -414,28 +406,69 @@ checkItemExists* insertionSort2(Bucket* bucket, dataNode* itemForInsert, int las
 	int startingPoint = getPosition->position;
 	while (j >= loc)
 	{
-	   // array[j+1] = array[j];
 	   moveSize+=sizeof(array[j]);
 	    j--;
-	    
-	    
-	}
-	printf("before\n");
-	for(int k=0; k<bucket->noOfElements ; k++){
-		printf("word '%s'\n", getString(&(array[k])));
 	}
 	memmove(&array[startingPoint+1],&array[startingPoint],moveSize);
-	array[j+1] = *itemForInsert;
+	memmove(&(array[j+1]),itemForInsert,sizeof(*itemForInsert));
 	moveSize+=sizeof(array[j+1]);
-	printf("after\n");
-	for(int k=0; k<bucket->noOfElements +1; k++){
-		printf("word '%s'\n", getString(&(array[k])));
+	printf("printing new array\n");
+	for(int i =0; i <arrayCounter+1; i++){
+		printf("word '%s'\n", getString(&(array[i])));
 	}
 	
-	//create chunks
+	printf("after new array\n");
 	
-	memmove(&(bucket->cells[0]),&array[0],moveSize);
-	printf("word in bucket 0 '%s'\n",bucket->cells[0].word);
+	int noOfExtraBucketsToBeUsed = ((bucket->noOfElements ) / bucket->length);
+	//printf("noOfBucketsToBeUsed is %d\n", noOfExtraBucketsToBeUsed);
+	
+	//create chunks
+
+	Bucket* bucketForInsert = bucket;
+	
+	int* sizes = malloc(0*sizeof(int));
+	for(int i=0; i<=bucket->noOfElements +1; i++){	//store chunk size
+		sizes = realloc(sizes,(i+1)*sizeof(int));
+		sizes[i] = sizeof(array[i]);
+	}
+	int chunkCounter = 0;
+	int sizesCounter = 0;
+	for(int i=0; i<=noOfExtraBucketsToBeUsed;i++){	//memmove inside bucket
+		int sizeOfChunk = 0;
+		int j =0;
+		while(j<bucket->length && j<bucket->noOfElements +1){
+			sizeOfChunk+=sizes[sizesCounter];
+			sizesCounter++;
+			j++;
+		}
+
+		memmove(&(bucketForInsert->cells[0]),&array[chunkCounter],sizeOfChunk);
+		printf("bucket %d \n",i);
+		printf("word in cell 0 '%s'\n", getString(&(bucketForInsert->cells[0])));
+		printf("word in cell 1 '%s'\n",getString(&(bucketForInsert->cells[1])));
+		printf("word in cell 2 '%s'\n",getString(&(bucketForInsert->cells[2])));
+		printf("word in cell 3 '%s'\n",getString(&(bucketForInsert->cells[3])));
+		
+		if(i==noOfExtraBucketsToBeUsed)
+			bucketForInsert->position++;
+		
+		
+		if(bucketForInsert->position==bucketForInsert->length && bucketForInsert->nextBucket==NULL){	//overflow
+			printf("inside overflow\n");
+			bucketForInsert->nextBucket = malloc(sizeof(Bucket));
+			initializeBucket(bucketForInsert->nextBucket,bucketForInsert->length,bucketForInsert->noOfElements);
+			printf("after init\n");
+		}
+		
+		bucketForInsert = bucketForInsert->nextBucket;
+		
+		chunkCounter+=bucket->length;
+		
+	}
+	//printf("before position++\n");
+	
+	//printf("after position++\n");
+	//printf("word in bucket 0 '%s'\n",bucket->cells[0].word);
 	
     getPosition->position=j+1;
     
@@ -664,13 +697,17 @@ void insertString (dataNode* node, char* word){
 
 char* getString(dataNode* node){
 	char* returnWord = NULL;
+	//printf("start\n");
 	if(node->isDynamic){
+	//	printf("is dynamic\n");
 		returnWord = malloc((strlen(node->dynamicWord)+1)*sizeof(char));
 		strcpy(	returnWord,  node->dynamicWord);
 		return returnWord;
 	}	
-	
-	returnWord = malloc(node->noOfChars*sizeof(char));	
+	//printf("is not dynamic\n");
+	//printf("node->noOfChars %d\n",node->noOfChars);
+	returnWord = malloc((node->noOfChars)*sizeof(char));
+	//printf("after malloc\n");	
 	//sprintf(returnWord,"%s",node->word);
 	//printf("%s %ld\n", node->word, strlen(node->word));
 	for(int i=0; i<node->noOfChars; i++){

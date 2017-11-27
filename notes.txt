@@ -38,4 +38,13 @@ LinearHashing:
 ..........................................................................
 ta leaks ofeilontai mono sto hashTable
 
-must do bucket->position++; in insertion sort 2
+must do bucket->position++; in insertion sort 2	[done]
+move chucks in buckets							[done]
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+na vriskoume swsto bucket
+possibly free ta buckets
+na arxisoume na vazoume ngrams anti gia 1grams
+
+afou ginoun auta prepei na arxisoume na auksanoume to megethos tou hashTable
