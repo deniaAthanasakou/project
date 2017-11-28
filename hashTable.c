@@ -29,7 +29,7 @@ void initializeBucket(Bucket* bucket, int noOfCells, int noOfElements ){
 
 dataNode* insertTrieNode(dataNode* node, HashTable* hashTable){
 	char* word = getString(node);
-	int noOfbucket = 0;//getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, word);
+	int noOfbucket = getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, word);
 	//printf("INSERT word: %s\n",word);
 	Bucket* bucket = &(hashTable->buckets[noOfbucket]);
 	
@@ -63,7 +63,18 @@ dataNode* insertTrieNode(dataNode* node, HashTable* hashTable){
 			//printf("hashTable->bucketToBeSplit %d\n",hashTable->bucketToBeSplit);
 		}
 	}
+	free(word);
+	word=NULL;
+	/*dataNode returnNode = *(check->insertedNode);
+	if(check->insertedNode!=NULL){
+		deleteDataNode(check->insertedNode);
+		free(check->insertedNode);
+	}
 	
+	free(check);
+	check=NULL;
+	dataNode* returnNodePtr = &returnNode;
+	return returnNodePtr;*/
 	return check->insertedNode;
 }
 
@@ -77,9 +88,34 @@ void splitBucket(HashTable* hashTable, int bucketToBeSplit){
 
 }
 
+void deletionSortBucket(Bucket* bucket, int position){
+	if(bucket->cells[position].dynamicWord!=NULL){		
+		free(bucket->cells[position].dynamicWord);
+		bucket->cells[position].dynamicWord=NULL;
+	}
+	else{
+		bucket->cells[position].word[0] = '\0';
+	}
+	if(bucket->cells[position].nextWordArray!=NULL){
+		deleteArray(bucket->cells[position].nextWordArray);
+		bucket->cells[position].nextWordArray=NULL;
+	}
+	int moveSize = 0;
+	int startingPoint = position;
+	while (position < bucket->position)
+	{
+	    //array_of_str->array[position]=array_of_str->array[position+1];
+	    moveSize+=sizeof(bucket->cells[position+1]);
+	    position++;
+	}
+	memmove(&(bucket->cells[startingPoint]),&(bucket->cells[startingPoint+1]), moveSize);
+	bucket->position--;
+}
+
+
 dataNode* lookupTrieNode(char* lookupWord ,HashTable* hashTable){
 	//printf("inside lookup\n");
-	int getCorrectBucket =0;// getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, lookupWord);
+	int getCorrectBucket = getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, lookupWord);
 	int maxElems = hashTable->buckets[getCorrectBucket].noOfElements;
 	dataNode** searchArray = malloc(maxElems * sizeof(dataNode*));
 	Bucket *copyBucket = &hashTable->buckets[getCorrectBucket];
@@ -157,21 +193,34 @@ dataNode* lookupTrieNode(char* lookupWord ,HashTable* hashTable){
 
 
 
-int destroyLinearHash(HashTable* hashTable){
+void destroyLinearHash(HashTable* hashTable){
 	for(int i=0; i<hashTable->length; i++){			//for each bucket
-		for(int j=0; j<hashTable->buckets[i].length; j++){		//for each cell
-			//while exei next phgaine ekei
-			//deleteDataNode
-			//free(node)
-			
+		Bucket* tempBucket=&hashTable->buckets[i];
+		while(tempBucket!=NULL){					//for each overflow bucket
+			for(int j=0; j<tempBucket->position; j++){		//for each cell
+				deleteArray(tempBucket->cells[j].nextWordArray);
+				deletionSortBucket(tempBucket, j);
+			}
+					
+		
+			tempBucket = tempBucket->nextBucket;
 		}
-		//free (hashTable->buckets[i].cells)
+		
+		free (hashTable->buckets[i].cells);
 
 	}
-	//free(buckets)
-	//free(hashTable)
-	return 0;
+	free(hashTable->buckets);
+	hashTable->buckets=NULL;
+	free(hashTable);
+	hashTable=NULL;
 }
+
+
+
+
+
+
+
 
 int getBucketFromHash(int level, int lengthHash, int bucketToBeSplit, char* word){	//word->int and by using h(level) returns number of bucket
 	int charSum=0;

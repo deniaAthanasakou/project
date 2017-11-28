@@ -62,7 +62,7 @@ void callBasicFuncs(char* ngram, arrayOfStructs* array, char query , HashTable* 
 		searchString=NULL;
 	}
 	else if(query == 'D'){
-		delete_ngram(array, arrayOfWords,noOfWords);
+		delete_ngram(hashTable, arrayOfWords,noOfWords);
 	}
 	
 	deleteArrayOfWords(arrayOfWords,noOfWords);
@@ -395,6 +395,14 @@ checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* i
 		
 		retPosition->insertedNode = &(bucket->cells[0]);
 		//printf("last element 0 word '%s'\n",retPosition->insertedNode->word);
+		
+		for(int i=0; i<arrayCounter; i++){
+			deleteDataNode(&(array[i]));
+			//free(&(array[i]));
+		}
+		free(array);
+		array=NULL;
+		
 		return retPosition;
 	}
 	free(retPosition);
@@ -418,6 +426,14 @@ checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* i
 			tempBucket = tempBucket->nextBucket;	
 		}
 		//printf("word is '%s'\n",getPosition->insertedNode->word);
+
+		for(int i=0; i<arrayCounter; i++){
+			deleteDataNode(&(array[i]));
+			//free(&(array[i]));
+		}
+		free(array);
+		array=NULL;
+
 
     	return getPosition;
     }
@@ -502,6 +518,16 @@ checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* i
 		bucketForInsert = bucketForInsert->nextBucket;
 		
 	}
+	
+	for(int i=0; i<arrayCounter; i++){
+		deleteDataNode(&(array[i]));
+		//free(&(array[i]));
+	}
+	
+	free(sizes);
+	sizes=NULL;
+	free(array);
+	array=NULL;
 		
     getPosition->position=j+1;
     

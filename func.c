@@ -305,72 +305,101 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 }
 
 //delete
-void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords){
+void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 	//printf("Before\n");
 	//printFullArray(array_of_structs,array_of_structs->position);
-	arrayOfStructs* tempArray = array_of_structs;
+	arrayOfStructs* tempArray = NULL;
 	stack* myStack = malloc(sizeof(stack));
 	initializeStack(myStack);
+	dataNode* lookupElement=NULL;
 	for(int i=0; i<noOfWords; i++){
+	
+	
+		if(i==0){
+			//lookup node
+			lookupElement = lookupTrieNode(arrayOfWords[i] ,hashTable);
+			if(lookupElement==NULL){
+				printf("lookupElement==NULL\n");
+				return;
+			}
+			printf("lookupElement->word = %s\n",lookupElement->word);
+			if(i==noOfWords-1){
+				lookupElement->isFinal=false;
+			}
+			//if not found return
+			//else
+			//keepit
+		}
+		else{
+			if(i==1){
+				tempArray = lookupElement->nextWordArray;
+			}
 
-		int position = tempArray->position;
+			int position = tempArray->position;
 		
-		dataNode* tempElement = malloc(sizeof(dataNode));
-		insertString (tempElement, arrayOfWords[i]);
-		//tempElement->word= (char*)malloc((strlen(arrayOfWords[i])+1) * sizeof(char));
-		tempElement->nextWordArray=NULL;
-		//strcpy(tempElement->word,arrayOfWords[i]);	
+			dataNode* tempElement = malloc(sizeof(dataNode));
+			insertString (tempElement, arrayOfWords[i]);
+			//tempElement->word= (char*)malloc((strlen(arrayOfWords[i])+1) * sizeof(char));
+			tempElement->nextWordArray=NULL;
+			//strcpy(tempElement->word,arrayOfWords[i]);	
 		
-		
-		//find out if word exists in array and if it does return position
-		checkItemExists* getPosition = binarySearch(tempArray, tempElement,0 ,tempArray->position,NULL);
-		if(	getPosition->exists==true){
-			push(myStack, getPosition->position);
-		}
-		else{										//element was not found inside array so it can not be deleted	
-			deleteDataNode(tempElement);
-			free(tempElement);
-			tempElement=NULL;
-			free(getPosition);
-			getPosition = NULL;
+			printf("tempElement->word = %s\n",tempElement->word);
+			//find out if word exists in array and if it does return position
+			checkItemExists* getPosition = binarySearch(tempArray, tempElement,0 ,tempArray->position,NULL);
+			if(	getPosition->exists==true){
+				push(myStack, getPosition->position);
+			}
+			else{										//element was not found inside array so it can not be deleted	
+				deleteDataNode(tempElement);
+				free(tempElement);
+				tempElement=NULL;
+				free(getPosition);
+				getPosition = NULL;
 			
-			deleteStack(myStack);
-			free(myStack);
-			myStack = NULL;
-			
-			return;	
-		}
-		
-		tempArray = tempArray->array[getPosition->position].nextWordArray;
-		if(tempArray == NULL)
-		{
-			deleteDataNode(tempElement);
-			free(tempElement);
-			tempElement=NULL;
-			free(getPosition);
-			getPosition = NULL;
-			if(i!=noOfWords-1){
 				deleteStack(myStack);
 				free(myStack);
 				myStack = NULL;
+			
 				return;	
 			}
-			break;			
+		
+			tempArray = tempArray->array[getPosition->position].nextWordArray;
+			if(tempArray == NULL)
+			{
+				deleteDataNode(tempElement);
+				free(tempElement);
+				tempElement=NULL;
+				free(getPosition);
+				getPosition = NULL;
+				if(i!=noOfWords-1){
+					deleteStack(myStack);
+					free(myStack);
+					myStack = NULL;
+					return;	
+				}
+				break;			
+			}
+			deleteDataNode(tempElement);
+			free(tempElement);
+			tempElement=NULL;
+			free(getPosition);
+			getPosition = NULL;
 		}
-		deleteDataNode(tempElement);
-		free(tempElement);
-		tempElement=NULL;
-		free(getPosition);
-		getPosition = NULL;
 		
 	}
-
+	
+	displayStack(myStack);
+	
+	//must delete from stack and must delete from bucket
+	printf("before\n");
+	printFullArray(lookupElement->nextWordArray,lookupElement->nextWordArray->position);
 	
 	int flagIfElementWasDeleted=0;
 	int flagLastElementDeleted = 0;
 	while(!isEmpty(myStack)){
 		//root of trie
-		tempArray = array_of_structs;
+		//tempArray = array_of_structs;
+		tempArray = lookupElement->nextWordArray;
 		
 		//get last element of stack
 		for(int i=0;i < myStack->top ;i++){
@@ -412,8 +441,13 @@ void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noO
 		}
 		
 	}
-	//printf("After\n");
-	//printFullArray(array_of_structs,array_of_structs->position);
+	printf("After\n");
+	printFullArray(lookupElement->nextWordArray,lookupElement->nextWordArray->position);
+	
+	//must call deletionSort for bucket
+	//lookUpBucket->bucket
+	//binarySearch->position
+	//deletionSortBucket(Bucket* bucket, int position);
 	
 	deleteStack(myStack);
 	free(myStack);

@@ -14,7 +14,7 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords);
 char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWordsOriginal);
 
 //delete
-void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords);
+void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords);
 
 
 #endif

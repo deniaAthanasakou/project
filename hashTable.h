@@ -24,7 +24,7 @@ struct Bucket{
 };
 
 HashTable* createLinearHash(int noOfBuckets, int noOfCells);
-int destroyLinearHash(HashTable* hashTable);
+void destroyLinearHash(HashTable* hashTable);
 dataNode* insertTrieNode(dataNode* node, HashTable* hashTable);
 dataNode* lookupTrieNode(char* lookupWord ,HashTable* hashTable);
 
@@ -37,6 +37,8 @@ int getBucketFromHash(int level, int lengthHash, int bucketToBeSplit, char* word
 
 void splitBucket(HashTable* hashTable, int bucketToBeSplit);
 void levelUp(HashTable* hashTable);
+
+void deletionSortBucket(Bucket* bucket, int position);
 
 
 #endif
