@@ -27,10 +27,10 @@ void initializeBucket(Bucket* bucket, int noOfCells, int noOfElements ){
 	
 }
 
-int insertTrieNode(dataNode* node, HashTable* hashTable){
+dataNode* insertTrieNode(dataNode* node, HashTable* hashTable){
 
 	char* word = getString(node);
-	int noOfbucket = 0;//getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, word);	
+	int noOfbucket = getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, word);	
 
 	Bucket* bucket = &(hashTable->buckets[noOfbucket]);
 	while(bucket!=NULL){					//go to last overflowed bucket
@@ -49,17 +49,27 @@ int insertTrieNode(dataNode* node, HashTable* hashTable){
 	}
 	
 	//insertion sort
-	printf("bucket %d elements %d\n",noOfbucket,hashTable->buckets[noOfbucket].noOfElements);
+	//printf("bucket %d elements %d\n",noOfbucket,hashTable->buckets[noOfbucket].noOfElements);
 	checkItemExists* check = insertionSort2(hashTable, &(hashTable->buckets[noOfbucket]),node, hashTable->buckets[noOfbucket].noOfElements);
+	//printf("print it\n");
+	//printFullArray(check->insertedNode->nextWordArray, check->insertedNode->nextWordArray->position);
+	//printf("end print it\n");
+	
+	
+	//printf("after insertion sort word '%s'\n",check->insertedNode->word);
 	if(!check->exists){
 	
-		printf("inserted item '%s' in position '%d'\n",word,check->position);
+		//printf("inserted item '%s' in position '%d'\n",word,check->position);
 	
 		hashTable->buckets[noOfbucket].noOfElements++;
 	}
 	
 	
-	printf("bucket to be split '%d'\n",hashTable->bucketToBeSplit);
+	
+	
+	//printf("bucket to be split '%d'\n",hashTable->bucketToBeSplit);
+	
+	return check->insertedNode;
 	
 	
 }

@@ -6,57 +6,112 @@
 #include "bloomfilter.h"
 
 void insert_ngram(arrayOfStructs* array_of_structs, HashTable* hashTable, char** arrayOfWords, int noOfWords){		//same layer
-	arrayOfStructs* tempArray = array_of_structs;
+	arrayOfStructs* tempArray =NULL ;//= array_of_structs;
 	int i=0;
-
+	dataNode* rootElement=NULL;
+	dataNode* tempElement=NULL;
+	dataNode* insertedElement = NULL;
 	
 	for(i=0; i<noOfWords; i++){				//different layers
-		int position = tempArray->position;
+		printf("INSERTING WORD '%s\n",arrayOfWords[i]);
+		if(i==0){			//root word
 		
 		
-		
-		dataNode* tempElement = malloc(sizeof(dataNode));		//creating dataNode for insert
-		if(i==noOfWords -1)		//final word
-			tempElement->isFinal=true;
-		else
-			tempElement->isFinal=false;
-		
-		insertString (tempElement, arrayOfWords[i]);
-		tempElement->nextWordArray=NULL;
-		
-		insertTrieNode(tempElement, hashTable);					//inserting node into hashTable
-		
-		
-		/*checkItemExists* getPosition = insertionSort(tempArray, tempElement, tempArray->position); 
-		
-		if(getPosition->exists==true){
+			rootElement = malloc(sizeof(dataNode));		//creating dataNode for insert
 			if(i==noOfWords -1)		//final word
-				tempArray->array[getPosition->position].isFinal=true;
-			deleteDataNode(tempElement);
+				rootElement->isFinal=true;
+			else
+				rootElement->isFinal=false;
+		
+			insertString (rootElement, arrayOfWords[i]);
+			rootElement->nextWordArray=NULL;
+		
+		
+			insertedElement = insertTrieNode(rootElement, hashTable);					//inserting node into hashTable
+			
+			//deleteDataNode(rootElement);
+			//free(rootElement);
+			//rootElement=NULL;	
 			
 		}
-		else{			//if word is not in array yet
+		else{
+		
+			//if(insertedElement->nextWordArray!=NULL){
+			//	printf("printing array of word '%s'\n",insertedElement->word);
+				//printFullArray(insertedElement->nextWordArray, insertedElement->nextWordArray->position);
+			//	printf("AFTER printing array of word '%s'\n",insertedElement->word);
+			//}
+		
+			tempElement = malloc(sizeof(dataNode));		//creating dataNode for insert
 			if(i==noOfWords -1)		//final word
-				tempArray->array[getPosition->position].isFinal=true;
+				tempElement->isFinal=true;
 			else
-				tempArray->array[getPosition->position].isFinal=false; 
+				tempElement->isFinal=false;
+		
+			insertString (tempElement, arrayOfWords[i]);
+			tempElement->nextWordArray=NULL;
+			
+			//printf("this\n");
+			
+			if(i==1){
+				//printf("i==1\n");
+				if(insertedElement->nextWordArray==NULL){
+					//printf("nextWordArray==NULL\n");
+					insertedElement->nextWordArray =  malloc(1 * sizeof(arrayOfStructs));
+					initializeArray(insertedElement->nextWordArray);
+				}
+				tempArray = insertedElement->nextWordArray;	
+				//tempArray = malloc(1 * sizeof(arrayOfStructs));
+					
+			}
+			checkItemExists* getPosition = insertionSort(tempArray, tempElement, tempArray->position); 
+	
+			//printf("position is %d\n", getPosition->position);
+		
+			if(getPosition->exists==true){
+				//printf("already exists\n");
+				if(i==noOfWords -1)		//final word
+					tempArray->array[getPosition->position].isFinal=true;
+				deleteDataNode(tempElement);
+			
+			}
+			else{			//if word is not in array yet
+				if(i==noOfWords -1)		//final word
+					tempArray->array[getPosition->position].isFinal=true;
+				else
+					tempArray->array[getPosition->position].isFinal=false; 
 				
 			
-			tempArray->position++;	
-		}
-		
-		if(i!=noOfWords -1 && tempArray->array[getPosition->position].nextWordArray==NULL){
-			tempArray->array[getPosition->position].nextWordArray = malloc(1 * sizeof(arrayOfStructs));
-			initializeArray(tempArray->array[getPosition->position].nextWordArray);
-		}
-		
-		free(tempElement);
-		tempElement=NULL;
-		tempArray = tempArray->array[getPosition->position].nextWordArray;
-		free(getPosition);
-		getPosition = NULL;*/
+				tempArray->position++;	
+				//printf("WORD IS '%s' tempArray->position is %d\n",tempArray->array[1].word, tempArray->position);
+			}
+			if(i!=noOfWords -1 && tempArray->array[getPosition->position].nextWordArray==NULL){
+				//printf("inside if\n");
+				tempArray->array[getPosition->position].nextWordArray = malloc(1 * sizeof(arrayOfStructs));
+				initializeArray(tempArray->array[getPosition->position].nextWordArray);
 
+			}
+			
+			//printFullArray(tempArray, tempArray->position);
+			free(tempElement);
+			tempElement=NULL;
+			tempArray = tempArray->array[getPosition->position].nextWordArray;
+			//printf("next tempARray\n");
+			free(getPosition);
+			getPosition = NULL;
+		
+		}
+		
 	}
+	printf("element: '%s' printing next words\n",insertedElement->word);
+	if(insertedElement->nextWordArray!=NULL){
+		printFullArray(insertedElement->nextWordArray, insertedElement->nextWordArray->position);
+	}
+		
+		
+		
+		
+	
 }
 
 //search

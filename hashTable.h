@@ -24,7 +24,7 @@ struct Bucket{
 
 HashTable* createLinearHash(int noOfBuckets, int noOfCells);
 int destroyLinearHash(HashTable* hashTable);
-int insertTrieNode(dataNode* node, HashTable* hashTable);
+dataNode* insertTrieNode(dataNode* node, HashTable* hashTable);
 dataNode* lookupTrieNode(char* lookupWord ,HashTable* hashTable);
 
 int deleteTrieNode(char* deleteWord ,HashTable* hashTable);

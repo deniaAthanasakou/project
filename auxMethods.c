@@ -345,24 +345,21 @@ checkItemExists* binarySearch2(dataNode* array, dataNode* item, int first, int l
 checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* itemForInsert, int lastElement)
 {
 	
-	printf("/////////////////////////////////////////////inserting word '%s'\n", getString(itemForInsert));
+	//printf("/////////////////////////////////////////////inserting word '%s'\n", getString(itemForInsert));
 	dataNode* array = malloc((bucket->noOfElements)*sizeof(dataNode));
 	Bucket* tempBucket = bucket;
 	int arrayCounter=0;
 	int cellCounter=0;
 	while(tempBucket!=NULL){		
 		if(cellCounter == tempBucket->length){
-			printf("next temp\n");
 			tempBucket=tempBucket->nextBucket;
 			cellCounter = 0;
 		}
 		if(tempBucket == bucket && tempBucket->position == 0) {
-			printf("a\n");
 			break;
 		}
 		int position = tempBucket->position;
 		if(cellCounter >= position) {
-			printf("b\n");
 			break;
 		}	
 		//printf("c\n");	
@@ -370,12 +367,12 @@ checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* i
 		arrayCounter++;
 		cellCounter++;
 	}
-	printf("printing array arrayCounter %d\n", arrayCounter);
-	for(int i =0; i <arrayCounter; i++){
-		printf("word '%s'\n", getString(&(array[i])));
-	}
+//	printf("printing array arrayCounter %d\n", arrayCounter);
+//	for(int i =0; i <arrayCounter; i++){
+	//	printf("word '%s'\n", getString(&(array[i])));
+	//}
 	
-	printf("after array\n");
+	//printf("after array\n");
 
 
     int i, loc, j;
@@ -387,6 +384,10 @@ checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* i
 	if(lastElement==0){
 		memmove(&(bucket->cells[0]),itemForInsert, sizeof(*itemForInsert));
 		bucket->position++;
+		//insertNode = &(bucket->cells[0]);
+		
+		retPosition->insertedNode = &(bucket->cells[0]);
+		//printf("last element 0 word '%s'\n",retPosition->insertedNode->word);
 		return retPosition;
 	}
 	free(retPosition);
@@ -396,6 +397,21 @@ checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* i
     // find location where selected sould be inseretd
     checkItemExists* getPosition = binarySearch2(array, itemForInsert, 0, j,NULL);
     if(getPosition->exists==true){
+    	//insertNode = &(bucket->cells[0]);
+    	int noOfExtraBucketsToBeUsed = bucket->noOfElements  / bucket->length;
+    	int cellToInsert = getPosition->position % bucket->length;
+		int bucketToInsert = getPosition->position / bucket->length;
+		Bucket* tempBucket = bucket;
+		//printf("noOfExtraBucketsToBeUsed %d cellToInsert %d  bucketToInsert %d\n",noOfExtraBucketsToBeUsed,cellToInsert,bucketToInsert);
+		for(int i=0; i<=noOfExtraBucketsToBeUsed;i++){	//memmove inside bucket
+			
+			if(bucketToInsert==i)
+				getPosition->insertedNode =  &(tempBucket->cells[cellToInsert]);
+				
+			tempBucket = tempBucket->nextBucket;	
+		}
+		//printf("word is '%s'\n",getPosition->insertedNode->word);
+
     	return getPosition;
     }
     
@@ -413,14 +429,16 @@ checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* i
 	memmove(&array[startingPoint+1],&array[startingPoint],moveSize);
 	memmove(&(array[j+1]),itemForInsert,sizeof(*itemForInsert));
 	moveSize+=sizeof(array[j+1]);
-	printf("printing new array\n");
-	for(int i =0; i <arrayCounter+1; i++){
-		printf("word '%s'\n", getString(&(array[i])));
-	}
+	//printf("printing new array\n");
+	//for(int i =0; i <arrayCounter+1; i++){
+	//	printf("word '%s'\n", getString(&(array[i])));
+	//}
 	
-	printf("after new array\n");
+	//printf("after new array\n");
 	
-	int noOfExtraBucketsToBeUsed = ((bucket->noOfElements ) / bucket->length);
+	int noOfExtraBucketsToBeUsed = bucket->noOfElements  / bucket->length;
+	int cellToInsert = getPosition->position % bucket->length;
+	int bucketToInsert = getPosition->position / bucket->length;
 	//printf("noOfBucketsToBeUsed is %d\n", noOfExtraBucketsToBeUsed);
 	
 	//create chunks
@@ -452,16 +470,19 @@ checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* i
 		
 		
 		
-		printf("bucketForInsert->position %d\n",bucketForInsert->position);
+		//printf("bucketForInsert->position %d\n",bucketForInsert->position);
 		
 		if(i==noOfExtraBucketsToBeUsed){
 			bucketForInsert->position++;
-			printf("++\n");
 		}	
 		
 		bucketForInsert = bucketForInsert->nextBucket;
 		
 		chunkCounter+=bucket->length;
+		
+		if(bucketToInsert==i)
+			getPosition->insertedNode =  &(bucketForInsert->cells[cellToInsert]);
+			//insertNode = &(bucketForInsert->cells[cellToInsert]);
 		
 	}
 	//printf("before position++\n");
@@ -516,7 +537,7 @@ void printFullArray(arrayOfStructs* array_of_str, int position){	//prints all la
 			word=NULL;
 			if(i==lastElement-1){				//print only once
 				printf("\b\b: ");
-				printArray(tempArray,(position-1));
+				printArray(tempArray,(position));
 			}
 			if( tempArray->array[i].nextWordArray!=NULL){
 				printFullArray( tempArray->array[i].nextWordArray, position);

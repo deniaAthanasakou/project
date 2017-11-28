@@ -10,6 +10,7 @@ typedef struct checkItemExists checkItemExists;
 struct checkItemExists{
 	int position;	//position of element to insert
 	bool exists;	// if exists true
+	dataNode* insertedNode;
 };
 
 typedef struct arrayWords{

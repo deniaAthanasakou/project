@@ -48,3 +48,23 @@ possibly free ta buckets
 na arxisoume na vazoume ngrams anti gia 1grams
 
 afou ginoun auta prepei na arxisoume na auksanoume to megethos tou hashTable
+
+
+senario
+	is this a cat
+	is a
+	
+	prepei h insert trie na epistrefei to dataNode wste meta na ephreazetai to sugkekrimeno
+	
+	
+	
+	if(getPosition->exists==true){
+    	//insertNode = &(bucket->cells[0]);
+    	return getPosition;
+    }
+	
+	
+	
+	
+	
+	
