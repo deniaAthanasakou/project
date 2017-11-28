@@ -11,6 +11,7 @@ struct HashTable{
 	Bucket* buckets;			//array of buckets
 	int level;					//level of hashing
 	int bucketToBeSplit;		//p
+	int numberOfBuckets;		//real length of bukets
 };
 
 struct Bucket{
@@ -33,6 +34,9 @@ void initializeBucket(Bucket* bucket, int noOfCells, int noOfElements );
 
 
 int getBucketFromHash(int level, int lengthHash, int bucketToBeSplit, char* word);
+
+void splitBucket(HashTable* hashTable, int bucketToBeSplit);
+void levelUp(HashTable* hashTable);
 
 
 #endif
