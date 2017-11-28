@@ -30,50 +30,104 @@ void initializeBucket(Bucket* bucket, int noOfCells, int noOfElements ){
 dataNode* insertTrieNode(dataNode* node, HashTable* hashTable){
 
 	char* word = getString(node);
-	int noOfbucket = getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, word);	
-
+	int noOfbucket = getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, word);
+	//printf("INSERT TO BUCKET: %d\n",noOfbucket);
 	Bucket* bucket = &(hashTable->buckets[noOfbucket]);
 	while(bucket!=NULL){					//go to last overflowed bucket
 		if(bucket->position==bucket->length){	//overflow
 			if(bucket->nextBucket==NULL){
-				printf("inside overflow\n");
 				bucket->nextBucket = malloc(sizeof(Bucket));
 				initializeBucket(bucket->nextBucket,bucket->length,bucket->noOfElements);
 				hashTable->bucketToBeSplit++;
-				printf("after init\n");
-			}
-			
-			
+			}	
 		}
 		bucket=bucket->nextBucket;
 	}
 	
 	//insertion sort
-	//printf("bucket %d elements %d\n",noOfbucket,hashTable->buckets[noOfbucket].noOfElements);
 	checkItemExists* check = insertionSort2(hashTable, &(hashTable->buckets[noOfbucket]),node, hashTable->buckets[noOfbucket].noOfElements);
-	//printf("print it\n");
-	//printFullArray(check->insertedNode->nextWordArray, check->insertedNode->nextWordArray->position);
-	//printf("end print it\n");
 	
-	
-	//printf("after insertion sort word '%s'\n",check->insertedNode->word);
-	if(!check->exists){
-	
-		//printf("inserted item '%s' in position '%d'\n",word,check->position);
-	
+	if(!check->exists){	
 		hashTable->buckets[noOfbucket].noOfElements++;
 	}
-	
-	
-	
-	
-	//printf("bucket to be split '%d'\n",hashTable->bucketToBeSplit);
-	
 	return check->insertedNode;
-	
-	
 }
 
+dataNode* lookupTrieNode(char* lookupWord ,HashTable* hashTable){
+	//printf("inside lookup\n");
+	int getCorrectBucket = getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, lookupWord);
+	int maxElems = hashTable->buckets[getCorrectBucket].noOfElements;
+	dataNode** searchArray = malloc(maxElems * sizeof(dataNode*));
+	Bucket *copyBucket = &hashTable->buckets[getCorrectBucket];
+	Bucket *firstBucket = copyBucket;
+	int arrayCounter=0;
+	int cellCounter=0;
+	while(copyBucket!=NULL){		
+		if(cellCounter == copyBucket->length){		//max cell
+			copyBucket = copyBucket->nextBucket;
+			cellCounter = 0;
+		}
+		if(copyBucket==NULL)
+			break;
+		
+		if(firstBucket==copyBucket  && copyBucket->position == 0) {
+			return NULL;
+		}
+		
+		int position = copyBucket->position;
+		if(cellCounter >= position) {
+			break;
+		}	
+		
+		
+		//printf("arrayCounter = %d,cellCounter = %d\n ",arrayCounter,cellCounter);
+		searchArray[arrayCounter] = &copyBucket->cells[cellCounter];
+		//printf("---------------%dth elem with %s\n",arrayCounter,searchArray[arrayCounter]->word);
+		arrayCounter++;
+		cellCounter++;
+	
+	}
+	
+	/*printf("after array\n");
+	for(int i=0; i<arrayCounter; i++){
+		printf("---------------%dth elem with %s\n",i,searchArray[i]->word);
+	}*/
+	
+	int first = 0;
+	int last = maxElems - 1;
+	int middle = (first+last)/2;
+	
+	//printf("middle:  %d\n",middle);
+	
+	char *searchWord;
+	while (first <= last) {
+		searchWord = getString(searchArray[middle]);
+		//printf("searchword is '%s'\n",searchArray[middle]->word);
+		if (strcmp(searchWord,lookupWord)<0)
+			first = middle + 1;    
+		else if (strcmp(searchWord,lookupWord)==0) {
+			free(searchWord);
+			searchWord = NULL;
+			dataNode* returnNode =  searchArray[middle];
+			free(searchArray);
+			searchArray = NULL;
+			return returnNode;
+		}
+		else
+			last = middle - 1;
+
+		middle = (first + last)/2;
+	}
+	if (first > last){
+		free(searchWord);
+		searchWord = NULL;
+		free(searchArray);
+		searchArray = NULL;
+		//printf("nulllll in lookup\n");
+		return NULL;
+	}
+
+}
 
 
 
@@ -103,7 +157,7 @@ int getBucketFromHash(int level, int lengthHash, int bucketToBeSplit, char* word
 	int hashLevel = charSum % ((int)pow(2,level) * lengthHash);
 	int hashLevelPlus = charSum %  ((int)pow(2,level+1) * lengthHash);
 	
-	printf("word '%s' charSum '%d' bucketToBeSplit '%d'\n",word, charSum, bucketToBeSplit);
+	//printf("word '%s' charSum '%d' bucketToBeSplit '%d'\n",word, charSum, bucketToBeSplit);
 	
 	if(hashLevel>=bucketToBeSplit)
 		return hashLevel;

@@ -8,10 +8,10 @@
 
 
 //insert
-void insert_ngram(arrayOfStructs* array_of_structs, HashTable* hashTable, char** arrayOfWords, int noOfWords);
+void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords);
 
 //search
-char* search_ngram(arrayOfStructs* array_of_structs, char** arrayOfWordsOriginal, int noOfWordsOriginal);
+char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWordsOriginal);
 
 //delete
 void delete_ngram(arrayOfStructs* array_of_structs, char** arrayOfWords, int noOfWords);
