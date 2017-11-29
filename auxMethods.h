@@ -46,6 +46,4 @@ checkItemExists* binarySearch2(dataNode* array, dataNode* item, int first, int l
 
 checkItemExists* insertionSort2(HashTable* hashTable, Bucket* bucket, dataNode* itemForInsert, int lastElement);
 
-dataNode** bucketsToArrayConv(Bucket* bucket);
-
 #endif

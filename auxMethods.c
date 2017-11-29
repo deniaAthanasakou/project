@@ -39,9 +39,6 @@ int initialize(FILE* file, arrayOfStructs* structureTree, HashTable* hashTable){
 	}
 	
 	
-	/*printf("printing array of word 'this'\n");
-	printFullArray(hashTable->buckets[0].cells[0].nextWordArray,hashTable->buckets[0].cells[0].nextWordArray->position);
-	printf("AFTER printing array of word 'this'\n");*/
 	printf("----PRINT 0TH BUCKET----\n");
 	printBuckets(&(hashTable->buckets[0]));
 	printf("----PRINT 4TH BUCKET----\n");
@@ -356,183 +353,57 @@ checkItemExists* binarySearch2(dataNode* array, dataNode* item, int first, int l
 checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* itemForInsert, int lastElement)
 {
 	
-	//printf("/////////////////////////////////////////////inserting word '%s'\n", getString(itemForInsert));
-	dataNode* array = malloc((bucket->noOfElements)*sizeof(dataNode));
-	Bucket* tempBucket = bucket;
-	int arrayCounter=0;
-	int cellCounter=0;
-	while(tempBucket!=NULL){		
-		if(cellCounter == tempBucket->length){
-			tempBucket=tempBucket->nextBucket;
-			cellCounter = 0;
-		}
-		if(tempBucket == bucket && tempBucket->position == 0) {
-			break;
-		}
-		int position = tempBucket->position;
-		if(cellCounter >= position) {
-			break;
-		}	
-		//printf("c\n");	
-		array[arrayCounter] = tempBucket->cells[cellCounter];
-		arrayCounter++;
-		cellCounter++;
-	}
-//	printf("printing array arrayCounter %d\n", arrayCounter);
-//	for(int i =0; i <arrayCounter; i++){
-	//	printf("word '%s'\n", getString(&(array[i])));
-	//}
+	printf("/////////////////////////////////////////////inserting word '%s'\n", getString(itemForInsert));
 	
-	//printf("after array\n");
-
-
-    int i, loc, j;
+	int i, loc, j;
     
     checkItemExists* retPosition=malloc(sizeof(checkItemExists));
     retPosition->position=0;	//insert in first elements
     retPosition->exists=false;
+	
     
 	if(lastElement==0){
-		memmove(&(bucket->cells[0]),itemForInsert, sizeof(*itemForInsert));
+		//array_of_str->array[0] = *itemForInsert;
+		memmove(&(bucket->cells[0]), itemForInsert, sizeof(*itemForInsert));
 		bucket->position++;
-		//insertNode = &(bucket->cells[0]);
-		
 		retPosition->insertedNode = &(bucket->cells[0]);
-		//printf("last element 0 word '%s'\n",retPosition->insertedNode->word);
-		
-		for(int i=0; i<arrayCounter; i++){
-			deleteDataNode(&(array[i]));
-			//free(&(array[i]));
-		}
-		free(array);
-		array=NULL;
-		
 		return retPosition;
 	}
 	free(retPosition);
 	retPosition=NULL;
-    j = lastElement - 1;
+	i=lastElement;
+    j = i - 1;
 
-    // find location where selected sould be inseretd
-    checkItemExists* getPosition = binarySearch2(array, itemForInsert, 0, j,NULL);
+    // find location where selected should be inserted
+    checkItemExists* getPosition = binarySearch2(bucket->cells, itemForInsert, 0, j,NULL);
     if(getPosition->exists==true){
-    	//insertNode = &(bucket->cells[0]);
-    	int noOfExtraBucketsToBeUsed = bucket->noOfElements  / bucket->length;
-    	int cellToInsert = (getPosition->position) % bucket->length;
-		int bucketToInsert = (getPosition->position-1) / bucket->length;
-		Bucket* tempBucket = bucket;
-		//printf("noOfExtraBucketsToBeUsed %d cellToInsert %d  bucketToInsert %d\n",noOfExtraBucketsToBeUsed,cellToInsert,bucketToInsert);
-		for(int i=0; i<=noOfExtraBucketsToBeUsed;i++){	//memmove inside bucket
-			
-			if(bucketToInsert==i)
-				getPosition->insertedNode =  &(tempBucket->cells[cellToInsert]);
-				
-			tempBucket = tempBucket->nextBucket;	
-		}
-		//printf("word is '%s'\n",getPosition->insertedNode->word);
-
-		for(int i=0; i<arrayCounter; i++){
-			deleteDataNode(&(array[i]));
-			//free(&(array[i]));
-		}
-		free(array);
-		array=NULL;
-
-
     	return getPosition;
     }
-    
-    
-    
+
+	//increase cells
+	if(bucket->position == bucket->length){
+		createOverflowCells(bucket);
+	}
+
     loc=getPosition->position;
-    array = realloc(array,(bucket->noOfElements +1 )*sizeof(dataNode));
-	int moveSize=0;
-	int startingPoint = getPosition->position;
-	while (j >= loc)
-	{
-	   moveSize+=sizeof(array[j]);
-	    j--;
-	}
-	memmove(&array[startingPoint+1],&array[startingPoint],moveSize);
-	memmove(&(array[j+1]),itemForInsert,sizeof(*itemForInsert));
-	moveSize+=sizeof(array[j+1]);
-	//printf("printing new array\n");
-	//for(int i =0; i <arrayCounter+1; i++){
-	//	printf("word '%s'\n", getString(&(array[i])));
-	//}
-	
-	//printf("after new array\n");
-	
-	
-	int noOfExtraBucketsToBeUsed = bucket->noOfElements  / bucket->length;
-	int cellToInsert = (getPosition->position) % bucket->length;
-	int bucketToInsert = (getPosition->position-1) / bucket->length;
-	//create chunks
-
-	Bucket* bucketForInsert = bucket;
-	
-	int* sizes = malloc(0*sizeof(int));
-	for(int i=0; i<=bucket->noOfElements +1; i++){	//store chunk size
-		sizes = realloc(sizes,(i+1)*sizeof(int));
-		sizes[i] = sizeof(array[i]);
-	}
-	int chunkCounter = 0;
-	int sizesCounter = 0;
-	int elementsForChucks=bucket->noOfElements +1;
-	for(int i=0; i<=noOfExtraBucketsToBeUsed;i++){	//memmove inside bucket
-		int sizeOfChunk = 0;
-		int j =0;
-		
-		while(j<bucket->length && j<=bucketForInsert->position){
-			sizeOfChunk+=sizes[sizesCounter];
-			sizesCounter++;
-			j++;
-			elementsForChucks-=bucket->length;
+    
+    // Move all elements after location to create space
+    int moveSize=0;
+	//int startingPoint = j-1;			//an vroume auto ti prepei na einai tha doulepsei komple
+	int startingPoint = getPosition->position;	
+	if( j>=loc){
+		while (j >= loc)
+		{
+			moveSize+=sizeof(bucket->cells[j]);
+			j--;
+			
 		}
-		
-
-		memmove(&(bucketForInsert->cells[0]),&array[chunkCounter],sizeOfChunk);
-		//printf("bucket %d\n",i);
-		//printf("ARRAYYY: array[chunkCounter].word = %s\n",array[chunkCounter].word);
-		//printf("sizeOfChunk = %d and JJJJJ: %d\n",sizeOfChunk,j);
-		
-		//if(bucketForInsert==NULL) printf("----NULLLLL");
-		//printf("wwword in cell 0 '%s'\n", bucketForInsert->cells[0].word);
-		//printf("word in cell 0 '%s'\n", getString(&(bucketForInsert->cells[0])));
-		//printf("word in cell 1 '%s'\n",getString(&(bucketForInsert->cells[1])));
-		//printf("word in cell 2 '%s'\n",getString(&(bucketForInsert->cells[2])));
-		//printf("word in cell 3 '%s'\n",getString(&(bucketForInsert->cells[3])));
-		
-		
-		
-		//printf("bucketForInsert->position %d\n",bucketForInsert->position);
-		
-		if(i==noOfExtraBucketsToBeUsed){
-			bucketForInsert->position++;
-		}	
-		
-		chunkCounter+=bucket->length;
-		
-		//printf("bucketToInsert %d\n",bucketToInsert);
-		if(bucketToInsert==i)
-			getPosition->insertedNode =  &(bucketForInsert->cells[cellToInsert]);
-			//insertNode = &(bucketForInsert->cells[cellToInsert]);
-		
-	
-		bucketForInsert = bucketForInsert->nextBucket;
-		
+		memmove(&(bucket->cells[startingPoint+1]), &(bucket->cells[startingPoint]), moveSize);
 	}
-	
-	for(int i=0; i<arrayCounter; i++){
-		deleteDataNode(&(array[i]));
-		//free(&(array[i]));
-	}
-	
-	free(sizes);
-	sizes=NULL;
-	free(array);
-	array=NULL;
-		
+	//array_of_str->array[j+1] = *itemForInsert;
+	memmove(&(bucket->cells[j+1]), itemForInsert, sizeof(*itemForInsert));
+	bucket->position++;
+	getPosition->insertedNode = itemForInsert;
     getPosition->position=j+1;
     
     return getPosition;
@@ -770,46 +641,7 @@ char* getString(dataNode* node){
 	}
 	return returnWord;	
 }
-/*
-dataNode** bucketsToArrayConv(Bucket* bucket){
 
-	int getCorrectBucket = getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, lookupWord);
-	int maxElems = hashTable->buckets[getCorrectBucket].noOfElements;
-	dataNode** searchArray = malloc(maxElems * sizeof(dataNode*));
-	Bucket *copyBucket = &hashTable->buckets[getCorrectBucket];
-	Bucket *firstBucket = copyBucket;
-	int arrayCounter=0;
-	int cellCounter=0;
-	while(copyBucket!=NULL){		
-		if(cellCounter == copyBucket->length){		//max cell
-			copyBucket = copyBucket->nextBucket;
-			cellCounter = 0;
-		}
-		if(copyBucket==NULL)
-			break;
-		
-		if(firstBucket==copyBucket  && copyBucket->position == 0) {
-			return NULL;
-		}
-		
-		int position = copyBucket->position;
-		if(cellCounter >= position) {
-			break;
-		}	
-		
-		
-		//printf("arrayCounter = %d,cellCounter = %d\n ",arrayCounter,cellCounter);
-		searchArray[arrayCounter] = &copyBucket->cells[cellCounter];
-		//printf("---------------%dth elem with %s\n",arrayCounter,searchArray[arrayCounter]->word);
-		arrayCounter++;
-		cellCounter++;
-	
-	}
-	
-	return 
-
-
-}
 
 
 

@@ -19,14 +19,9 @@ struct Bucket{
 	int length;					//c initial length
 	dataNode* cells;			//array of struct datanode
 	//Bucket* nextBucket;			//ptr for overflow
-	//int hashFunc;	
 	int position;				//position of last element
-	int noOfElements;
-};
-
-struct BucketCell{
-	Bucket* bucket;
-	int cellNum;
+	int noOfCells;
+	//int noOfElements;
 };
 
 
@@ -37,19 +32,19 @@ dataNode* lookupTrieNode(char* lookupWord ,HashTable* hashTable);
 
 int deleteTrieNode(char* deleteWord ,HashTable* hashTable);
 
-void initializeBucket(Bucket* bucket, int noOfCells, int noOfElements );
+void initializeBucket(Bucket* bucket, int noOfCells);
 
 
 int getBucketFromHash(int level, int lengthHash, int bucketToBeSplit, char* word);
 
 void splitBucket(HashTable* hashTable);
 void levelUp(HashTable* hashTable);
-BucketCell* lookupBucket(char *lookupWord,HashTable *hashTable);
 void deletionSortBucket(Bucket* bucket, int position);
 void printBuckets(Bucket *bucket);
 
 
-void createOverflowCells(Bucket* bucket);		//noOfElements+length
+void createOverflowCells(Bucket* bucket);
+int getCell(char* lookupWord ,HashTable* hashTable,int previousBucket);
 
 
 #endif
