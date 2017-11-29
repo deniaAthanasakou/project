@@ -42,6 +42,10 @@ int initialize(FILE* file, arrayOfStructs* structureTree, HashTable* hashTable){
 	/*printf("printing array of word 'this'\n");
 	printFullArray(hashTable->buckets[0].cells[0].nextWordArray,hashTable->buckets[0].cells[0].nextWordArray->position);
 	printf("AFTER printing array of word 'this'\n");*/
+	printf("----PRINT 0TH BUCKET----\n");
+	printBuckets(&(hashTable->buckets[0]));
+	printf("----PRINT 4TH BUCKET----\n");
+	printBuckets(&(hashTable->buckets[4]));
 	
 	return returnValue;
 }
@@ -766,8 +770,46 @@ char* getString(dataNode* node){
 	}
 	return returnWord;	
 }
+/*
+dataNode** bucketsToArrayConv(Bucket* bucket){
+
+	int getCorrectBucket = getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, lookupWord);
+	int maxElems = hashTable->buckets[getCorrectBucket].noOfElements;
+	dataNode** searchArray = malloc(maxElems * sizeof(dataNode*));
+	Bucket *copyBucket = &hashTable->buckets[getCorrectBucket];
+	Bucket *firstBucket = copyBucket;
+	int arrayCounter=0;
+	int cellCounter=0;
+	while(copyBucket!=NULL){		
+		if(cellCounter == copyBucket->length){		//max cell
+			copyBucket = copyBucket->nextBucket;
+			cellCounter = 0;
+		}
+		if(copyBucket==NULL)
+			break;
+		
+		if(firstBucket==copyBucket  && copyBucket->position == 0) {
+			return NULL;
+		}
+		
+		int position = copyBucket->position;
+		if(cellCounter >= position) {
+			break;
+		}	
+		
+		
+		//printf("arrayCounter = %d,cellCounter = %d\n ",arrayCounter,cellCounter);
+		searchArray[arrayCounter] = &copyBucket->cells[cellCounter];
+		//printf("---------------%dth elem with %s\n",arrayCounter,searchArray[arrayCounter]->word);
+		arrayCounter++;
+		cellCounter++;
+	
+	}
+	
+	return 
 
 
+}
 
 
 

@@ -5,6 +5,7 @@
 
 typedef struct HashTable HashTable;
 typedef struct Bucket Bucket;
+typedef struct BucketCell BucketCell;
 
 struct HashTable{
 	int length;					//m
@@ -15,13 +16,19 @@ struct HashTable{
 };
 
 struct Bucket{
-	int length;					//c
+	int length;					//c initial length
 	dataNode* cells;			//array of struct datanode
-	Bucket* nextBucket;			//ptr for overflow
+	//Bucket* nextBucket;			//ptr for overflow
 	//int hashFunc;	
 	int position;				//position of last element
 	int noOfElements;
 };
+
+struct BucketCell{
+	Bucket* bucket;
+	int cellNum;
+};
+
 
 HashTable* createLinearHash(int noOfBuckets, int noOfCells);
 void destroyLinearHash(HashTable* hashTable);
@@ -37,8 +44,12 @@ int getBucketFromHash(int level, int lengthHash, int bucketToBeSplit, char* word
 
 void splitBucket(HashTable* hashTable);
 void levelUp(HashTable* hashTable);
-Bucket* lookupBucket(char *lookupWord,HashTable *hashTable);
+BucketCell* lookupBucket(char *lookupWord,HashTable *hashTable);
 void deletionSortBucket(Bucket* bucket, int position);
 void printBuckets(Bucket *bucket);
+
+
+void createOverflowCells(Bucket* bucket);		//noOfElements+length
+
 
 #endif
