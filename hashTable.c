@@ -10,6 +10,7 @@ HashTable* createLinearHash(int noOfBuckets, int noOfCells){
 	HashTable* hashTable = malloc(sizeof(HashTable));
 	hashTable->buckets = malloc(noOfBuckets * sizeof(Bucket));
 	hashTable->length = noOfBuckets;
+	hashTable->numberOfBuckets = noOfBuckets;
 	hashTable->level = 0;
 	hashTable->bucketToBeSplit = 0;
 	for(int i=0; i<noOfBuckets; i++){			//for each bucket
@@ -25,67 +26,6 @@ void initializeBucket(Bucket* bucket, int noOfCells, int noOfElements ){
 	bucket->cells = malloc(noOfCells * sizeof(dataNode));
 	bucket->noOfElements = noOfElements;
 	
-}
-
-dataNode* insertTrieNode(dataNode* node, HashTable* hashTable){
-	char* word = getString(node);
-	int noOfbucket = getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, word);
-	//printf("INSERT word: %s\n",word);
-	Bucket* bucket = &(hashTable->buckets[noOfbucket]);
-	
-
-	//insertion sort
-	checkItemExists* check = insertionSort2(hashTable, &(hashTable->buckets[noOfbucket]),node, hashTable->buckets[noOfbucket].noOfElements);
-	
-	if(!check->exists){	
-		//printf("INSERTed word: %s\n",word);
-		hashTable->buckets[noOfbucket].noOfElements++;
-		int i=0;
-		while(bucket!=NULL){					//go to last overflowed bucket
-			printf("%d %s\n",i, node->word);
-			if(bucket->position==bucket->length){	//overflow
-				if(bucket->nextBucket==NULL){
-					bucket->nextBucket = malloc(sizeof(Bucket));
-					initializeBucket(bucket->nextBucket,bucket->length,bucket->noOfElements);
-					//hashTable->bucketToBeSplit++;
-					
-				}	
-				
-			}
-			
-			if(bucket->position==1 && bucket!=&(hashTable->buckets[noOfbucket])){
-				//split bucket in position hashTable->bucketToBeSplit
-				hashTable->bucketToBeSplit++;
-			}
-			bucket=bucket->nextBucket;
-			i++;
-			
-			//printf("hashTable->bucketToBeSplit %d\n",hashTable->bucketToBeSplit);
-		}
-	}
-	free(word);
-	word=NULL;
-	/*dataNode returnNode = *(check->insertedNode);
-	if(check->insertedNode!=NULL){
-		deleteDataNode(check->insertedNode);
-		free(check->insertedNode);
-	}
-	
-	free(check);
-	check=NULL;
-	dataNode* returnNodePtr = &returnNode;
-	return returnNodePtr;*/
-	return check->insertedNode;
-}
-
-void levelUp(HashTable* hashTable){
-	hashTable->length*=2;
-	hashTable->level++;
-}
-
-void splitBucket(HashTable* hashTable, int bucketToBeSplit){
-	
-
 }
 
 void deletionSortBucket(Bucket* bucket, int position){
@@ -112,10 +52,124 @@ void deletionSortBucket(Bucket* bucket, int position){
 	bucket->position--;
 }
 
+dataNode* insertTrieNode(dataNode* node, HashTable* hashTable, int checkBucketToBeSplit){
+	char* word = getString(node);
+	int noOfbucket = getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, word);
+	
+	
+	printf("INSERT word: %s in %d \n",word, noOfbucket);
+	
+	Bucket* bucket = &(hashTable->buckets[noOfbucket]);
+
+	//insertion sort
+	checkItemExists* check = insertionSort2(hashTable, &(hashTable->buckets[noOfbucket]),node, hashTable->buckets[noOfbucket].noOfElements);
+	
+	if(!check->exists){	
+		/*printf("++++++++checkBucketToBeSplit is %d\n",checkBucketToBeSplit);
+		if(checkBucketToBeSplit!=-1){
+			if(noOfbucket!=checkBucketToBeSplit){
+				//bucket will be changed
+				Bucket* bucketOfItem = lookupBucket(word,hashTable);
+				if(bucketOfItem!=NULL){
+					printf("word in lookup is '%s'\n",bucketOfItem->cells[check->position].word);
+					deletionSortBucket(bucketOfItem,check->position);
+					printf("word in lookup is '%s'\n",bucketOfItem->cells[check->position].word);
+				}
+				else{
+					printf("not found\n");
+				
+				}
+			}
+		}*/
+		
+		hashTable->buckets[noOfbucket].noOfElements++;
+		
+		while(bucket!=NULL){					//go to last overflowed bucket
+			if(bucket->position==bucket->length){	//overflow
+				if(bucket->nextBucket==NULL){
+					bucket->nextBucket = malloc(sizeof(Bucket));
+					initializeBucket(bucket->nextBucket,bucket->length,bucket->noOfElements);					
+				}	
+			}
+			if(bucket->position==1 && bucket!=&(hashTable->buckets[noOfbucket])){
+				hashTable->bucketToBeSplit++;
+				//split bucket in position hashTable->bucketToBeSplit
+				//splitBucket(hashTable);
+			}
+			bucket=bucket->nextBucket;
+		}
+	}
+	free(word);
+	word=NULL;
+	
+	//printf("--------------OTH BUCKET-----------------\n");
+	//printBuckets(&hashTable->buckets[0]);
+	/*printf("--------------4TH BUCKET-----------------\n");
+	printBuckets(&hashTable->buckets[4]);*/
+	
+    /*dataNode* returnNodePtr;
+	*returnNodePtr = *check->insertedNode;
+	
+	
+	//dataNode returnNode = *(check->insertedNode);
+	if(check!=NULL){
+		if(check->insertedNode!=NULL){
+			deleteDataNode(check->insertedNode);
+			free(check->insertedNode);
+		}
+		free(check);
+		check=NULL;
+	}*/
+	
+	//return returnNodePtr;
+	return check->insertedNode;
+}
+
+void printBuckets(Bucket *bucket){
+	while(bucket!=NULL){
+		for(int i=0; i < bucket->position;i++){
+			char *word = getString(&bucket->cells[i]);
+			printf("%dth elem with word: '%s'\n",i,word);
+			free(word);
+			word = NULL;
+		}
+		bucket = bucket->nextBucket;
+	}
+}
+
+void levelUp(HashTable* hashTable){
+	hashTable->length*=2;
+	hashTable->level++;
+}
+
+void splitBucket(HashTable* hashTable){
+	printf("SPLITTING BUCKET\n");
+	hashTable->numberOfBuckets++;
+	hashTable->buckets = realloc(hashTable->buckets, hashTable->numberOfBuckets * sizeof(Bucket));
+	int nextCreatedBucket = hashTable->numberOfBuckets-1;
+	initializeBucket(&hashTable->buckets[nextCreatedBucket], hashTable->buckets[0].length,0);
+	
+	
+	//for each dataNode in bucketToBeSplit call getHashBucket and rearrange
+	Bucket *tempBucket = &(hashTable->buckets[hashTable->bucketToBeSplit -1 ]);
+	while(tempBucket!=NULL){							//for each connected bucket
+		printf("splittinggggggg pos is : %d\n",tempBucket->position);
+		for(int i=0; i<tempBucket->position; i++){		//for each cell of bucket
+			
+			printf("SALKDJASKDJASJDAJ  '%s' in cell %d\n",tempBucket->cells[i].word,i);
+			insertTrieNode(&tempBucket->cells[i],hashTable,hashTable->bucketToBeSplit-1);
+			printf("new is '%s'\n",hashTable->buckets[4].cells[0].word);
+			printf("old is '%s'\n",hashTable->buckets[0].cells[0].word);
+		}
+		tempBucket = tempBucket->nextBucket;
+	}
+	
+
+}
 
 dataNode* lookupTrieNode(char* lookupWord ,HashTable* hashTable){
 	//printf("inside lookup\n");
-	int getCorrectBucket = getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, lookupWord);
+	int getCorrectBucket =0;// getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, lookupWord);
 	int maxElems = hashTable->buckets[getCorrectBucket].noOfElements;
 	dataNode** searchArray = malloc(maxElems * sizeof(dataNode*));
 	Bucket *copyBucket = &hashTable->buckets[getCorrectBucket];
@@ -189,8 +243,80 @@ dataNode* lookupTrieNode(char* lookupWord ,HashTable* hashTable){
 
 }
 
+Bucket* lookupBucket(char *lookupWord,HashTable *hashTable){
+	int getCorrectBucket = getBucketFromHash(hashTable->level, hashTable->length, hashTable->bucketToBeSplit, lookupWord);
+	int maxElems = hashTable->buckets[getCorrectBucket].noOfElements+1;
+	dataNode** searchArray = malloc(maxElems * sizeof(dataNode*));
+	Bucket *copyBucket = &hashTable->buckets[getCorrectBucket];
+	Bucket *firstBucket = copyBucket;
+	int arrayCounter=0;
+	int cellCounter=0;
+	while(copyBucket!=NULL){		
+		if(cellCounter == copyBucket->length){		//max cell
+			copyBucket = copyBucket->nextBucket;
+			cellCounter = 0;
+		}
+		if(copyBucket==NULL)
+			break;
+		
+		if(firstBucket==copyBucket  && copyBucket->position == 0) {
+			return NULL;
+		}
+		
+		int position = copyBucket->position;
+		if(cellCounter >= position) {
+			break;
+		}	
+		
+		
+		//printf("arrayCounter = %d,cellCounter = %d\n ",arrayCounter,cellCounter);
+		searchArray[arrayCounter] = &copyBucket->cells[cellCounter];
+		//printf("---------------%dth elem with %s\n",arrayCounter,searchArray[arrayCounter]->word);
+		arrayCounter++;
+		cellCounter++;
+	
+	}
+	
+	/*printf("after array\n");
+	for(int i=0; i<arrayCounter; i++){
+		printf("---------------%dth elem with %s\n",i,searchArray[i]->word);
+	}*/
+	
+	int first = 0;
+	int last = maxElems - 1;
+	int middle = (first+last)/2;
+	
+	//printf("first: %d, last: %d, middle: %d\n",first,last,middle);
+	
+	char *searchWord;
+	while (first <= last) {
+		searchWord = getString(searchArray[middle]);
+		//printf("searchword is '%s'\n",searchArray[middle]->word);
+		if (strcmp(searchWord,lookupWord)<0)
+			first = middle + 1;    
+		else if (strcmp(searchWord,lookupWord)==0) {
+			//printf("AAAAAAAAAAAAA: found\n");
+			free(searchWord);
+			searchWord = NULL;
+			free(searchArray);
+			searchArray = NULL;
+			return copyBucket;
+		}
+		else
+			last = middle - 1;
 
-
+		middle = (first + last)/2;
+	}
+	if (first > last){
+		//printf("FUCKKKKKKKKK\n");
+		free(searchWord);
+		searchWord = NULL;
+		free(searchArray);
+		searchArray = NULL;
+		return NULL;
+	}
+	
+}
 
 
 void destroyLinearHash(HashTable* hashTable){
@@ -201,8 +327,6 @@ void destroyLinearHash(HashTable* hashTable){
 				deleteArray(tempBucket->cells[j].nextWordArray);
 				deletionSortBucket(tempBucket, j);
 			}
-					
-		
 			tempBucket = tempBucket->nextBucket;
 		}
 		
@@ -214,13 +338,6 @@ void destroyLinearHash(HashTable* hashTable){
 	free(hashTable);
 	hashTable=NULL;
 }
-
-
-
-
-
-
-
 
 int getBucketFromHash(int level, int lengthHash, int bucketToBeSplit, char* word){	//word->int and by using h(level) returns number of bucket
 	int charSum=0;

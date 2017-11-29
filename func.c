@@ -26,7 +26,7 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 			insertString (rootElement, arrayOfWords[i]);
 			rootElement->nextWordArray=NULL;
 		
-			insertedElement = insertTrieNode(rootElement, hashTable);					//inserting node into hashTable
+			insertedElement = insertTrieNode(rootElement, hashTable, -1);					//inserting node into hashTable
 			
 			deleteDataNode(rootElement);
 			free(rootElement);
@@ -453,6 +453,8 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 	free(myStack);
 	myStack = NULL;
 }
+
+
 
 
 

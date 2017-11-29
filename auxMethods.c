@@ -534,9 +534,8 @@ checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* i
     return getPosition;
 }
 
-void deletionSort(arrayOfStructs* array_of_str,	int position, int lastElement){
-	
 
+void deletionSort(arrayOfStructs* array_of_str,	int position, int lastElement){
 	
 	if(array_of_str->array[position].dynamicWord!=NULL){		
 		free(array_of_str->array[position].dynamicWord);

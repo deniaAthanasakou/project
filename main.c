@@ -60,31 +60,6 @@ int main (int argc,char* argv[]){
 		}
 		fclose (queryFile);
 	}
-	
 	destroyLinearHash(hashTable);	//addit wherever we exit (maybe in executeQueryFile);
-
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
