@@ -27,7 +27,7 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 			rootElement->nextWordArray=NULL;
 		
 			insertedElement = insertTrieNode(rootElement, hashTable, -1);					//inserting node into hashTable
-			
+			//insertedElement = check->insertedNode;
 			deleteDataNode(rootElement);
 			free(rootElement);
 			rootElement=NULL;	
@@ -144,8 +144,11 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 			if(i==0){
 				//printf("first word is '%s'\n",arrayOfWords[i]);
 				firstElement = lookupTrieNode(arrayOfWords[i],hashTable);
-				if(firstElement==NULL)
+				//printf("after lookup \n");
+				if(firstElement==NULL){
+				//	printf("NULL ELEMENT \n");
 					break;
+				}
 				strLength += strlen(arrayOfWords[i]) + 2;
 				finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
 				strcpy(finalString,arrayOfWords[i]);
@@ -178,7 +181,7 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 				strcat(finalString, " ");
 			}
 			else{
-				//printf(" word is '%s'\n",arrayOfWords[i]);
+				//printf("next word is '%s'\n",arrayOfWords[i]);
 				//printf("finalString %s\n",finalString);
 				if(i==1)
 					tempArray = firstElement->nextWordArray;
@@ -319,10 +322,10 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 			//lookup node
 			lookupElement = lookupTrieNode(arrayOfWords[i] ,hashTable);
 			if(lookupElement==NULL){
-				printf("lookupElement==NULL\n");
+			//	printf("lookupElement==NULL\n");
 				return;
 			}
-			printf("lookupElement->word = %s\n",lookupElement->word);
+			//printf("lookupElement->word = %s\n",lookupElement->word);
 			if(i==noOfWords-1){
 				lookupElement->isFinal=false;
 			}
@@ -343,7 +346,7 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 			tempElement->nextWordArray=NULL;
 			//strcpy(tempElement->word,arrayOfWords[i]);	
 		
-			printf("tempElement->word = %s\n",tempElement->word);
+			//printf("tempElement->word = %s\n",tempElement->word);
 			//find out if word exists in array and if it does return position
 			checkItemExists* getPosition = binarySearch(tempArray, tempElement,0 ,tempArray->position,NULL);
 			if(	getPosition->exists==true){
@@ -388,11 +391,11 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 		
 	}
 	
-	displayStack(myStack);
+	//displayStack(myStack);
 	
 	//must delete from stack and must delete from bucket
-	printf("before\n");
-	printFullArray(lookupElement->nextWordArray,lookupElement->nextWordArray->position);
+//	printf("before\n");
+//	printFullArray(lookupElement->nextWordArray,lookupElement->nextWordArray->position);
 	
 	int flagIfElementWasDeleted=0;
 	int flagLastElementDeleted = 0;
@@ -441,8 +444,8 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 		}
 		
 	}
-	printf("After\n");
-	printFullArray(lookupElement->nextWordArray,lookupElement->nextWordArray->position);
+	//printf("After\n");
+	//printFullArray(lookupElement->nextWordArray,lookupElement->nextWordArray->position);
 	
 	//must call deletionSort for bucket
 	//lookUpBucket->bucket

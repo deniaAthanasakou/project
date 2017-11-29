@@ -39,10 +39,10 @@ int initialize(FILE* file, arrayOfStructs* structureTree, HashTable* hashTable){
 	}
 	
 	
-	printf("----PRINT 0TH BUCKET----\n");
-	printBuckets(&(hashTable->buckets[0]));
-	printf("----PRINT 4TH BUCKET----\n");
-	printBuckets(&(hashTable->buckets[4]));
+	//printf("----PRINT 0TH BUCKET----\n");
+	//printBuckets(&(hashTable->buckets[0]));
+	//printf("----PRINT 4TH BUCKET----\n");
+	//printBuckets(&(hashTable->buckets[4]));
 	
 	return returnValue;
 }
@@ -353,7 +353,7 @@ checkItemExists* binarySearch2(dataNode* array, dataNode* item, int first, int l
 checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* itemForInsert, int lastElement)
 {
 	
-	printf("/////////////////////////////////////////////inserting word '%s'\n", getString(itemForInsert));
+//	printf("/////////////////////////////////////////////inserting word '%s'\n", getString(itemForInsert));
 	
 	int i, loc, j;
     
@@ -377,6 +377,7 @@ checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* i
     // find location where selected should be inserted
     checkItemExists* getPosition = binarySearch2(bucket->cells, itemForInsert, 0, j,NULL);
     if(getPosition->exists==true){
+    	getPosition->insertedNode = &(bucket->cells[getPosition->position]);
     	return getPosition;
     }
 

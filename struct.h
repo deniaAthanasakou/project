@@ -2,6 +2,7 @@
 #define _STRUCT_H_
 #include <stdbool.h>
 
+
 typedef struct dataNode dataNode;
 
 typedef struct arrayOfStructs arrayOfStructs;
