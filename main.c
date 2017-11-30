@@ -47,7 +47,11 @@ int main (int argc,char* argv[]){
 		staticDynamic = initialize(initFile, structureTree, hashTable);
 		fclose (initFile);
 	}
+	//printBuckets(hashTable);
+	//deletionSortBucket(&hashTable->buckets[0],1);
 	
+	//printBuckets(hashTable);
+	//printBucket(&hashTable->buckets[0]);
 	//query
 	FILE * queryFile;
 	queryFile = fopen (query,"r");
@@ -60,6 +64,6 @@ int main (int argc,char* argv[]){
 		}
 		fclose (queryFile);
 	}
-	destroyLinearHash(hashTable);	//addit wherever we exit (maybe in executeQueryFile);
+	
 	return 0;
 }

@@ -10,11 +10,7 @@ void initializeArray(arrayOfStructs* array_of_str){
 	array_of_str->length=10;
 	array_of_str->array=malloc(array_of_str->length * sizeof(dataNode));
 	for(int i=0;i<array_of_str->length;i++){
-		array_of_str->array[i].dynamicWord = NULL;
-		array_of_str->array[i].nextWordArray = NULL;
-		array_of_str->array[i].isDynamic=false;
-		array_of_str->array[i].noOfChars = -1;
-		array_of_str->array[i].word[0]='\0';
+		initializeDataNode(&(array_of_str->array[i]));
 	}
 	
 }
@@ -25,43 +21,59 @@ void doubleLength(arrayOfStructs* array_of_str){
 	array_of_str->array = (dataNode*) realloc(array_of_str->array , array_of_str->length * sizeof(dataNode));
 	
 	for(int i=lengthBefore;i<array_of_str->length;i++){
-		array_of_str->array[i].dynamicWord = NULL;
-		array_of_str->array[i].nextWordArray = NULL;
-		array_of_str->array[i].isDynamic=false;
-		array_of_str->array[i].noOfChars = -1;
-		array_of_str->array[i].word[0]='\0';
+		initializeDataNode(&(array_of_str->array[i]));
 	}
 	
+}
+
+void initializeDataNode(dataNode* node){
+	node->dynamicWord = NULL;
+	node->nextWordArray = NULL;
+	node->isDynamic=false;
+	node->noOfChars = -1;
+	node->word[0]='\0';
 }
 
 
 
 void deleteArray(arrayOfStructs* array_of_str){	
-
+	printf("startdelete array\n");
 	arrayOfStructs* tempArray = array_of_str;
-	if(tempArray != NULL){	
+	if(tempArray != NULL){
+		//printf("begin\n");	
 		if(tempArray->array==NULL){
+		//	printf("tempArray->array\n");	
 			free(tempArray);
 			tempArray=NULL;
 			return;
 		}
+		//printf("after first if\n");
 		int lastElement = tempArray->position;	
-
+		printf("lastElement %d\n",lastElement);	
 		for(int i=0; i < lastElement; i++){
-
-			if( &(tempArray->array[i])!=NULL){
+			printf("for last %d i: %d\n", lastElement, i);
+				
+			if( &(tempArray->array[i])!=NULL){	
+			printf("a\n");
+				printf("noOfChars %d\n",tempArray->array[i].noOfChars);
+			printf("b\n");
 				deleteArray(tempArray->array[i].nextWordArray);
-				if(tempArray->array[i].dynamicWord!=NULL)				
+				printf("afterif\n");	
+				if(tempArray->array[i].dynamicWord!=NULL){	
+					printf("ifif\n");				
 					deleteDataNode(&(tempArray->array[i]));
+				}
 			}
 			else
 				break;
 			
 		}
-		
+		printf("before free\n");
 		free(tempArray->array);
+		//printf("after free1\n");
 		tempArray->array=NULL;
 		free(tempArray);
+	//	printf("after free2\n");
 		tempArray=NULL;
 	}	
 		
@@ -70,8 +82,11 @@ void deleteArray(arrayOfStructs* array_of_str){
 
 
 void deleteDataNode(dataNode* elem){
+//printf("deleteDataNode\n");
 	if(elem!=NULL){
+		//printf("word '%s'\n", elem->word);
 		if( elem->dynamicWord!=NULL){
+		//	printf("word '%s'\n", elem->dynamicWord);
 			free(elem->dynamicWord);
 			elem->dynamicWord = NULL;
 		}

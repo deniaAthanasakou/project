@@ -13,27 +13,31 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 	dataNode* insertedElement = NULL;
 	
 	for(i=0; i<noOfWords; i++){				//different layers
-		//printf("INSERTING WORD '%s\n",arrayOfWords[i]);
+	//	printf("beginning of for\n");
+	//	printf("INSERTING WORD '%s\n",arrayOfWords[i]);
 		if(i==0){			//root word
 		
 		
 			rootElement = malloc(sizeof(dataNode));		//creating dataNode for insert
+			initializeDataNode(rootElement);
 			if(i==noOfWords -1)		//final word
 				rootElement->isFinal=true;
 			else
 				rootElement->isFinal=false;
-		
+
 			insertString (rootElement, arrayOfWords[i]);
-			rootElement->nextWordArray=NULL;
+			//rootElement->nextWordArray=NULL;
 		
-			insertedElement = insertTrieNode(rootElement, hashTable, -1);					//inserting node into hashTable
+			insertedElement = insertTrieNode(rootElement, hashTable);					//inserting node into hashTable
+			//printf("after insertTrie FUNC\n");
 			//insertedElement = check->insertedNode;
 			deleteDataNode(rootElement);
 			free(rootElement);
 			rootElement=NULL;	
-			
+			//printf("after i==0\n");
 		}
 		else{
+	//	printf("beginning of else\n");
 		
 			//if(insertedElement->nextWordArray!=NULL){
 			//	printf("printing array of word '%s'\n",insertedElement->word);
@@ -42,6 +46,7 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 			//}
 		
 			tempElement = malloc(sizeof(dataNode));		//creating dataNode for insert
+			//initializeDataNode(tempElement);
 			if(i==noOfWords -1)		//final word
 				tempElement->isFinal=true;
 			else
@@ -55,7 +60,7 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 			if(i==1){
 				//printf("i==1\n");
 				if(insertedElement->nextWordArray==NULL){
-					//printf("nextWordArray==NULL\n");
+				//	printf("nextWordArray==NULL IIIII= 1111\n");
 					insertedElement->nextWordArray =  malloc(1 * sizeof(arrayOfStructs));
 					initializeArray(insertedElement->nextWordArray);
 				}
@@ -68,7 +73,7 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 			//printf("position is %d\n", getPosition->position);
 		
 			if(getPosition->exists==true){
-				//printf("already exists\n");
+			//	printf("already exists\n");
 				if(i==noOfWords -1)		//final word
 					tempArray->array[getPosition->position].isFinal=true;
 				deleteDataNode(tempElement);
@@ -83,13 +88,17 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 			
 				tempArray->position++;	
 				//printf("WORD IS '%s' tempArray->position is %d\n",tempArray->array[1].word, tempArray->position);
+				if(i==noOfWords-1){
+					tempArray->array[getPosition->position].nextWordArray=NULL;
+				}
 			}
 			if(i!=noOfWords -1 && tempArray->array[getPosition->position].nextWordArray==NULL){
-				//printf("inside if\n");
+			//	printf("----------------------- AGAINNNNNNNNNNNNNNinside if\n");
 				tempArray->array[getPosition->position].nextWordArray = malloc(1 * sizeof(arrayOfStructs));
 				initializeArray(tempArray->array[getPosition->position].nextWordArray);
 
 			}
+			
 			
 			//printFullArray(tempArray, tempArray->position);
 			free(tempElement);
@@ -100,7 +109,7 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 			getPosition = NULL;
 		
 		}
-		
+		//printf("end of for\n");
 	}
 	/*printf("element: '%s' printing next words\n",insertedElement->word);
 	if(insertedElement->nextWordArray!=NULL){

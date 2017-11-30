@@ -30,5 +30,6 @@ void initializeArray(arrayOfStructs* array_of_str);
 void doubleLength(arrayOfStructs* array_of_str);
 void deleteArray(arrayOfStructs* array_of_str);
 void deleteDataNode(dataNode* elem);
+void initializeDataNode(dataNode* node);
 
 #endif
