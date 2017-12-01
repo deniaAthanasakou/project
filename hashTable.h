@@ -49,5 +49,6 @@ void printBuckets(HashTable* hashTable);
 void createOverflowCells(Bucket* bucket);
 int getCell(char* lookupWord ,HashTable* hashTable,int previousBucket);
 
+void deletionSortWithoutErasingNextArray(Bucket* bucket, int position);
 
 #endif

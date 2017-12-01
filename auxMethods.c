@@ -39,7 +39,9 @@ int initialize(FILE* file, arrayOfStructs* structureTree, HashTable* hashTable){
 		line=NULL;
 	}
 	
-	printBuckets(hashTable);
+	//printf("\n\n\n");
+	//printBuckets(hashTable);
+	
 	
 	return returnValue;
 }
@@ -119,6 +121,24 @@ void deleteArrayOfWords(char** array,int length){
 	}
 
 }
+
+
+void copyDataNode(dataNode* node, dataNode* tempNode){
+
+	node->nextWordArray = tempNode->nextWordArray;
+	node->isFinal = tempNode->isFinal;
+	node->isDynamic = tempNode->isDynamic;
+	if(tempNode->dynamicWord!=NULL)
+		strcpy(node->dynamicWord , tempNode->dynamicWord);
+	else
+		node->dynamicWord=NULL;	
+	node->noOfChars = tempNode->noOfChars;
+	//printf("before word\n");
+	for(int i=0; i<node->noOfChars; i++){
+		node->word[i] = tempNode->word[i];
+	}
+}
+
 
 checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last, checkItemExists* check)	
 {
@@ -440,8 +460,11 @@ checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* i
 		memmove(&(bucket->cells[startingPoint+1]), &(bucket->cells[startingPoint]), moveSize);
 	}
 	memmove(&(bucket->cells[j+1]), itemForInsert, sizeof(*itemForInsert));
+	//printf("----INSIDE INSERSORT itemforinsert %p cell[0] %p word '%s'\n",itemForInsert,&bucket->cells[0],bucket->cells[0].word);
+	//printf("----INSIDE INSERSORT  bucket->cells[j+1] %p itemForInsert %p word '%s'\n",&bucket->cells[j+1],itemForInsert,itemForInsert->word);
 	bucket->position++;
-	getPosition->insertedNode = itemForInsert;
+	
+	getPosition->insertedNode = &(bucket->cells[j+1]);//itemForInsert;
     getPosition->position=j+1;
     
     return getPosition;
@@ -564,6 +587,7 @@ int executeQueryFile(FILE* file ,arrayOfStructs* structureTree , HashTable* hash
 
 		if(strcmp(wordCase,"A")==0){	
 			startingLetter = 'A';
+			//printf("ADD\n");
 			if(staticDynamic==0){	//STATIC
 				printf("Error with init file! Add is not supported in Static version.\n");
 				deleteArray(structureTree);
@@ -579,9 +603,11 @@ int executeQueryFile(FILE* file ,arrayOfStructs* structureTree , HashTable* hash
 		}
 		else if(strcmp(wordCase,"Q")==0){
 			startingLetter = 'Q';
+			//printf("QUERY\n");
 			callBasicFuncs(remainingLine,structureTree,'Q',hashTable);		
 		}
 		else if(strcmp(wordCase,"D")==0){
+			//printf("DELETE\n");
 			startingLetter = 'D';
 			if(staticDynamic==0){	//STATIC
 				printf("Error with init file! Delete is not supported in Static version.\n");
@@ -621,7 +647,6 @@ int executeQueryFile(FILE* file ,arrayOfStructs* structureTree , HashTable* hash
 		line=NULL;
 	}
 	
-	printBuckets(hashTable);
 	destroyLinearHash(hashTable);	//addit wherever we exit (maybe in executeQueryFile);
 	if(startingLetter !='F'){
 		return 0;

@@ -31,9 +31,38 @@ void initializeBucket(Bucket* bucket, int noOfCells){
 	}
 }
 
+void deletionSortWithoutErasingNextArray(Bucket* bucket, int position){
+	//printf("start\n");
+	//printBucket(bucket);
+	if(bucket->cells[position].dynamicWord!=NULL){	
+		//printf("dynamic\n");	
+		free(bucket->cells[position].dynamicWord);
+		bucket->cells[position].dynamicWord=NULL;
+	}
+	else{
+		bucket->cells[position].word[0] = '\0';
+	}
+	
+	int moveSize = 0;
+	int startingPoint = position;
+	while (position < bucket->position -1)
+	{
+	   // array_of_str->array[position]=array_of_str->array[position+1];
+	  // 	printf("position+1 %d\n",position+1);
+	    //bucket->cells[position] = bucket->cells[position+1];
+	    moveSize+=sizeof(bucket->cells[position+1]);
+	    position++;
+	}
+	bucket->cells[startingPoint] = bucket->cells[startingPoint+1];
+	memmove(&(bucket->cells[startingPoint]),&(bucket->cells[startingPoint+1]), moveSize);
+	bucket->position--;
+}
+
+
 void deletionSortBucket(Bucket* bucket, int position){
-	printf("start\n");
-	printf("word %s noOfChars %d\n",getString(&bucket->cells[position]),bucket->cells[position].noOfChars);
+	//printf("start\n");
+	//printBucket(bucket);
+
 	if(bucket->cells[position].dynamicWord!=NULL){	
 		//printf("dynamic\n");	
 		free(bucket->cells[position].dynamicWord);
@@ -45,19 +74,19 @@ void deletionSortBucket(Bucket* bucket, int position){
 	//printf("middle\n");
 	if(bucket->cells[position].nextWordArray!=NULL){
 		//printf("inside if\n");
-		//printf("position %d\n",position);
+		////printf("position %d\n",position);
 		//printf("noOfChars %d\n",bucket->cells[position].noOfChars);
 		//if(bucket->cells[position].nextWordArray!=NULL)
 		//	printf("not null\n");
-		printf("before delete position %d\n", position);
+
 		deleteArray(bucket->cells[position].nextWordArray);
-		printf("after delete\n");
+		//printf("after delete\n");
 		bucket->cells[position].nextWordArray=NULL;
 	}
 	
 	int moveSize = 0;
 	int startingPoint = position;
-	while (position < bucket->position)
+	while (position < bucket->position -1)
 	{
 	    //array_of_str->array[position]=array_of_str->array[position+1];
 	    moveSize+=sizeof(bucket->cells[position+1]);
@@ -67,7 +96,10 @@ void deletionSortBucket(Bucket* bucket, int position){
 	bucket->position--;
 }
 
+
 dataNode* insertTrieNode(dataNode* node, HashTable* hashTable){
+	
+
 	char* word = getString(node);
 	
 	int noOfbucket = getBucketFromHash(hashTable->level, hashTable->initialLength, hashTable->bucketToBeSplit, word);
@@ -123,29 +155,36 @@ dataNode* insertTrieNode(dataNode* node, HashTable* hashTable){
 
 dataNode* insertTrieNodeAgain(dataNode* node, HashTable* hashTable, int checkBucketToBeSplit){
 	//printf("insertTrieNodeAgain\n");
+	
+	
 	char* word = getString(node);
 	//printf("LENGTH OF HASHTABLE IS %d\n",hashTable->length);
 	//printf("REAL LENGTH OF HASHTABLE IS %d\n",hashTable->numberOfBuckets);
 	int noOfbucket = getBucketFromHash(hashTable->level, hashTable->initialLength, hashTable->bucketToBeSplit, word);
 	//printf("----------------------INSERT trie again word: '%s' in %d  with position %d\n",word, noOfbucket,hashTable->buckets[noOfbucket].position);
 	
-	dataNode* splitted = NULL;
+	
+	
+	dataNode splitted;
 	if(checkBucketToBeSplit!=-1){
 	//	printf("CHECK IF NEED TO DELETE\n");
+		//printBucket(&hashTable->buckets[checkBucketToBeSplit]);
 		if(noOfbucket!=checkBucketToBeSplit){
-		//	printf("DELETE PREVIOUS with checkBucketToBeSplit = %d\n",checkBucketToBeSplit);
+			//printf("DELETE PREVIOUS with checkBucketToBeSplit = %d\n",checkBucketToBeSplit);
+			
+			
 			Bucket* temp = &(hashTable->buckets[checkBucketToBeSplit]);
+
 			int prevPos = getCell(word,hashTable,checkBucketToBeSplit);
-			splitted = malloc(sizeof(dataNode));
-			initializeDataNode(splitted);
-			printf("before splited\n");
-			*splitted = hashTable->buckets[checkBucketToBeSplit].cells[prevPos];
-			printf("after splited\n");
-			//printFullArray(hashTable->buckets[checkBucketToBeSplit].cells[prevPos].nextWordArray,hashTable->buckets[checkBucketToBeSplit].cells[prevPos].nextWordArray->position);
-			splitted->nextWordArray = hashTable->buckets[checkBucketToBeSplit].cells[prevPos].nextWordArray;
-			deletionSortBucket(temp,prevPos);
-			//printf("DELETION DONE\n");
-			//printBuckets(temp);
+			//splitted = malloc(sizeof(dataNode));
+
+			splitted = hashTable->buckets[checkBucketToBeSplit].cells[prevPos];
+			//copyDataNode(splitted, &hashTable->buckets[checkBucketToBeSplit].cells[prevPos]);
+	
+			
+			
+			deletionSortWithoutErasingNextArray(temp,prevPos);
+			
 		}
 	}
 	//printf("noOfbucket %d\n",noOfbucket);
@@ -165,13 +204,13 @@ dataNode* insertTrieNodeAgain(dataNode* node, HashTable* hashTable, int checkBuc
 	//	printf("bucket was REARRANGED\n");
 		if(noOfbucket!=checkBucketToBeSplit){
 		//	printf("------insert to new bucket word : %s\n",word);
-			check = insertionSort2(hashTable, &(hashTable->buckets[noOfbucket]),splitted,bucket->position);
+			check = insertionSort2(hashTable, &(hashTable->buckets[noOfbucket]),&splitted,bucket->position);
 		//	printf("after insetionSort2\n");
 		}
 		//if(splitted==NULL) printf("NOOOOOOOO\n");
 		
 	}
-	
+
 	
 
 	free(word);
@@ -182,6 +221,8 @@ dataNode* insertTrieNodeAgain(dataNode* node, HashTable* hashTable, int checkBuc
 		free(check);
 		check=NULL;
 	}
+
+
 
 	//printf("before return\n");
 	return returnNodePtr;
@@ -210,15 +251,15 @@ void printBuckets(HashTable* hashTable){
 }
 
 void printBucket(Bucket *bucket){
-	printf("position %d\n",bucket->position);
+	//printf("position %d\n",bucket->position);
 	for(int i=0; i < bucket->position;i++){
 		//break;
 		char *word = getString(&bucket->cells[i]);
 		printf("%dth elem with word: '%s'\n",i,word);
 		if(bucket->cells[i].nextWordArray!=NULL)
 			printFullArray(bucket->cells[i].nextWordArray, bucket->cells[i].nextWordArray->position);
-		else
-			printf("null next\n");	
+		//else
+		//	printf("null next\n");	
 		free(word);
 		word = NULL;
 	}
@@ -256,17 +297,21 @@ void splitBucket(HashTable* hashTable){
 	
 	//for each dataNode in bucketToBeSplit call getHashBucket and rearrange
 	//printf("old bucket%d\n", oldBucket);
+
 	Bucket *tempBucket = &(hashTable->buckets[oldBucket]);
 	//printf("tempBucket->position %d\n",tempBucket->position);
 	
-	printBucket(tempBucket);
-	printf("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+	//printBucket(tempBucket);
+	//printf("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
 	for(int i=0; i<tempBucket->position; i++){		//for each cell of bucket
 
 		//printBuckets(tempBucket);	
 	//	printf("-----------------------------------REARRANGE '%s'\n",tempBucket->cells[i].word);
 		char* oldWord=  getString(&tempBucket->cells[i]);
 		//printf("oldBucket %d\n",oldBucket);
+		
+
+		//printBucket(&hashTable->buckets[oldBucket]);
 		insertTrieNodeAgain(&tempBucket->cells[i],hashTable,oldBucket);
 		
 		int newBucket = getBucketFromHash(hashTable->level,hashTable->initialLength, hashTable->bucketToBeSplit,oldWord);
@@ -274,6 +319,12 @@ void splitBucket(HashTable* hashTable){
 		if(newBucket!=oldBucket){	//node was moved to another bucket
 			i--;
 		}
+		
+		if(oldWord!=NULL){
+			free(oldWord);
+			oldWord=NULL;
+		}
+		
 		//printf("after insertTrie %s\n",oldWord);
 		
 	}
@@ -339,6 +390,10 @@ int getCell(char* lookupWord ,HashTable* hashTable,int previousBucket){
 			last = middle - 1;
 
 		middle = (first + last)/2;
+		
+		free(searchWord);
+		searchWord = NULL;
+		
 	}
 	if (first > last){
 		//printf("kk\n");
@@ -354,15 +409,20 @@ int getCell(char* lookupWord ,HashTable* hashTable,int previousBucket){
 
 
 void destroyLinearHash(HashTable* hashTable){
+	//printf("hashTable->numberOfBuckets %d\n",hashTable->numberOfBuckets);
 	for(int i=0; i<hashTable->numberOfBuckets; i++){			//for each bucket
 		Bucket* tempBucket=&hashTable->buckets[i];
 		if(tempBucket!=NULL){
+			//printf("tempBucket->position %d\n",tempBucket->position);
 			for(int j=0; j<tempBucket->position; j++){		//for each cell
-				deleteArray(tempBucket->cells[j].nextWordArray);
+			
+				deleteArray(tempBucket->cells[j].nextWordArray);	
+				
 				//deletionSortBucket(tempBucket, j);
 				deleteDataNode(&(tempBucket->cells[j]));
 			}
 			free (tempBucket->cells);
+			tempBucket->cells = NULL;
 		}
 	}
 	free(hashTable->buckets);
