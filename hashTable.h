@@ -19,10 +19,8 @@ struct HashTable{
 struct Bucket{
 	int length;					
 	dataNode* cells;			//array of struct datanode
-	//Bucket* nextBucket;			//ptr for overflow
 	int position;				//position of last element
 	int noOfCells;				//c initial length
-	//int noOfElements;
 	bool overflowed;
 };
 

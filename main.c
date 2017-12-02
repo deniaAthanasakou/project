@@ -29,12 +29,7 @@ int main (int argc,char* argv[]){
 		exit(1);
 	}
 	
-	
-	arrayOfStructs* structureTree = (arrayOfStructs*) malloc(1 * sizeof(arrayOfStructs));
-	initializeArray(structureTree);
-	
 	HashTable* hashTable = createLinearHash(NOOFBUCKETS, NOOFCELLS);
-	
 	
 	//initialize
 	FILE * initFile;
@@ -42,20 +37,16 @@ int main (int argc,char* argv[]){
 	int staticDynamic = 1;
 	if (initFile!=NULL)
 	{
-		staticDynamic = initialize(initFile, structureTree, hashTable);
+		staticDynamic = initialize(initFile, hashTable);
 		fclose (initFile);
 	}
-	//printBuckets(hashTable);
-	//deletionSortBucket(&hashTable->buckets[0],1);
 	
-	//printBuckets(hashTable);
-	//printBucket(&hashTable->buckets[0]);
 	//query
 	FILE * queryFile;
 	queryFile = fopen (query,"r");
 	if (queryFile!=NULL)
 	{
-		int query = executeQueryFile(queryFile,structureTree, hashTable, staticDynamic);
+		int query = executeQueryFile(queryFile, hashTable, staticDynamic);
 		if(query==0){
 			printf("Error in file of queries\n");
 			exit(1);
