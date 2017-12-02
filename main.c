@@ -11,7 +11,6 @@
 
 
 int main (int argc,char* argv[]){
-	
 	if(argc!=5){
 		printf("Error! Wrong Number of Arguments\n");
 		exit(1);
@@ -35,7 +34,6 @@ int main (int argc,char* argv[]){
 	initializeArray(structureTree);
 	
 	HashTable* hashTable = createLinearHash(NOOFBUCKETS, NOOFCELLS);
-	
 	
 	
 	//initialize

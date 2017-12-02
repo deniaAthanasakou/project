@@ -6,7 +6,6 @@
 
 
 int initialize(FILE* file, arrayOfStructs* structureTree, HashTable* hashTable){
-
 	char *line = NULL;
 	size_t len = 0;
 	int read;
@@ -29,7 +28,7 @@ int initialize(FILE* file, arrayOfStructs* structureTree, HashTable* hashTable){
 				
 		}
 		else{
-			callBasicFuncs(ngram,structureTree,'A',hashTable);
+			callBasicFuncs(ngram,structureTree,'A',hashTable,NULL,NULL);
 		}
 		counter++;
 	}
@@ -40,14 +39,15 @@ int initialize(FILE* file, arrayOfStructs* structureTree, HashTable* hashTable){
 	}
 	
 	//printf("\n\n\n");
-	//printBuckets(hashTable);
+//	printBuckets(hashTable);
 	
 	
 	return returnValue;
 }
 
 
-void callBasicFuncs(char* ngram, arrayOfStructs* array, char query , HashTable* hashTable){
+void callBasicFuncs(char* ngram, arrayOfStructs* array, char query , HashTable* hashTable, BloomFilter* topFilter, topKStruct* topKArray){
+
 
 	arrayWords* arrayW = stringToArray(ngram);
 	int noOfWords = arrayW->length;
@@ -57,7 +57,7 @@ void callBasicFuncs(char* ngram, arrayOfStructs* array, char query , HashTable* 
 		insert_ngram(hashTable, arrayOfWords,noOfWords);
 	}
 	else if(query == 'Q'){
-		char* searchString = search_ngram(hashTable, arrayOfWords,noOfWords);
+		char* searchString = search_ngram(hashTable, arrayOfWords,noOfWords, topFilter, topKArray);
 		free(searchString);
 		searchString=NULL;
 	}
@@ -243,8 +243,7 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
 	}
 	free(retPosition);
 	retPosition=NULL;
-	i=lastElement;
-    j = i - 1;
+    j = lastElement - 1;
 
     // find location where selected sould be inseretd
     checkItemExists* getPosition = binarySearch(array_of_str, itemForInsert, 0, j,NULL);
@@ -260,23 +259,24 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
     loc=getPosition->position;
     
     // Move all elements after location to create space
-    int moveSize=0;
-	//int startingPoint = j-1;			//an vroume auto ti prepei na einai tha doulepsei komple
+    int fullMoveSize=0;
 	int startingPoint = getPosition->position;	
 	if( j>=loc){
-		while (j >= loc)
-		{
-			moveSize+=sizeof(array_of_str->array[j]);
-			j--;
-			
-		}
-		memmove(&(array_of_str->array[startingPoint+1]), &(array_of_str->array[startingPoint]), moveSize);
+	
+		fullMoveSize = (lastElement -loc)*sizeof(array_of_str->array[lastElement - 1]);
+		memmove(&(array_of_str->array[startingPoint+1]), &(array_of_str->array[startingPoint]), fullMoveSize);
+		memmove(&(array_of_str->array[loc]), itemForInsert, sizeof(*itemForInsert));
+		getPosition->position=loc;
+	}
+	else{
+		memmove(&(array_of_str->array[lastElement]), itemForInsert, sizeof(*itemForInsert));
+   		getPosition->position=lastElement;
 	}
 	//array_of_str->array[j+1] = *itemForInsert;
-	memmove(&(array_of_str->array[j+1]), itemForInsert, sizeof(*itemForInsert));
-    getPosition->position=j+1;
+	
     
-    return getPosition;
+    return getPosition;  
+    
 }
 
 
@@ -433,6 +433,9 @@ checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* i
     //printf("after binary\n");
     if(getPosition->exists==true){
     	//printf("exists\n");
+    	if(itemForInsert->isFinal)
+    		bucket->cells[getPosition->position].isFinal= true;
+    	
     	getPosition->insertedNode = &(bucket->cells[getPosition->position]);
     	return getPosition;
     }
@@ -448,24 +451,32 @@ checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* i
     loc=getPosition->position;
     
     // Move all elements after location to create space
-    int moveSize=0;
+    int fullMoveSize=0;
 	int startingPoint = getPosition->position;	
+	//printf("j  %d loc %d\n",j, loc); 
+	
 	if( j>=loc){
-		while (j >= loc)
-		{
-			moveSize+=sizeof(bucket->cells[j]);
-			j--;
-			
-		}
-		memmove(&(bucket->cells[startingPoint+1]), &(bucket->cells[startingPoint]), moveSize);
+		
+		fullMoveSize = (lastElement -loc)*sizeof(bucket->cells[lastElement - 1]);
+		
+		
+		memmove(&(bucket->cells[startingPoint+1]), &(bucket->cells[startingPoint]), fullMoveSize);
+		memmove(&(bucket->cells[loc]), itemForInsert, sizeof(*itemForInsert));
+		getPosition->insertedNode = &(bucket->cells[loc]);//itemForInsert;
+    	getPosition->position=loc;
+
 	}
-	memmove(&(bucket->cells[j+1]), itemForInsert, sizeof(*itemForInsert));
-	//printf("----INSIDE INSERSORT itemforinsert %p cell[0] %p word '%s'\n",itemForInsert,&bucket->cells[0],bucket->cells[0].word);
-	//printf("----INSIDE INSERSORT  bucket->cells[j+1] %p itemForInsert %p word '%s'\n",&bucket->cells[j+1],itemForInsert,itemForInsert->word);
+	else{
+		//printf("J+1 %d\n",j+1); 
+		memmove(&(bucket->cells[lastElement]), itemForInsert, sizeof(*itemForInsert));
+		//printf("----INSIDE INSERSORT itemforinsert %p cell[0] %p word '%s'\n",itemForInsert,&bucket->cells[0],bucket->cells[0].word);
+		//printf("----INSIDE INSERSORT  bucket->cells[j+1] %p itemForInsert %p word '%s'\n",&bucket->cells[j+1],itemForInsert,itemForInsert->word);
+		//bucket->position++;
+		getPosition->insertedNode = &(bucket->cells[lastElement]);//itemForInsert;
+   		getPosition->position=lastElement;
+	}
 	bucket->position++;
 	
-	getPosition->insertedNode = &(bucket->cells[j+1]);//itemForInsert;
-    getPosition->position=j+1;
     
     return getPosition;
 }
@@ -484,15 +495,14 @@ void deletionSort(arrayOfStructs* array_of_str,	int position, int lastElement){
 		deleteArray(array_of_str->array[position].nextWordArray);
 		array_of_str->array[position].nextWordArray=NULL;
 	}
-	int moveSize = 0;
-	int startingPoint = position;
-	while (position < lastElement -1)
-	{
-	    //array_of_str->array[position]=array_of_str->array[position+1];
-	    moveSize+=sizeof(array_of_str->array[position+1]);
-	    position++;
+	
+	int fullMoveSize = 0;
+	if(position < array_of_str->position -1){
+		fullMoveSize = (array_of_str->position -1 - position)*sizeof(array_of_str->array[position+1]);
 	}
-	memmove(&(array_of_str->array[startingPoint]),&(array_of_str->array[startingPoint+1]), moveSize);
+	
+	
+	memmove(&(array_of_str->array[position]),&(array_of_str->array[position+1]), fullMoveSize);
 	array_of_str->position--;
      
 }
@@ -514,7 +524,7 @@ void printFullArray(arrayOfStructs* array_of_str, int position){	//prints all la
 				printArray(tempArray,(position-1));
 			}
 			if( tempArray->array[i].nextWordArray!=NULL){
-				printFullArray( tempArray->array[i].nextWordArray, position);
+				printFullArray( tempArray->array[i].nextWordArray,  tempArray->array[i].nextWordArray->position);
 				
 			}
 		}
@@ -528,14 +538,17 @@ void printFullArray(arrayOfStructs* array_of_str, int position){	//prints all la
 void printArray(arrayOfStructs* array_of_str, int position){		//prints layer
 
 	printf("ELEMENTS ARE: [");
-	for(int k=0; k<= position;k++){
+	for(int k=0; k< array_of_str->position;k++){
 		char* word = getString(& (array_of_str->array[k]));
+		if(array_of_str->array[k].isFinal)
+			printf("FINAL ");
+		else
+			printf("NOT FINAL ");
 		printf("%s ",  word);
-		
 		free(word);
 		word=NULL;
 		
-		if(k!=position)
+		if(k!=array_of_str->position-1)
 			printf(", ");
 	}
 	printf("]\n");
@@ -546,7 +559,7 @@ void printArray(arrayOfStructs* array_of_str, int position){		//prints layer
 void printArrayFinalWords(arrayOfStructs* array_of_str, int position){
 
 	printf("FINAL ELEMENTS ARE: [");
-	for(int k=0; k<= position;k++){
+	for(int k=0; k< array_of_str->position;k++){
 		if(array_of_str->array[k].isFinal){
 			char* word = getString(& (array_of_str->array[k]));
 			printf("%s ",  word);
@@ -554,7 +567,7 @@ void printArrayFinalWords(arrayOfStructs* array_of_str, int position){
 			free(word);
 			word=NULL;
 		
-			if(k!=position)
+			if(k!=array_of_str->position)
 				printf(", ");
 		}
 	}
@@ -568,6 +581,8 @@ void printArrayFinalWords(arrayOfStructs* array_of_str, int position){
 //insert from query file
 int executeQueryFile(FILE* file ,arrayOfStructs* structureTree , HashTable* hashTable, int staticDynamic){
 
+	
+	
 	char *line = NULL;
 	size_t len = 0;
 	int read;
@@ -575,10 +590,23 @@ int executeQueryFile(FILE* file ,arrayOfStructs* structureTree , HashTable* hash
 	if (file == NULL)
 		return 1;
 		
-	char startingLetter = 'F';			//initialization			
-
+	char endingLetter = 'F';			//initialization	
+	int counter=-1;
+	BloomFilter* topFilter = NULL;
+	topKStruct* topKArray = NULL;
 	while ((read = getline(&line, &len, file)) != -1) {
 	
+		counter++;
+		
+		
+		
+		if(counter == 0){		//initialize bloomFilter
+			topFilter = initializeFilter(5);		//initialize bloomFilter here
+			topKArray = malloc(1*sizeof(topKStruct));
+		}
+		
+		
+		
 		char* ngram = strtok(line, "\n");
 		
 		//find first letter for each case
@@ -586,8 +614,7 @@ int executeQueryFile(FILE* file ,arrayOfStructs* structureTree , HashTable* hash
 		char* remainingLine = strtok(NULL,"");
 
 		if(strcmp(wordCase,"A")==0){	
-			startingLetter = 'A';
-			//printf("ADD\n");
+			endingLetter = 'A';
 			if(staticDynamic==0){	//STATIC
 				printf("Error with init file! Add is not supported in Static version.\n");
 				deleteArray(structureTree);
@@ -596,19 +623,17 @@ int executeQueryFile(FILE* file ,arrayOfStructs* structureTree , HashTable* hash
 					free(line);
 					line=NULL;
 				}
-				destroyLinearHash(hashTable);	//addit wherever we exit (maybe in executeQueryFile);
+				destroyLinearHash(hashTable);
 				exit(1);
 			}
-			callBasicFuncs(remainingLine,structureTree,'A',hashTable);
+			callBasicFuncs(remainingLine,structureTree,'A',hashTable, NULL, NULL);
 		}
 		else if(strcmp(wordCase,"Q")==0){
-			startingLetter = 'Q';
-			//printf("QUERY\n");
-			callBasicFuncs(remainingLine,structureTree,'Q',hashTable);		
+			endingLetter = 'Q';
+			callBasicFuncs(remainingLine,structureTree,'Q',hashTable,topFilter, topKArray );		
 		}
 		else if(strcmp(wordCase,"D")==0){
-			//printf("DELETE\n");
-			startingLetter = 'D';
+			endingLetter = 'D';
 			if(staticDynamic==0){	//STATIC
 				printf("Error with init file! Delete is not supported in Static version.\n");
 				deleteArray(structureTree);
@@ -617,14 +642,18 @@ int executeQueryFile(FILE* file ,arrayOfStructs* structureTree , HashTable* hash
 					free(line);
 					line=NULL;
 				}
-				destroyLinearHash(hashTable);	//addit wherever we exit (maybe in executeQueryFile);
+				destroyLinearHash(hashTable);
 				exit(1);
 			}
-			callBasicFuncs(remainingLine,structureTree,'D',hashTable);
+			callBasicFuncs(remainingLine,structureTree,'D',hashTable, NULL, NULL);
 		}
 		else if(strcmp(wordCase,"F")==0){
 			
-			startingLetter = 'F';
+			endingLetter = 'F';
+			counter = -1;
+			//free bloomFilter
+			//free array
+			
 		}
 		else{			//different letter
 			deleteArray(structureTree);
@@ -647,8 +676,8 @@ int executeQueryFile(FILE* file ,arrayOfStructs* structureTree , HashTable* hash
 		line=NULL;
 	}
 	
-	destroyLinearHash(hashTable);	//addit wherever we exit (maybe in executeQueryFile);
-	if(startingLetter !='F'){
+	destroyLinearHash(hashTable);
+	if(endingLetter !='F'){
 		return 0;
 	}
 	

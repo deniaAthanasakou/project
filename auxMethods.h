@@ -6,6 +6,7 @@
 #include "hashTable.h"
 
 typedef struct checkItemExists checkItemExists;
+typedef struct topKStruct topKStruct;
 
 struct checkItemExists{
 	int position;	//position of element to insert
@@ -18,10 +19,17 @@ typedef struct arrayWords{
 	char** words;			//array of strings
 }arrayWords;
 
+
+struct topKStruct{
+	char* ngram;
+	int occurences;
+};
+
 int initialize(FILE* file, arrayOfStructs* structureTree, HashTable* hashTable);
 int executeQueryFile(FILE* file, arrayOfStructs* structureTree, HashTable* hashTable, int staticDynamic);
 
-void callBasicFuncs(char* ngram, arrayOfStructs* array, char query , HashTable* hashTable);
+void callBasicFuncs(char* ngram, arrayOfStructs* array, char query , HashTable* hashTable, BloomFilter* topFilter, topKStruct* topKArray);
+
 arrayWords* stringToArray(char* ngram);
 
 void printArray(arrayOfStructs* tempArray, int position);

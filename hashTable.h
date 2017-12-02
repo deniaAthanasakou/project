@@ -40,7 +40,7 @@ void initializeBucket(Bucket* bucket, int noOfCells);
 
 int getBucketFromHash(int level, int lengthHash, int bucketToBeSplit, char* word);
 
-void splitBucket(HashTable* hashTable);
+dataNode* splitBucket(HashTable* hashTable, char* oldCellWord);
 int levelUp(HashTable* hashTable);
 void deletionSortBucket(Bucket* bucket, int position);
 void printBucket(Bucket *bucket);
