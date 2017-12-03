@@ -4,6 +4,7 @@
 #include "func.h"
 #include "bloomfilter.h"
 #include "hashTable.h"
+#include "topK.h"
 
 typedef struct checkItemExists checkItemExists;
 
@@ -23,7 +24,7 @@ typedef struct arrayWords{
 int initialize(FILE* file, HashTable* hashTable);
 int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic);
 
-void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKStruct* topKArray);
+void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKArray *topArray);
 
 arrayWords* stringToArray(char* ngram);
 

@@ -4,8 +4,6 @@
 #include "func.h"
 #include "stack.h"
 #include "bloomfilter.h"
-#include "auxMethods.h"
-
 
 void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//same layer
 	arrayOfStructs* tempArray =NULL ;
@@ -87,7 +85,7 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 }
 
 //search
-char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWordsOriginal, BloomFilter* topFilter, topKStruct* topKArray){		//is called for a single query
+char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWordsOriginal, BloomFilter* topFilter,topKArray *topArray){		//is called for a single query
 
 	BloomFilter* filter = initializeFilter(5);		//initialize bloomFilter here
 	
@@ -131,9 +129,20 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 						finalStringArray[itemsOffinalStringArray-1]=malloc((strlen(finalString)+1)* sizeof(char));
 						strcpy(finalStringArray[itemsOffinalStringArray-1], finalString);
 
+						//insert to topArray
+						if(!possiblyContains(topFilter,finalString,strlen(finalString))){
+							addFilter(topFilter,finalString,strlen(finalString));
+							if(topArray->positionInsertion-1 == topArray->length){
+								doubleTopKArray(topArray);
+							}
+							insertTopArray(topArray,finalString);
+							pigeonholeSort(topArray);
+						}
+						
 						returningStringLength += strlen(finalString)+2;
 						returningString=realloc(returningString,returningStringLength *sizeof(char));
 						strcat(returningString,finalString);
+						
 					}
 				}
 				finalString = realloc(finalString,(strlen(finalString)+2)*sizeof(char));
@@ -172,6 +181,16 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 							finalStringArray=realloc(finalStringArray, itemsOffinalStringArray * sizeof(char*));
 							finalStringArray[itemsOffinalStringArray-1]=malloc((strlen(finalString)+1)* sizeof(char));
 							strcpy(finalStringArray[itemsOffinalStringArray-1], finalString);
+							
+							//insert to topArray
+							if(!possiblyContains(topFilter,finalString,strlen(finalString))){
+								addFilter(topFilter,finalString,strlen(finalString));
+								if(topArray->positionInsertion-1 == topArray->length){
+									doubleTopKArray(topArray);
+								}
+								insertTopArray(topArray,finalString);
+								pigeonholeSort(topArray);
+							}
 
 							returningStringLength += strlen(finalString)+2;
 							returningString=realloc(returningString,returningStringLength *sizeof(char));
@@ -229,7 +248,6 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 	}
 	free(finalStringArray);
 	finalStringArray = NULL;
-	
 	
 	freeFilter(filter);
 	return returningString;

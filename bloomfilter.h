@@ -16,7 +16,6 @@ uint64_t* getHashesMurmur(const char* data,size_t len);
 uint64_t kthHash(uint8_t k,uint64_t hashA,uint64_t hashB,uint64_t filterSize);
 void addFilter(BloomFilter* filter,const char* data, size_t len);
 bool possiblyContains(BloomFilter* filter,const char* data, size_t len);
-bool bloomFilterSeach(BloomFilter* filter,const char* data);
 void freeFilter(BloomFilter* filter);
 
 

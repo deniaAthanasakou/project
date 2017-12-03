@@ -40,7 +40,7 @@ int initialize(FILE* file, HashTable* hashTable){
 }
 
 
-void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKStruct* topKArray){
+void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKArray *topArray){
 
 
 	arrayWords* arrayW = stringToArray(ngram);
@@ -50,7 +50,7 @@ void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter*
 		insert_ngram(hashTable, arrayOfWords,noOfWords);
 	}
 	else if(query == 'Q'){
-		char* searchString = search_ngram(hashTable, arrayOfWords,noOfWords, topFilter, topKArray);
+		char* searchString = search_ngram(hashTable, arrayOfWords,noOfWords, topFilter, topArray);
 		free(searchString);
 		searchString=NULL;
 	}
@@ -306,8 +306,6 @@ checkItemExists* binarySearch2(dataNode* array, dataNode* item, int first, int l
 	
     	return 	check;
      }
-     
-    
 
  	int mid = (first+last)/2;
 		
@@ -501,13 +499,13 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 	char endingLetter = 'F';			//initialization	
 	int counter=-1;
 	BloomFilter* topFilter = NULL;
-	topKStruct* topKArray = NULL;
+	topKArray* topArray = NULL;
 	while ((read = getline(&line, &len, file)) != -1) {
 	
 		counter++;
-		if(counter == 0){		//initialize bloomFilter
+		if(counter == 0){		 
 			topFilter = initializeFilter(5);		//initialize bloomFilter here
-			topKArray = malloc(1*sizeof(topKStruct));
+			topArray = initializeTopKArray();		//initialize topKArray
 		}
 		
 		char* ngram = strtok(line, "\n");
@@ -530,7 +528,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 		}
 		else if(strcmp(wordCase,"Q")==0){
 			endingLetter = 'Q';
-			callBasicFuncs(remainingLine,'Q',hashTable,topFilter, topKArray);		
+			callBasicFuncs(remainingLine,'Q',hashTable,topFilter,topArray);		
 		}
 		else if(strcmp(wordCase,"D")==0){
 			endingLetter = 'D';
@@ -549,8 +547,17 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			
 			endingLetter = 'F';
 			counter = -1;
+			
+			//get top-k
+			if(remainingLine!=NULL){
+				int topK = atoi(remainingLine);				
+				//print topK
+				printTopK(topArray,topK);
+			}
 			//free bloomFilter
+			freeFilter(topFilter);
 			//free array
+			destroyTopArray(topArray);
 			
 		}
 		else{			//different letter

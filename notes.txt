@@ -1,2 +1,23 @@
-1)levelUp mporei na dhmiourghsei provlhma
-2)check why test doesn't work
+KA8ARISA MERIKA PRAGMATA KI ALLAKSA TO BLOOMSEARCH SE POSSIBLYCONTAINS (douleuei kanonika, gt h bloomsearch kalouse mn thn POSSIBLYCONTAINS mesa ekei)
+TO MEDIUM EINAI TERASTION GIA NA TO ANEBASO
+ALLAKSA TO INIT_FILE, QUERY_FILE GIA NA EINAI SAN THS EKFONHSHS
+
+TOP-K ngrams: 
+-dhmioyrghsa kainourio .c ki .h arxeia
+-allaksa to makefile gia n douleyei
+-eftiaksa to executeQueryFile na pairnei to sosto ari8mo gia ta top-k
+-allaksa to search-ngram ki ekei pou kanoyme insert kalesa na ginetai insert ki meta pigeonhole sort sthn domh tou top-k
+-alla mou bgazei sega, dn to exo treksei ena bhma pros ena, isos kapou se kapoio malloc exo kanei la8os
+-bucket sort h pigeonhole??
+	-bucket sort: 
+		gia ari8mous (an exoun idio occurences pos 8 kanoume to sorting??)
+		exei ena complexity ths takshs O(n) -> O(n^2)
+		den ksero an douleuei gia ta strings
+	-pigeonhole sort:
+		gia ari8mous mazi me strings
+		complexity: O(n+N)
+		genika: https://en.wikipedia.org/wiki/Pigeonhole_sort
+		leei oti an N >> n tote prepei na xrhsimopoihsoume bucket sort
+		
+	TELIKA: paizei bucket sort alla na thn allaksoume gia ta dedomena mas,ki ego eblepa gia pigeon :( 
+
