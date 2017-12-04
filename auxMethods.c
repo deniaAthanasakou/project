@@ -426,6 +426,9 @@ void deletionSort(arrayOfStructs* array_of_str,	int position, int lastElement){
 	array_of_str->position--;
 }
 
+
+ 
+
 void printFullArray(arrayOfStructs* array_of_str, int position){	//prints all layers
 	arrayOfStructs* tempArray = array_of_str;
 	printf("PRINTING FULL ARRAY\n");
@@ -548,16 +551,30 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			endingLetter = 'F';
 			counter = -1;
 			
+			
+			
 			//get top-k
 			if(remainingLine!=NULL){
-				int topK = atoi(remainingLine);				
+				int topK = atoi(remainingLine);		
+				HeapSort(topArray->array, topArray->positionInsertion, 0);	//sort based on integers		
 				//print topK
+				if(topK > topArray->positionInsertion)
+					topK=topArray->positionInsertion;
 				printTopK(topArray,topK);
+				
+				//printFullArrayTop(topArray);
+				
 			}
+			
+			
+
+			
 			//free bloomFilter
 			freeFilter(topFilter);
 			//free array
 			destroyTopArray(topArray);
+			
+			//break;
 			
 		}
 		else{			//different letter

@@ -5,6 +5,8 @@
 #include "auxMethods.h"
 #include "bloomfilter.h"
 #include "hashTable.h" 
+#include "topK.h"
+#include "compress.h"
 
 #define NOOFBUCKETS 4
 #define NOOFCELLS 4
@@ -39,6 +41,13 @@ int main (int argc,char* argv[]){
 	{
 		staticDynamic = initialize(initFile, hashTable);
 		fclose (initFile);
+	}
+	
+	
+	if(staticDynamic==0){
+		//compress
+		compress(hashTable);
+	
 	}
 	
 	//query

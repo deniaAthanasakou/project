@@ -13,6 +13,7 @@ void initializeArray(arrayOfStructs* array_of_str){
 		initializeDataNode(&(array_of_str->array[i]));
 	}
 	
+	
 }
 
 void doubleLength(arrayOfStructs* array_of_str){
@@ -32,6 +33,7 @@ void initializeDataNode(dataNode* node){
 	node->isDynamic=false;
 	node->noOfChars = -1;
 	node->word[0]='\0';
+	node->staticArray = NULL;
 }
 
 
@@ -70,6 +72,10 @@ void deleteDataNode(dataNode* elem){
 		if( elem->dynamicWord!=NULL){
 			free(elem->dynamicWord);
 			elem->dynamicWord = NULL;
+		}
+		if(elem->staticArray!=NULL){
+			free(elem->staticArray);
+			elem->staticArray = NULL;
 		}
 	}
 }
