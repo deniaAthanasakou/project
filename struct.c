@@ -34,6 +34,7 @@ void initializeDataNode(dataNode* node){
 	node->noOfChars = -1;
 	node->word[0]='\0';
 	node->staticArray = NULL;
+	node->staticArrayLength = 0;
 }
 
 

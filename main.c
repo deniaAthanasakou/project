@@ -46,7 +46,7 @@ int main (int argc,char* argv[]){
 	
 	if(staticDynamic==0){
 		//compress
-		compress(hashTable);
+		recreateStructure(hashTable);
 	
 	}
 	

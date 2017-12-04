@@ -15,6 +15,7 @@ struct dataNode{
 	char* dynamicWord;				//at first is null
 	int noOfChars;
 	int* staticArray;				//for static files
+	int staticArrayLength;			//for static files
 };
 
 
