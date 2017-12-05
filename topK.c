@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "topK.h"
-#define TOP_SIZE 20
+
 
 topKArray* initializeTopKArray(){
 	topKArray *topArray = malloc(sizeof(topKArray));

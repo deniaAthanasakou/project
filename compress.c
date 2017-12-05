@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "compress.h"
 
 void recreateStructure(HashTable* hashTable){
@@ -61,19 +62,20 @@ int checkForCompression(dataNode* node){
 		if (node->nextWordArray->position == 1){
 			if(node->staticArray==NULL){
 				node->staticArray = malloc(node->staticArrayLength *sizeof(int));
+				char* startString = getString(node);
+				if(node->isFinal)
+					node->staticArray[node->staticArrayLength -1] = strlen(startString);
+				else
+					node->staticArray[node->staticArrayLength -1] = -strlen(startString);
+		
+				free(startString);
+				startString = NULL;
 			}
 			else{
 				node->staticArray = realloc(node->staticArray, node->staticArrayLength *sizeof(int));
 			}
 			
-			char* startString = getString(node);
-			if(node->isFinal)
-				node->staticArray[node->staticArrayLength -1] = strlen(startString);
-			else
-				node->staticArray[node->staticArrayLength -1] = -strlen(startString);
-		
-			free(startString);
-			startString = NULL;
+			
 		
 		
 			compress(node,&node->nextWordArray->array[0]);
@@ -98,7 +100,7 @@ void compress(dataNode* startNode,dataNode* additionalNode){
 	startNode->staticArray = realloc(startNode->staticArray,(startNode->staticArrayLength +1) *sizeof(int));
 	arrayOfStructs* tempArray = startNode->nextWordArray;
 	
-	printf("startNode->staticArrayLength %d\n",startNode->staticArrayLength);
+	printf("startNode->staticArrayLength %d\n",startNode->staticArrayLength +1);
 	
 	
 	startNode->nextWordArray = additionalNode->nextWordArray;
@@ -121,6 +123,7 @@ void compress(dataNode* startNode,dataNode* additionalNode){
 	else
 		startNode->staticArray[startNode->staticArrayLength] = -strlen(secondString);	
 	
+	printf("startNode->staticArrayLength %d\n",startNode->staticArrayLength);
 	printf("newString %s \n",startNode->dynamicWord);
 	
 	//printf("Printing Static Array %d\n",startNode->staticArrayLength);
@@ -135,8 +138,38 @@ void compress(dataNode* startNode,dataNode* additionalNode){
 
 }
 
-
-
+char** getNgramFromNode(dataNode* node){
+	//printf("InitialString %s\n",getString(node));
+	char** ngram;
+	if(node->staticArray!=NULL){
+		ngram = malloc(node->staticArrayLength*sizeof(char*));
+		int k=0;
+		char* temp;
+		for(int i=0; i <= node->staticArrayLength; i++){
+			int sizeMalloc = abs(node->staticArray[i]);
+			//printf("sizeMalloc is '%d'\n",sizeMalloc);
+			ngram[i] = malloc(sizeof(char)*(sizeMalloc));
+			int j = 0;
+			for(j=0; j< sizeMalloc; j++){
+				ngram[i][j] = node->dynamicWord[k];
+				k++;
+			}
+			ngram[i][j] = '\0';
+			//printf("%dth ngram is '%s'\n",i,ngram[i]);
+			
+		}
+	}
+	else{		//1 word
+		//printf("WHAT\n");
+		ngram = malloc(1*sizeof(char*));
+		char* word = getString(node);
+		ngram[0] = malloc((strlen(word) +1)*sizeof(char));
+		strcpy(ngram[0], word);
+		free(word);
+		word = NULL;
+	}
+	return ngram;
+}
 
 
 

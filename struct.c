@@ -77,6 +77,7 @@ void deleteArray1Layer(arrayOfStructs* array_of_str){
 		int lastElement = array_of_str->position;	
 		for(int i=0; i < lastElement; i++){		
 			deleteDataNode(&(array_of_str->array[i]));
+			array_of_str->array[i].nextWordArray = NULL;
 			
 		}
 		free(array_of_str->array);

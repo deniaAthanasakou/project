@@ -256,6 +256,18 @@ dataNode* lookupTrieNode(char* lookupWord ,HashTable* hashTable){
 	while (first <= last) {
 		char *searchWord = NULL;
 		searchWord = getString(&bucket->cells[middle]);
+		if(bucket->cells[middle].staticArray!=NULL){
+			int sizeMalloc = abs(bucket->cells[middle].staticArray[0]);
+			//printf("sizeMalloc is LOOKUPTRIE'%d'\n",sizeMalloc);
+			int j = 0;
+			int k=0;
+			for(j=0; j< sizeMalloc; j++){
+				searchWord[j] = bucket->cells[middle].dynamicWord[k];
+				k++;
+			}
+			searchWord[j] = '\0';
+		}
+		//printf("searchword %s\n",searchWord);
 		if (strcmp(searchWord,lookupWord)<0)
 			first = middle + 1;    
 		else if (strcmp(searchWord,lookupWord)==0) {

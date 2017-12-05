@@ -1,21 +1,12 @@
-#ifndef _TOP_K_H_
-#define _TOP_K_H_
-#define TOP_SIZE 20
+#ifndef CU_TEST_TOP_K_H
+#define CU_TEST_TOP_K_H
+#include "CuTest.h"
+#include "../topK.h"
 
-typedef struct topKStruct{
-	char* ngram;
-	int occurences;
-}topKStruct;
-
-typedef struct topKArray{
-	int length;
-	topKStruct *array;
-	int positionInsertion;		//empty position for insert
-}topKArray;
-
-topKArray* initializeTopKArray();
+void TestInitializeTopKArray(CuTest *tc);
+void TestInitializeTopKStruct(CuTest *tc);
+/*
 void doubleTopKArray(topKArray *topArray);
-void initializeTopKStruct(topKStruct* node);
 void insertTopArray(topKArray *topArray,char *item);
 void printTopK(topKArray *topArray,int topK);
 void printFullArrayTop(topKArray *topArray);
@@ -27,5 +18,9 @@ void HeapifyIntegers(topKStruct* array, int i, int* heapSize);
 void HeapifyStrings(topKStruct* array, int i, int* heapSize);
 
 void binarySearchTopK(topKStruct* array, char* ngram, int maxElems);
+*/
+
+CuSuite* TopKGetSuite();
 
 #endif
+

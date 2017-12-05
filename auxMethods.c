@@ -146,6 +146,18 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
     	check->exists=false;
     	if(array[first].noOfChars!=-1){
 			char* wordFirst = getString(&(array[first]));
+		 	if(array[first].staticArray!=NULL){
+				int sizeMalloc = abs(array[first].staticArray[0]);
+				//printf("sizeMalloc is LOOKUPTRIE'%d'\n",sizeMalloc);
+				int j = 0;
+				int k=0;
+				for(j=0; j< sizeMalloc; j++){
+					wordFirst[j] = array[first].dynamicWord[k];
+					k++;
+				}
+				wordFirst[j] = '\0';
+			}
+
 			char* wordItem = getString(item);
 			
 			if(wordFirst!=NULL){
@@ -172,7 +184,7 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
     	return 	check;
      }
      
-  
+  	//printf("mid\n");
 
  	int mid = (first+last)/2;
 
@@ -183,12 +195,22 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
  	}
  	
  	char* wordMid = getString(&(array[mid]));
+ 	if(array[mid].staticArray!=NULL){
+		int sizeMalloc = abs(array[mid].staticArray[0]);
+		//printf("sizeMalloc is LOOKUPTRIE '%d'\n",sizeMalloc);
+		int j = 0;
+		for(j=0; j< sizeMalloc; j++){
+			wordMid[j] = array[mid].dynamicWord[j];
+		}
+		wordMid[j] = '\0';
+	}
+
 	char* wordItem = getString(item);
  	
 	if(strcmp(wordItem ,wordMid)==0){
 		check->position=mid;
 		check->exists=true;
-	
+		check->insertedNode = &array[mid];
 		free(wordMid);
 		wordMid = NULL;
 		free (wordItem);

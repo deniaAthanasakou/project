@@ -1,11 +1,11 @@
 CC = gcc -g
-FILES = AllTests.c CuTest.c CuTestStack.c CuTestAuxMethods.c CuTestFunc.c CuTestStruct.c ../struct.c ../func.c ../auxMethods.c ../stack.c 
-OBJECTS = AllTests.o CuTest.o CuTestStack.o CuTestAuxMethods.o CuTestFunc.o CuTestStruct.o struct.o func.o auxMethods.o stack.o
+FILES = AllTests.c CuTest.c CuTestStack.c CuTestAuxMethods.c CuTestFunc.c CuTestStruct.c CuTestTopK.c ../struct.c ../func.c ../auxMethods.c ../stack.c ../bloomfilter.c ../hashTable.c ../murmur3/murmur3.c ../topK.c ../compress.c
+OBJECTS = AllTests.o CuTest.o CuTestStack.o CuTestAuxMethods.o CuTestFunc.o CuTestStruct.o CuTestTopK.o struct.o func.o auxMethods.o stack.o bloomfilter.o hashTable.o murmur3.o topK.o compress.o
 OUT = test
-HEADERS = CuTest.h CuTestStack.h CuTestAuxMethods.h CuTestFunc.h CuTestStruct.h ../struct.h ../func.h ../auxMethods.h ../stack.h
+HEADERS = CuTest.h CuTestStack.h CuTestAuxMethods.h CuTestFunc.h CuTestStruct.h CuTestTopK.h ../struct.h ../func.h ../auxMethods.h ../stack.h ../bloomfilter.h ../hashTable.h ../murmur3/murmur3.h ../topK.c ../compress.h
 
 all: $(OBJECTS) $(HEADERS)
-	$(CC) -o $(OUT) $(FILES)
+	$(CC) -o $(OUT) $(FILES) -lm
 	make clean
 
 AllTests.o: AllTests.c
@@ -26,7 +26,9 @@ CuTestFunc.o: CuTestFunc.c
 CuTestStruct.o: CuTestStruct.c
 	$(CC) -c CuTestStruct.c
 
-
+CuTestTopK.o: CuTestTopK.c
+	$(CC) -c CuTestTopK.c
+	
 struct.o: ../struct.c
 	$(CC) -c ../struct.c
 
@@ -38,6 +40,21 @@ func.o: ../func.c
 
 auxMethods.o: ../auxMethods.c
 	$(CC) -c ../auxMethods.c
+	
+bloomfilter.o: ../bloomfilter.c
+	$(CC) -c ../bloomfilter.c
+	
+hashTable.o: ../hashTable.c
+	$(CC) -c ../hashTable.c	
+	
+murmur3.o: ../murmur3/murmur3.c
+	$(CC) -c ../murmur3/murmur3.c
+
+topK.o: ../topK.c
+	$(CC) -c ../topK.c
+	
+compress.o: ../compress.c
+	$(CC) -c ../compress.c		
 
 
 clean:

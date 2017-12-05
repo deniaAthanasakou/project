@@ -3,7 +3,7 @@
 #include <string.h>
 #include "CuTestFunc.h"
 
-
+/*
 void TestInsert_ngram(CuTest *tc){
 	
 	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
@@ -225,7 +225,7 @@ void TestDelete_ngram(CuTest *tc){
 		A test
 		D this is
 	*/
-	
+	/*
 	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
 	initializeArray(array_of_str);
 	
@@ -356,4 +356,4 @@ CuSuite* FuncGetSuite() {		//adding TestFunc Functions into suite
 
     
     return suite;
-}
+}*/

@@ -5,6 +5,7 @@
 #include "CuTestAuxMethods.h"
 #include "CuTestFunc.h"
 #include "CuTestStruct.h"
+#include "CuTestTopK.h"
 
 CuSuite* CuGetSuite();
 CuSuite* CuStringGetSuite();
@@ -28,10 +29,21 @@ void RunAllTests(void)
 	free(auxMethodsSuite);
 	auxMethodsSuite=NULL;
 	
-	CuSuite* funcSuite =  FuncGetSuite();
+	/*CuSuite* funcSuite =  FuncGetSuite();
 	CuSuiteAddSuite(suite, funcSuite);
 	free(funcSuite);
 	funcSuite=NULL;
+*/	
+
+	//topK
+	//compress
+	//bloomFilter	
+	//hashTable
+	
+	CuSuite* topKSuite =  TopKGetSuite();
+	CuSuiteAddSuite(suite, topKSuite);
+	free(topKSuite);
+	topKSuite=NULL;
 	
 	CuSuite* structSuite =  StructGetSuite();
 	CuSuiteAddSuite(suite, structSuite);

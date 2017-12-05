@@ -14,7 +14,7 @@ struct dataNode{
 	bool isDynamic;					//if true strlen(word)>20
 	char* dynamicWord;				//at first is null
 	int noOfChars;
-	int* staticArray;				//for static files
+	signed short* staticArray;		//for static files
 	int staticArrayLength;			//for static files
 };
 
