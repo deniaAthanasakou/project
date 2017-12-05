@@ -24,7 +24,7 @@ typedef struct arrayWords{
 int initialize(FILE* file, HashTable* hashTable);
 int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic);
 
-void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKArray *topArray);
+void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKArray *topArray, int isDynamic);
 
 arrayWords* stringToArray(char* ngram);
 
@@ -49,6 +49,8 @@ void insertString (dataNode* node, char* word);
 checkItemExists* binarySearch2(dataNode* array, dataNode* item, int first, int last, int trueLastElement, checkItemExists* check);
 
 checkItemExists* insertionSort2(HashTable* hashTable, Bucket* bucket, dataNode* itemForInsert, int lastElement);
+
+
 
 
 void copyDataNode(dataNode* node, dataNode* tempNode);

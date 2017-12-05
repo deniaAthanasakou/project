@@ -66,15 +66,48 @@ void deleteArray(arrayOfStructs* array_of_str){
 	}		
 }
 
+void deleteArray1Layer(arrayOfStructs* array_of_str){	
+
+	if(array_of_str != NULL){
+		if(array_of_str->array==NULL){
+			free(array_of_str);
+			array_of_str=NULL;
+			return;
+		}
+		int lastElement = array_of_str->position;	
+		for(int i=0; i < lastElement; i++){		
+			deleteDataNode(&(array_of_str->array[i]));
+			
+		}
+		free(array_of_str->array);
+		array_of_str->array=NULL;
+		free(array_of_str);
+		array_of_str=NULL;
+	}		
+}
+
+void printStaticArray(dataNode* node){
+	printf("Printing Static Array %d \n [ ",node->staticArrayLength+1);
+	for(int i=0; i <= node->staticArrayLength; i++){
+		if(i!=node->staticArrayLength)
+			printf("%d, ",node->staticArray[i]);
+		else 
+			printf("%d ",node->staticArray[i]);
+	}
+	printf(" ]\n");
+
+}
 
 
 void deleteDataNode(dataNode* elem){
 	if(elem!=NULL){
 		if( elem->dynamicWord!=NULL){
+
 			free(elem->dynamicWord);
 			elem->dynamicWord = NULL;
 		}
 		if(elem->staticArray!=NULL){
+			//printStaticArray(elem);
 			free(elem->staticArray);
 			elem->staticArray = NULL;
 		}

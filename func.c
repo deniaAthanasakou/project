@@ -263,6 +263,186 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 	return returningString;
 }
 
+
+//search in static files
+char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWordsOriginal, BloomFilter* topFilter, topKArray *topArray){
+
+	BloomFilter* filter = initializeFilter(5);		//initialize bloomFilter here
+	
+	char** finalStringArray=malloc(0*sizeof(char*));
+	int itemsOffinalStringArray=0;
+	char* returningString=malloc(1*sizeof(char));
+	strcpy(returningString,"");			//initialization
+	int returningStringLength=0;
+	int found = 0;
+	int noOfWords=noOfWordsOriginal;
+	for(int j=0; j < noOfWordsOriginal; j++){	//for each word of query starting as first Word
+		
+		dataNode* firstElement;
+		arrayOfStructs *tempArray;
+		
+		char* finalString= NULL;
+		int strLength=0;
+
+		char* arrayOfWords[noOfWords];
+		int counter=j;
+		for(int k=0; k<noOfWords; k++){
+			arrayOfWords[k]=arrayOfWordsOriginal[counter];
+			counter++;
+		}
+		for(int i=0; i < noOfWords; i++){				//for each word of query
+			if(i==0){
+				firstElement = lookupTrieNode(arrayOfWords[i],hashTable);
+				if(firstElement==NULL){
+					break;
+				}
+				strLength += strlen(arrayOfWords[i]) + 2;
+				finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
+				strcpy(finalString,arrayOfWords[i]);
+				
+				if(firstElement->isFinal){
+					found=1;
+					if(!possiblyContains(filter,finalString,strlen(finalString))){			//if finalString should be printed (is not in filter)
+						addFilter(filter,finalString,strlen(finalString));		//add finalString in filter
+						itemsOffinalStringArray++;
+						finalStringArray=realloc(finalStringArray, itemsOffinalStringArray * sizeof(char*));
+						finalStringArray[itemsOffinalStringArray-1]=malloc((strlen(finalString)+1)* sizeof(char));
+						strcpy(finalStringArray[itemsOffinalStringArray-1], finalString);
+
+						//insert to topArray
+						if(!possiblyContains(topFilter,finalString,strlen(finalString))){		//if finalString does not exist in array
+							addFilter(topFilter,finalString,strlen(finalString));
+							if(topArray->positionInsertion == topArray->length){
+								doubleTopKArray(topArray);
+							}
+							insertTopArray(topArray,finalString);
+						}
+						else{																	//exists in array
+							//printf("final Strind %s\n", finalString);
+							//printFullArrayTop(topArray);
+							binarySearchTopK(topArray->array, finalString, topArray->positionInsertion);
+						}
+						HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+						returningStringLength += strlen(finalString)+2;
+						returningString=realloc(returningString,returningStringLength *sizeof(char));
+						strcat(returningString,finalString);
+						
+					}
+				}
+				finalString = realloc(finalString,(strlen(finalString)+2)*sizeof(char));
+				finalString[strlen(finalString)] = '\0';
+				strcat(finalString, " ");
+			}
+			else{
+				if(i==1){
+					tempArray = firstElement->nextWordArray;
+					if(tempArray == NULL)
+					{
+						break;		
+					}
+
+				}
+				dataNode* tempElement = malloc(sizeof(dataNode));
+				insertString (tempElement, arrayOfWords[i]);
+				checkItemExists* getPosition = binarySearch(tempArray, tempElement, 0 ,tempArray->position,NULL); 
+				if(getPosition->exists==true){		//if word was found
+					strLength += strlen(arrayOfWords[i]) + 2;
+					finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
+				
+					finalString[strlen(finalString)] = '\0';
+					char* word = getString(&(tempArray->array[getPosition->position]));
+					strcat(finalString, word);	
+					free(word);
+					word = NULL;
+					
+					if(tempArray->array[getPosition->position].isFinal == true){		//if true check whether finalString should be printed
+						found=1;
+						
+						//finalString does not exist in finalStringArray
+						if(!possiblyContains(filter,finalString,strlen(finalString))){			//if finalString should be printed (is not in filter)
+							addFilter(filter,finalString,strlen(finalString));		//add finalString in filter
+							itemsOffinalStringArray++;
+							finalStringArray=realloc(finalStringArray, itemsOffinalStringArray * sizeof(char*));
+							finalStringArray[itemsOffinalStringArray-1]=malloc((strlen(finalString)+1)* sizeof(char));
+							strcpy(finalStringArray[itemsOffinalStringArray-1], finalString);
+							
+							//insert to topArray
+							if(!possiblyContains(topFilter,finalString,strlen(finalString))){
+								addFilter(topFilter,finalString,strlen(finalString));
+								if(topArray->positionInsertion == topArray->length){
+									doubleTopKArray(topArray);
+								}
+								insertTopArray(topArray,finalString);
+							}
+							else{		//exists in array
+								//printf("final Strind %s\n", finalString);
+								//printFullArrayTop(topArray);
+								binarySearchTopK(topArray->array, finalString, topArray->positionInsertion);
+							
+							}
+							//HeapSort(topArray->array, topArray->positionInsertion);
+							HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+							returningStringLength += strlen(finalString)+2;
+							returningString=realloc(returningString,returningStringLength *sizeof(char));
+							strcat(returningString,finalString);
+						}
+
+					}
+					finalString = realloc(finalString,(strlen(finalString)+2)*sizeof(char));
+					finalString[strlen(finalString)] = '\0';
+					strcat(finalString, " ");
+				}
+				else{
+					deleteDataNode(tempElement);
+					free(tempElement);
+					tempElement=NULL;
+					free(getPosition);
+					getPosition = NULL;
+					break;
+				}	
+				tempArray = tempArray->array[getPosition->position].nextWordArray;
+				if(tempArray == NULL)
+				{
+					deleteDataNode(tempElement);
+					free(tempElement);
+					tempElement=NULL;
+					free(getPosition);
+					getPosition = NULL;
+					break;		
+				}
+
+				deleteDataNode(tempElement);
+				free(tempElement);
+				tempElement=NULL;
+				free(getPosition);
+				getPosition = NULL;			
+			}
+		}
+		free(finalString);
+		finalString = NULL;
+		noOfWords--;
+	}
+	
+	if(found==0){
+		printf("-1\n");
+		returningString = realloc(returningString, 3*sizeof(char));
+		strcpy(returningString,"-1");
+	}
+	else{	
+		printQuery(finalStringArray, itemsOffinalStringArray);
+	}	
+	
+	for(int i=0; i<itemsOffinalStringArray; i++){
+		free(finalStringArray[i]);
+		finalStringArray[i] = NULL;
+	}
+	free(finalStringArray);
+	finalStringArray = NULL;
+	
+	freeFilter(filter);
+	return returningString;
+}
+
 //delete
 void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 	arrayOfStructs* tempArray = NULL;

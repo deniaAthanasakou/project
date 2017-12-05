@@ -32,5 +32,7 @@ void doubleLength(arrayOfStructs* array_of_str);
 void deleteArray(arrayOfStructs* array_of_str);
 void deleteDataNode(dataNode* elem);
 void initializeDataNode(dataNode* node);
+void printStaticArray(dataNode* node);
+void deleteArray1Layer(arrayOfStructs* array_of_str);
 
 #endif

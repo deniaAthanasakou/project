@@ -27,7 +27,7 @@ int initialize(FILE* file, HashTable* hashTable){
 				
 		}
 		else{
-			callBasicFuncs(ngram,'A',hashTable,NULL,NULL);
+			callBasicFuncs(ngram,'A',hashTable,NULL,NULL,returnValue);
 		}
 		counter++;
 	}
@@ -40,7 +40,7 @@ int initialize(FILE* file, HashTable* hashTable){
 }
 
 
-void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKArray *topArray){
+void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKArray *topArray, int isDynamic){
 
 
 	arrayWords* arrayW = stringToArray(ngram);
@@ -50,7 +50,11 @@ void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter*
 		insert_ngram(hashTable, arrayOfWords,noOfWords);
 	}
 	else if(query == 'Q'){
-		char* searchString = search_ngram(hashTable, arrayOfWords,noOfWords, topFilter, topArray);
+		char* searchString = NULL;
+		if(isDynamic)
+		 	searchString= search_ngram(hashTable, arrayOfWords,noOfWords, topFilter, topArray);
+		else
+			searchString = search_ngram_StaticVersion(hashTable, arrayOfWords,noOfWords, topFilter, topArray);
 		free(searchString);
 		searchString=NULL;
 	}
@@ -527,11 +531,11 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				destroyLinearHash(hashTable);
 				exit(1);
 			}
-			callBasicFuncs(remainingLine,'A',hashTable, NULL, NULL);
+			callBasicFuncs(remainingLine,'A',hashTable, NULL, NULL, 1);
 		}
 		else if(strcmp(wordCase,"Q")==0){
 			endingLetter = 'Q';
-			callBasicFuncs(remainingLine,'Q',hashTable,topFilter,topArray);		
+			callBasicFuncs(remainingLine,'Q',hashTable,topFilter,topArray,staticDynamic);		
 		}
 		else if(strcmp(wordCase,"D")==0){
 			endingLetter = 'D';
@@ -544,7 +548,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				destroyLinearHash(hashTable);
 				exit(1);
 			}
-			callBasicFuncs(remainingLine,'D',hashTable, NULL, NULL);
+			callBasicFuncs(remainingLine,'D',hashTable, NULL, NULL, 1);
 		}
 		else if(strcmp(wordCase,"F")==0){
 			

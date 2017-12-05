@@ -6,4 +6,7 @@
 void recreateStructure(HashTable* hashTable);
 void compress(dataNode* startNode,dataNode* additionalNode);
 
+void recursiveCompression(arrayOfStructs* array);
+int checkForCompression(dataNode* node);
+
 #endif

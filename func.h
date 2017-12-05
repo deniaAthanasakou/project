@@ -14,6 +14,9 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords);
 //search
 char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWordsOriginal, BloomFilter* topFilter, topKArray *topArray);
 
+//search in static files
+char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWordsOriginal, BloomFilter* topFilter, topKArray *topArray);
+
 //delete
 void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords);
 
