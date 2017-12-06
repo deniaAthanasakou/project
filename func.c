@@ -313,6 +313,7 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 				strLength += strlen(arrayOfWords[i]) + 2;
 				finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
 				strcpy(finalString,arrayOfWords[i]);
+				//printf("after strcpy in i==0 finalstring '%s'\n",finalString);
 				
 			}
 			else if(subFlag==0 || tempElement->staticArray==NULL){
@@ -329,26 +330,29 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 			//printf("after getNgramFromNode\n");
 			int counterForArray = 0;
 			if(tempElement->staticArray!=NULL){					//if tempElement is supernode
-				//printf("------------SUPERRRRRRRRRRRR\n");
+			//	printf("------------SUPERRRRRRRRRRRR finalString %s\n", finalString);
 				
 				while(counterForArray <= tempElement->staticArrayLength){
-					printf("-------------INSIDE WHILE convertedStrings[counterForArray] = %s,arrayOfWords[i] = %s \n",convertedStrings[counterForArray],arrayOfWords[i]);
+					//printf("-------------INSIDE WHILE convertedStrings[counterForArray] = %s,arrayOfWords[i] = %s \n",convertedStrings[counterForArray],arrayOfWords[i]);
 					flagCounterIncreased=0;
+					//printf("before if counterForArray %d\n", counterForArray);
 					if(strcmp(convertedStrings[counterForArray],arrayOfWords[i])==0){  //if found
-						printf("FINAL STRING IN EQUAL IS %s\n",finalString);
-						if(i!=0 ){
-							strLength += strlen(convertedStrings[counterForArray]) + 2;
+					//	printf("after if counterForArray %d\n", counterForArray);
+					//	printf("FINAL STRING IN EQUAL IS %s i %d counterForArray %d\n",finalString, i, counterForArray);
+						if(i!=0 && flagFinalString != 1){
+							strLength += strlen(arrayOfWords[i]) + 2;
 							finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
 
 							finalString[strlen(finalString)] = '\0';
 							//char* word = getString(&(tempArray->array[getPosition->position]));
-							strcat(finalString, convertedStrings[counterForArray]);	
-							//printf("2--------FINALSTRING '%s'\n",finalString);
-							flagFinalString = 0;
+							//printf("%s will be inserted\n",arrayOfWords[i]);
+							strcat(finalString, arrayOfWords[i]);	
+							//printf("after strcat in while finalstring '%s'\n",finalString);
+							//flagFinalString = 0;
 							//free(word);
 							//word = NULL;
 						}
-						
+						//flagFinalString = 0;
 						if(tempElement->staticArray[counterForArray]>0){				//if final
 							found=1;
 							
@@ -400,10 +404,15 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 						break;
 					}	
 					counterForArray++;
+					flagFinalString = 0;
+					//printf("now counterForArray %d\n", counterForArray);
 				}
+				
+				//printf("endofWhile\n");
 			}
 			else {					// if tempElement is not a supernode
 				//printf("not a supernode\n");
+				flagFinalString = 0;
 				if(tempElement->isFinal){
 					found=1;
 						
@@ -415,6 +424,7 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 						finalString[strlen(finalString)] = '\0';
 						//char* word = getString(&(tempArray->array[getPosition->position]));
 						strcat(finalString, convertedStrings[0]);	
+					//printf("inside else finalString %s\n",finalString);
 						//free(word);
 						//word = NULL;
 						/*free(convertedStrings[0]);
@@ -467,7 +477,7 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 			convertedStrings = NULL;
 			
 			
-			printf("BEFORE CHANGE: %s\n",getString(tempElement));
+			//printf("BEFORE CHANGE: %s\n",getString(tempElement));
 			
 			//printf("before tempArray\n");
 			//get next tempElement
@@ -499,9 +509,9 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 				tempElement = getPosition->insertedNode;
 				free(getPosition);
 				getPosition = NULL;
-				printf("ELEMENT IS %s with i= %d\n", getString(tempElement),i);
+				//printf("ELEMENT IS %s with i= %d\n", getString(tempElement),i);
 				if(subFlag && tempElement->staticArray!=NULL){
-					printf("--------------------GIEP\n");
+				//	printf("--------------------GIEP\n");
 					i--;
 				}
 			}
@@ -512,7 +522,7 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 				break;
 			}
 			
-			
+			flagFinalString = 0;
 		}
 		free(finalString);
 		finalString = NULL;

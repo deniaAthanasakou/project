@@ -124,11 +124,11 @@ void compress(dataNode* startNode,dataNode* additionalNode){
 		startNode->staticArray[startNode->staticArrayLength] = -strlen(secondString);	
 	
 	//printf("startNode->staticArrayLength %d\n",startNode->staticArrayLength);
-	printf("newString %s \n",startNode->dynamicWord);
+	//printf("newString %s \n",startNode->dynamicWord);
 	
 	//printf("Printing Static Array %d\n",startNode->staticArrayLength);
-	printStaticArray(startNode);
-	printf("\n\n");
+	//printStaticArray(startNode);
+	//printf("\n\n");
 	free(firstString);
 	firstString = NULL;
 	free(secondString);
