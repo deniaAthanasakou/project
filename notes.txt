@@ -1,7 +1,5 @@
-to ftasa na kanei 7 removals 7 additions
-auto p ekana einai na valw 
-if(i!=0 && flagFinalString != 1) 
-mesa sth while
-kai prin to telos ths while na kanw flagFinalString = 0
+-to phga sta 5 la8h
+kati trexei otan briskei to university of alla meta otan akolou8ei to minnesota den paei ston epomeno kombo pou einai to minnesota
+opote ki den briskei genika fraseis opos 'university of' + 'minnesota'.
 
-trexto na deis pou bgazei thema
+-ekana oti xreiazotan gia ta test tou topK, ta etreksa ki meta valgrind ki dn m bghke 8ema

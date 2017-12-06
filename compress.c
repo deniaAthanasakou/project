@@ -100,7 +100,7 @@ void compress(dataNode* startNode,dataNode* additionalNode){
 	startNode->staticArray = realloc(startNode->staticArray,(startNode->staticArrayLength +1) *sizeof(int));
 	arrayOfStructs* tempArray = startNode->nextWordArray;
 	
-//printf("startNode->staticArrayLength %d\n",startNode->staticArrayLength +1);
+	//printf("startNode->staticArrayLength %d\n",startNode->staticArrayLength +1);
 	
 	
 	startNode->nextWordArray = additionalNode->nextWordArray;

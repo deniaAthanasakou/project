@@ -287,7 +287,6 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 		int subFlag = 0;
 		int flagFinalString = 0;
 
-
 		char* arrayOfWords[noOfWords];
 		int counter=j;
 		for(int k=0; k<noOfWords; k++){
@@ -330,7 +329,7 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 			//printf("after getNgramFromNode\n");
 			int counterForArray = 0;
 			if(tempElement->staticArray!=NULL){					//if tempElement is supernode
-			//	printf("------------SUPERRRRRRRRRRRR finalString %s\n", finalString);
+				//printf("------------SUPERRRRRRRRRRRR finalString %s\n", finalString);
 				
 				while(counterForArray <= tempElement->staticArrayLength){
 					//printf("-------------INSIDE WHILE convertedStrings[counterForArray] = %s,arrayOfWords[i] = %s \n",convertedStrings[counterForArray],arrayOfWords[i]);
@@ -396,77 +395,77 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 							flagCounterIncreased = 1;
 						}
 						else {
+							i--;
 							break;
 						}
 						//printf("AFTER arrayOfWords is '%s' with i = %d and noOfWords = %d\n",arrayOfWords[i],i,noOfWords);
 					}
 					else{
+						i--;
 						break;
 					}	
 					counterForArray++;
 					flagFinalString = 0;
 					//printf("now counterForArray %d\n", counterForArray);
 				}
-				
 				//printf("endofWhile\n");
 			}
 			else {					// if tempElement is not a supernode
 				//printf("not a supernode\n");
-				flagFinalString = 0;
-				if(tempElement->isFinal){
-					found=1;
-						
-					
-					if(!flagFound){
+				//printf("ONE WORD array: %s temp: %s\n",arrayOfWords[i],getString(tempElement));
+				char *word = getString(tempElement);
+				if(strcmp(word,arrayOfWords[i])==0){
+					if(i!=0 && flagFinalString != 1 && !flagFound){
 						strLength += strlen(arrayOfWords[i]) + 2;
 						finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
 
 						finalString[strlen(finalString)] = '\0';
-						//char* word = getString(&(tempArray->array[getPosition->position]));
 						strcat(finalString, convertedStrings[0]);	
-					//printf("inside else finalString %s\n",finalString);
-						//free(word);
-						//word = NULL;
-						/*free(convertedStrings[0]);
-						convertedStrings[0] = NULL;
-						free(convertedStrings);
-						convertedStrings = NULL;*/
 					}
-					
-					if(!possiblyContains(filter,finalString,strlen(finalString))){			//if finalString should be printed (is not in filter)
-						addFilter(filter,finalString,strlen(finalString));		//add finalString in filter
-						itemsOffinalStringArray++;
-						finalStringArray=realloc(finalStringArray, itemsOffinalStringArray * sizeof(char*));
-						finalStringArray[itemsOffinalStringArray-1]=malloc((strlen(finalString)+1)* sizeof(char));
-						strcpy(finalStringArray[itemsOffinalStringArray-1], finalString);
+				
+					if(tempElement->isFinal){
+						found=1;
 
-						//insert to topArray
-						if(!possiblyContains(topFilter,finalString,strlen(finalString))){		//if finalString does not exist in array
-							addFilter(topFilter,finalString,strlen(finalString));
-							if(topArray->positionInsertion == topArray->length){
-								doubleTopKArray(topArray);
+						if(!possiblyContains(filter,finalString,strlen(finalString))){			//if finalString should be printed (is not in filter)
+							addFilter(filter,finalString,strlen(finalString));		//add finalString in filter
+							itemsOffinalStringArray++;
+							finalStringArray=realloc(finalStringArray, itemsOffinalStringArray * sizeof(char*));
+							finalStringArray[itemsOffinalStringArray-1]=malloc((strlen(finalString)+1)* sizeof(char));
+							strcpy(finalStringArray[itemsOffinalStringArray-1], finalString);
+
+							//insert to topArray
+							if(!possiblyContains(topFilter,finalString,strlen(finalString))){		//if finalString does not exist in array
+								addFilter(topFilter,finalString,strlen(finalString));
+								if(topArray->positionInsertion == topArray->length){
+									doubleTopKArray(topArray);
+								}
+								insertTopArray(topArray,finalString);
 							}
-							insertTopArray(topArray,finalString);
-						}
-						else{																	//exists in array
-							//printf("final Strind %s\n", finalString);
-							//printFullArrayTop(topArray);
-							binarySearchTopK(topArray->array, finalString, topArray->positionInsertion);
-						}
-						HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
-						returningStringLength += strlen(finalString)+2;
-						returningString=realloc(returningString,returningStringLength *sizeof(char));
-						strcat(returningString,finalString);
-		
-					}	
+							else{																	//exists in array
+								//printf("final Strind %s\n", finalString);
+								//printFullArrayTop(topArray);
+								binarySearchTopK(topArray->array, finalString, topArray->positionInsertion);
+							}
+							HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+							returningStringLength += strlen(finalString)+2;
+							returningString=realloc(returningString,returningStringLength *sizeof(char));
+							strcat(returningString,finalString);
+
+						}	
+					}
+					//printf("after is final\n");
+					finalString = realloc(finalString,(strlen(finalString)+2)*sizeof(char));
+					finalString[strlen(finalString)] = '\0';
+					strcat(finalString, " ");
+				//	printf("finalString '%s'\n",finalString);
+					//printf("returningString %s\n",returningString);
 				}
-				//printf("after is final\n");
-				finalString = realloc(finalString,(strlen(finalString)+2)*sizeof(char));
-				finalString[strlen(finalString)] = '\0';
-				strcat(finalString, " ");
-			//	printf("finalString '%s'\n",finalString);
-				//printf("returningString %s\n",returningString);
+				flagFinalString = 0;
+				free(word);
+				word = NULL;
 			}
+			
+			
 			
 			
 			for(int m=0; m<=tempElement->staticArrayLength; m++){
@@ -511,7 +510,7 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 				getPosition = NULL;
 				//printf("ELEMENT IS %s with i= %d\n", getString(tempElement),i);
 				if(subFlag && tempElement->staticArray!=NULL){
-				//	printf("--------------------GIEP\n");
+					//printf("--------------------GIEP\n");
 					i--;
 				}
 			}

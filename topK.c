@@ -197,7 +197,6 @@ void destroyTopArray(topKArray *topArray){
 			free(topArray->array);
 			topArray->array = NULL;
 		}
-	
 		free(topArray);
 		topArray = NULL;
 	}
