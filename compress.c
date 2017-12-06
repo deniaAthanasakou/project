@@ -91,7 +91,7 @@ void compress(dataNode* startNode,dataNode* additionalNode){
 
 	char *firstString = getString(startNode);
 	char *secondString = getString(additionalNode);
-	printf("firstString %s  secondString %s ",firstString,secondString);
+	//printf("firstString %s  secondString %s ",firstString,secondString);
 	
 	firstString = realloc(firstString,(strlen( firstString) + strlen( secondString) +2)*sizeof(char));
 	strcat(firstString, secondString);
@@ -100,7 +100,7 @@ void compress(dataNode* startNode,dataNode* additionalNode){
 	startNode->staticArray = realloc(startNode->staticArray,(startNode->staticArrayLength +1) *sizeof(int));
 	arrayOfStructs* tempArray = startNode->nextWordArray;
 	
-	printf("startNode->staticArrayLength %d\n",startNode->staticArrayLength +1);
+//printf("startNode->staticArrayLength %d\n",startNode->staticArrayLength +1);
 	
 	
 	startNode->nextWordArray = additionalNode->nextWordArray;
@@ -123,7 +123,7 @@ void compress(dataNode* startNode,dataNode* additionalNode){
 	else
 		startNode->staticArray[startNode->staticArrayLength] = -strlen(secondString);	
 	
-	printf("startNode->staticArrayLength %d\n",startNode->staticArrayLength);
+	//printf("startNode->staticArrayLength %d\n",startNode->staticArrayLength);
 	printf("newString %s \n",startNode->dynamicWord);
 	
 	//printf("Printing Static Array %d\n",startNode->staticArrayLength);
@@ -140,17 +140,16 @@ void compress(dataNode* startNode,dataNode* additionalNode){
 
 char** getNgramFromNode(dataNode* node){
 	//printf("InitialString %s\n",getString(node));
-	char** ngram;
+	char** ngram=NULL;
 	if(node->staticArray!=NULL){
-		ngram = malloc(node->staticArrayLength*sizeof(char*));
+		ngram = malloc((node->staticArrayLength+1)*sizeof(char*));
 		int k=0;
-		char* temp;
 		for(int i=0; i <= node->staticArrayLength; i++){
 			int sizeMalloc = abs(node->staticArray[i]);
 			//printf("sizeMalloc is '%d'\n",sizeMalloc);
-			ngram[i] = malloc(sizeof(char)*(sizeMalloc));
+			ngram[i] = malloc(sizeof(char)*(sizeMalloc+1));
 			int j = 0;
-			for(j=0; j< sizeMalloc; j++){
+			for(j=0; j < sizeMalloc; j++){
 				ngram[i][j] = node->dynamicWord[k];
 				k++;
 			}

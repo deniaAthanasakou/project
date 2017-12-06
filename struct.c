@@ -103,12 +103,10 @@ void printStaticArray(dataNode* node){
 void deleteDataNode(dataNode* elem){
 	if(elem!=NULL){
 		if( elem->dynamicWord!=NULL){
-
 			free(elem->dynamicWord);
 			elem->dynamicWord = NULL;
 		}
 		if(elem->staticArray!=NULL){
-			//printStaticArray(elem);
 			free(elem->staticArray);
 			elem->staticArray = NULL;
 		}
