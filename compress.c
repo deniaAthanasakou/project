@@ -18,20 +18,10 @@ void recreateStructure(HashTable* hashTable){
 			cellNode->staticArrayLength--;
 			if(cellNode->nextWordArray !=NULL){
 				recursiveCompression(cellNode->nextWordArray);
-				
-				//printFullArray(cellNode->nextWordArray,cellNode->nextWordArray->position);
-				
 			}
-			
-			
-			
 		}
-	
 	}
-
 }
-
-
 
 
 void recursiveCompression(arrayOfStructs* array){
@@ -47,8 +37,6 @@ void recursiveCompression(arrayOfStructs* array){
 		startNode->staticArrayLength--;
 		if(startNode->nextWordArray !=NULL){
 			recursiveCompression(startNode->nextWordArray);
-			
-			//printFullArray(startNode->nextWordArray,startNode->nextWordArray->position);
 			
 		}
 	}
@@ -74,10 +62,6 @@ int checkForCompression(dataNode* node){
 			else{
 				node->staticArray = realloc(node->staticArray, node->staticArrayLength *sizeof(int));
 			}
-			
-			
-		
-		
 			compress(node,&node->nextWordArray->array[0]);
 			return 1;
 		}
@@ -91,17 +75,12 @@ void compress(dataNode* startNode,dataNode* additionalNode){
 
 	char *firstString = getString(startNode);
 	char *secondString = getString(additionalNode);
-	//printf("firstString %s  secondString %s ",firstString,secondString);
 	
 	firstString = realloc(firstString,(strlen( firstString) + strlen( secondString) +2)*sizeof(char));
 	strcat(firstString, secondString);
 	
-	
 	startNode->staticArray = realloc(startNode->staticArray,(startNode->staticArrayLength +1) *sizeof(int));
 	arrayOfStructs* tempArray = startNode->nextWordArray;
-	
-	//printf("startNode->staticArrayLength %d\n",startNode->staticArrayLength +1);
-	
 	
 	startNode->nextWordArray = additionalNode->nextWordArray;
 	startNode->word[0] = '\0';
@@ -122,13 +101,7 @@ void compress(dataNode* startNode,dataNode* additionalNode){
 		startNode->staticArray[startNode->staticArrayLength] = strlen(secondString);
 	else
 		startNode->staticArray[startNode->staticArrayLength] = -strlen(secondString);	
-	
-	//printf("startNode->staticArrayLength %d\n",startNode->staticArrayLength);
-	//printf("newString %s \n",startNode->dynamicWord);
-	
-	//printf("Printing Static Array %d\n",startNode->staticArrayLength);
-	//printStaticArray(startNode);
-	//printf("\n\n");
+
 	free(firstString);
 	firstString = NULL;
 	free(secondString);
@@ -139,14 +112,12 @@ void compress(dataNode* startNode,dataNode* additionalNode){
 }
 
 char** getNgramFromNode(dataNode* node){
-	//printf("InitialString %s\n",getString(node));
 	char** ngram=NULL;
 	if(node->staticArray!=NULL){
 		ngram = malloc((node->staticArrayLength+1)*sizeof(char*));
 		int k=0;
 		for(int i=0; i <= node->staticArrayLength; i++){
 			int sizeMalloc = abs(node->staticArray[i]);
-			//printf("sizeMalloc is '%d'\n",sizeMalloc);
 			ngram[i] = malloc(sizeof(char)*(sizeMalloc+1));
 			int j = 0;
 			for(j=0; j < sizeMalloc; j++){
@@ -154,12 +125,9 @@ char** getNgramFromNode(dataNode* node){
 				k++;
 			}
 			ngram[i][j] = '\0';
-			//printf("%dth ngram is '%s'\n",i,ngram[i]);
-			
 		}
 	}
 	else{		//1 word
-		//printf("WHAT\n");
 		ngram = malloc(1*sizeof(char*));
 		char* word = getString(node);
 		ngram[0] = malloc((strlen(word) +1)*sizeof(char));
@@ -169,22 +137,6 @@ char** getNgramFromNode(dataNode* node){
 	}
 	return ngram;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

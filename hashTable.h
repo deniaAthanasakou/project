@@ -2,7 +2,6 @@
 #define _HASH_TABLE_H_
 #include "struct.h"
 
-
 typedef struct HashTable HashTable;
 typedef struct Bucket Bucket;
 typedef struct BucketCell BucketCell;

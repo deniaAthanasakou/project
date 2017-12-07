@@ -50,14 +50,11 @@ void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter*
 		insert_ngram(hashTable, arrayOfWords,noOfWords);
 	}
 	else if(query == 'Q'){
-		//char* searchString = NULL;
-		char* searchString = NULL;// search_ngram(hashTable, arrayOfWords,noOfWords, topFilter, topArray);
+		char* searchString = NULL;
 		if(isDynamic){
-			//printf("cool\n");
 		 	searchString= search_ngram(hashTable, arrayOfWords,noOfWords, topFilter, topArray);
 		 }
 		else{
-			//printf("ABORT\n");
 			searchString = search_ngram_StaticVersion(hashTable, arrayOfWords,noOfWords, topFilter, topArray);
 		}
 		if(searchString!=NULL){
@@ -145,7 +142,6 @@ void copyDataNode(dataNode* node, dataNode* tempNode){
 
 checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last, checkItemExists* check)	
 {
-	//printf("start\n");
 	if(check==NULL)
 		check = malloc(sizeof(checkItemExists));
 	check->exists=false;
@@ -156,7 +152,6 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 			char* wordFirst = getString(&(array[first]));
 		 	if(array[first].staticArray!=NULL){
 				int sizeMalloc = abs(array[first].staticArray[0]);
-				//printf("sizeMalloc is LOOKUPTRIE'%d'\n",sizeMalloc);
 				int j = 0;
 				int k=0;
 				for(j=0; j< sizeMalloc; j++){
@@ -191,8 +186,6 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 		}
     	return 	check;
      }
-     
-  //	printf("mid\n");
 
  	int mid = (first+last)/2;
 
@@ -205,7 +198,6 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
  	char* wordMid = getString(&(array[mid]));
  	if(array[mid].staticArray!=NULL){
 		int sizeMalloc = abs(array[mid].staticArray[0]);
-		//printf("sizeMalloc is LOOKUPTRIE '%d'\n",sizeMalloc);
 		int j = 0;
 		for(j=0; j< sizeMalloc; j++){
 			wordMid[j] = array[mid].dynamicWord[j];
@@ -216,7 +208,6 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 	char* wordItem = getString(item);
  	
 	if(strcmp(wordItem ,wordMid)==0){
-	//printf("found\n");
 		check->position=mid;
 		check->exists=true;
 		check->insertedNode = &array[mid];
@@ -426,12 +417,12 @@ checkItemExists* insertionSortBucket(HashTable* hashTable,Bucket* bucket, dataNo
 		fullMoveSize = (lastElement -loc)*sizeof(bucket->cells[lastElement - 1]);
 		memmove(&(bucket->cells[startingPoint+1]), &(bucket->cells[startingPoint]), fullMoveSize);
 		memmove(&(bucket->cells[loc]), itemForInsert, sizeof(*itemForInsert));
-		getPosition->insertedNode = &(bucket->cells[loc]);//itemForInsert;
+		getPosition->insertedNode = &(bucket->cells[loc]);
     	getPosition->position=loc;
 	}
 	else{
 		memmove(&(bucket->cells[lastElement]), itemForInsert, sizeof(*itemForInsert));
-		getPosition->insertedNode = &(bucket->cells[lastElement]);//itemForInsert;
+		getPosition->insertedNode = &(bucket->cells[lastElement]);
    		getPosition->position=lastElement;
 	}
 	bucket->position++;
@@ -492,10 +483,6 @@ void printArray(arrayOfStructs* array_of_str, int position){		//prints layer
 	printf("ELEMENTS ARE: [");
 	for(int k=0; k< array_of_str->position;k++){
 		char* word = getString(& (array_of_str->array[k]));
-		if(array_of_str->array[k].isFinal)
-			printf("FINAL ");
-		else
-			printf("NOT FINAL ");
 		printf("%s ",  word);
 		free(word);
 		word=NULL;
@@ -554,7 +541,6 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 
 		if(strcmp(wordCase,"A")==0){	
 			endingLetter = 'A';
-			//printf("ADD\n");
 			if(staticDynamic==0){	//STATIC
 				printf("Error with init file! Add is not supported in Static version.\n");
 				if (line){
@@ -567,13 +553,11 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			callBasicFuncs(remainingLine,'A',hashTable, NULL, NULL, 1);
 		}
 		else if(strcmp(wordCase,"Q")==0){
-			//printf("QUERY\n");
 			endingLetter = 'Q';
 			callBasicFuncs(remainingLine,'Q',hashTable,topFilter,topArray,staticDynamic);		
 		}
 		else if(strcmp(wordCase,"D")==0){
 			endingLetter = 'D';
-			//printf("DELETE\n");
 			if(staticDynamic==0){	//STATIC
 				printf("Error with init file! Delete is not supported in Static version.\n");
 				if (line){
@@ -601,19 +585,12 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 					topK=topArray->positionInsertion;
 				printTopK(topArray,topK);
 				
-				//printFullArrayTop(topArray);
-				
 			}
-			
-			
-
 			
 			//free bloomFilter
 			freeFilter(topFilter);
 			//free array
 			destroyTopArray(topArray);
-			
-			//break;
 			
 		}
 		else{			//different letter

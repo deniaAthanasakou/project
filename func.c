@@ -139,8 +139,6 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 							insertTopArray(topArray,finalString);
 						}
 						else{																	//exists in array
-							//printf("final Strind %s\n", finalString);
-							//printFullArrayTop(topArray);
 							binarySearchTopK(topArray->array, finalString, topArray->positionInsertion);
 						}
 						HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
@@ -153,8 +151,8 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 				finalString = realloc(finalString,(strlen(finalString)+2)*sizeof(char));
 				finalString[strlen(finalString)] = '\0';
 				strcat(finalString, " ");
-			}
-			else{
+			}				
+			else{			//i!=0
 				if(i==1){
 					tempArray = firstElement->nextWordArray;
 					if(tempArray == NULL)
@@ -167,11 +165,8 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 				tempElement->staticArray = NULL;
 				tempElement->staticArrayLength = 0;
 				insertString (tempElement, arrayOfWords[i]);
-				//printf("before binary\n");
 				checkItemExists* getPosition = binarySearch(tempArray, tempElement, 0 ,tempArray->position,NULL); 
-				//printf("after binary\n");
 				if(getPosition->exists==true){		//if word was found
-				//printf("found\n");
 					strLength += strlen(arrayOfWords[i]) + 2;
 					finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
 				
@@ -201,12 +196,9 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 								insertTopArray(topArray,finalString);
 							}
 							else{		//exists in array
-								//printf("final Strind %s\n", finalString);
-								//printFullArrayTop(topArray);
 								binarySearchTopK(topArray->array, finalString, topArray->positionInsertion);
 							
 							}
-							//HeapSort(topArray->array, topArray->positionInsertion);
 							HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
 							returningStringLength += strlen(finalString)+2;
 							returningString=realloc(returningString,returningStringLength *sizeof(char));
@@ -218,12 +210,9 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 					finalString[strlen(finalString)] = '\0';
 					strcat(finalString, " ");
 				}
-				else{
-					//printf("not found\n");
+				else{		//if element does not exist
 					deleteDataNode(tempElement);
-					//printf("after delete\n");
 					free(tempElement);
-				//	printf("after free\n");
 					tempElement=NULL;
 					free(getPosition);
 					getPosition = NULL;
@@ -284,7 +273,6 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 	int found = 0;
 	int noOfWords=noOfWordsOriginal;
 	for(int j=0; j < noOfWordsOriginal; j++){	//for each word of query starting as first Word
-		//printf("First Word %s\n",arrayOfWordsOriginal[j]);
 		dataNode* tempElement = NULL;
 		arrayOfStructs *tempArray = NULL;
 		
@@ -300,32 +288,25 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 		int counter=j;
 		for(int k=0; k<noOfWords; k++){
 			arrayOfWords[k]=arrayOfWordsOriginal[counter];
-			//printf("arrayOfWords is '%s' k = %d\n",arrayOfWords[k],k);
 			counter++;
 		}
 		char** convertedStrings = NULL;
-		//printf("before inner for\n");
 		for(int i=0; i < noOfWords; i++){				//for each word of query
-		//	printf("word inner %s is %d\n",arrayOfWords[i],i);
 			flagStringWasNotFound = 0;
 			flagCounterIncreased = 0;
 			
 			
 			if(i==0){
-				//printf("before lookup\n");
 				tempElement = lookupTrieNode(arrayOfWords[i],hashTable);
 				if (tempElement == NULL)
 				{	
-					//printf("Element %s not found inside hashTable\n",arrayOfWords[i]);
 					break;
 				}
 				flagFound = 1;
-				//printf("Element %s found inside hashTable\n",arrayOfWords[i]);
 				
 				strLength += strlen(arrayOfWords[i]) + 2;
 				finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
 				strcpy(finalString,arrayOfWords[i]);
-				//printf("after strcpy in i==0 finalstring '%s'\n",finalString);
 				
 			}
 			else if(subFlag==0 || tempElement->staticArray==NULL){
@@ -333,42 +314,25 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 				finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
 				strcat(finalString,arrayOfWords[i]);
 				flagFinalString = 1;
-			//	printf("1--------FINALSTRING '%s'\n",finalString);
 			}
 			
-			
-			//printf("finalString '%s'\n", finalString);
 			convertedStrings = getNgramFromNode(tempElement);
-			//printf("after getNgramFromNode\n");
 			int counterForArray = 0;
 			if(tempElement->staticArray!=NULL){					//if tempElement is supernode
-			//	printf("------------SUPERRRRRRRRRRRR finalString %s\n", finalString);
 				
 				while(counterForArray <= tempElement->staticArrayLength){
-					//printf("-------------INSIDE WHILE convertedStrings[counterForArray] = %s,arrayOfWords[i] = %s \n",convertedStrings[counterForArray],arrayOfWords[i]);
 					flagCounterIncreased=0;
-					//printf("before if counterForArray %d\n", counterForArray);
 					if(strcmp(convertedStrings[counterForArray],arrayOfWords[i])==0){  //if found
-					//	printf("after if counterForArray %d\n", counterForArray);
-						//printf("FINAL STRING IN EQUAL IS %s i %d counterForArray %d\n",finalString, i, counterForArray);
 						if(i!=0 && flagFinalString != 1){
 							strLength += strlen(arrayOfWords[i]) + 2;
 							finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
 
 							finalString[strlen(finalString)] = '\0';
-							//char* word = getString(&(tempArray->array[getPosition->position]));
-						//	printf("%s will be inserted\n",arrayOfWords[i]);
 							strcat(finalString, arrayOfWords[i]);	
-							//printf("after strcat in while finalstring '%s'\n",finalString);
-							//flagFinalString = 0;
-							//free(word);
-							//word = NULL;
 						}
-						//flagFinalString = 0;
 						if(tempElement->staticArray[counterForArray]>0){				//if final
 							found=1;
-							
-						//	printf("tempElement->staticArray[counterForArray]>0\n");
+						
 							if(!possiblyContains(filter,finalString,strlen(finalString))){			//if finalString should be printed (is not in filter)
 								addFilter(filter,finalString,strlen(finalString));		//add finalString in filter
 								itemsOffinalStringArray++;
@@ -385,8 +349,6 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 									insertTopArray(topArray,finalString);
 								}
 								else{																	//exists in array
-									//printf("final Strind %s\n", finalString);
-									//printFullArrayTop(topArray);
 									binarySearchTopK(topArray->array, finalString, topArray->positionInsertion);
 								}
 								HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
@@ -400,27 +362,21 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 						finalString = realloc(finalString,(strlen(finalString)+2)*sizeof(char));
 						finalString[strlen(finalString)] = '\0';
 						strcat(finalString, " ");
-						//printf("finalString %s\n",finalString);
-						//printf("returningString %s\n",returningString);
-						//printf("BEFORE arrayOfWords is '%s' with i = %d and noOfWords = %d\n",arrayOfWords[i],i,noOfWords);
+
 						if(i+1!=noOfWords){
 							i++;
 							flagCounterIncreased = 1;
 						}
 						else {
-							//i--;
 							break;
 						}
-						//printf("AFTER arrayOfWords is '%s' with i = %d and noOfWords = %d\n",arrayOfWords[i],i,noOfWords);
 					}
-					else{
+					else{				//if not found
 						flagStringWasNotFound = 1;
-						//i--;
 						break;
 					}	
 					counterForArray++;
 					flagFinalString = 0;
-					//printf("now counterForArray %d\n", counterForArray);
 				}
 				if(flagStringWasNotFound){
 					for(int m=0; m<=tempElement->staticArrayLength; m++){
@@ -435,14 +391,11 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 					flagCounterIncreased = 0;
 					i--;
 				}
-				//printf("endofWhile\n");
 			}
 			else {					// if tempElement is not a supernode
-				//printf("not a supernode\n");
 				
 				char *word = getString(tempElement);
 				if(strcmp(word,arrayOfWords[i])==0){
-				//	printf("word %s\n",getString(tempElement));
 					if(i!=0 && flagFinalString != 1 && !flagFound){
 						strLength += strlen(arrayOfWords[i]) + 2;
 						finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
@@ -453,7 +406,6 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 				
 					if(tempElement->isFinal){
 						found=1;
-					//	printf("tempElement->isFinal\n");
 
 						if(!possiblyContains(filter,finalString,strlen(finalString))){			//if finalString should be printed (is not in filter)
 							addFilter(filter,finalString,strlen(finalString));		//add finalString in filter
@@ -471,8 +423,6 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 								insertTopArray(topArray,finalString);
 							}
 							else{																	//exists in array
-								//printf("final Strind %s\n", finalString);
-								//printFullArrayTop(topArray);
 								binarySearchTopK(topArray->array, finalString, topArray->positionInsertion);
 							}
 							HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
@@ -482,12 +432,9 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 
 						}	
 					}
-					//printf("after is final\n");
 					finalString = realloc(finalString,(strlen(finalString)+2)*sizeof(char));
 					finalString[strlen(finalString)] = '\0';
 					strcat(finalString, " ");
-				//	printf("finalString '%s'\n",finalString);
-					//printf("returningString %s\n",returningString);
 				}
 				flagFinalString = 0;
 				free(word);
@@ -503,29 +450,20 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 			}
 			free(convertedStrings);
 			convertedStrings = NULL;
-			
-			
-			//printf("BEFORE CHANGE: %s\n",getString(tempElement));
-			
-			//printf("before tempArray\n");
+
 			//get next tempElement
 			tempArray = tempElement->nextWordArray;
 			if(tempArray==NULL){
-				//printf("iss null\n");
 				break;
 			}
 			
 			int position=i;
 			if(i+1!=noOfWords && flagCounterIncreased==0){
-				//printf("inside flag if\n");
 				 position = i+1;
 			}
 			else 
 				subFlag=1;
-				
-			//else break;							//need to change??
-			//printf("WORD %s\n",getString(tempElement));	 
-			//printf("POSITIONNN arrayOfWords is '%s' with i = %d and noOfWords = %d\n",arrayOfWords[position],position,noOfWords);
+
 			dataNode* madeUpElement = malloc(sizeof(dataNode));
 			initializeDataNode(madeUpElement);
 			insertString (madeUpElement, arrayOfWords[position]);
@@ -538,14 +476,8 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 				tempElement = getPosition->insertedNode;
 				free(getPosition);
 				getPosition = NULL;
-				//printf("ELEMENT IS %s with i= %d\n", getString(tempElement),i);
-				if(subFlag && tempElement->staticArray!=NULL){
-					//printf("--------------------GIEP\n");
-				//	i--;
-				}
 			}
 			else{
-				//printf("NOOPE\n");
 				free(getPosition);
 				getPosition = NULL;
 				break;

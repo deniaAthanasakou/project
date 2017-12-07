@@ -44,14 +44,8 @@ void printQuery(char** items, int iterNum);
 char* getString(dataNode* node);
 void insertString (dataNode* node, char* word);
 
-
-
 checkItemExists* binarySearchBucket(dataNode* array, dataNode* item, int first, int last, int trueLastElement, checkItemExists* check);
-
 checkItemExists* insertionSortBucket(HashTable* hashTable, Bucket* bucket, dataNode* itemForInsert, int lastElement);
-
-
-
 
 void copyDataNode(dataNode* node, dataNode* tempNode);
 

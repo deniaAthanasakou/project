@@ -8,8 +8,8 @@ typedef struct dataNode dataNode;
 typedef struct arrayOfStructs arrayOfStructs;
 
 struct dataNode{
-	arrayOfStructs* nextWordArray;	//pointer se array apo dataNodes
-	char word[20];						//leksh
+	arrayOfStructs* nextWordArray;	//pointer to array of dataNodes
+	char word[20];					//static word
 	bool isFinal;					//final or not
 	bool isDynamic;					//if true strlen(word)>20
 	char* dynamicWord;				//at first is null
@@ -20,11 +20,10 @@ struct dataNode{
 
 
 struct arrayOfStructs{
-	int length;				//diastash array initialized 10
-	dataNode* array;		//pointer se array apo structs dataNodes
+	int length;				//dim of array initialized 10
+	dataNode* array;		//pointer to array of structs dataNodes
 	int position;			//the position of the first null element of array
 };
-
 
 
 void initializeArray(arrayOfStructs* array_of_str);

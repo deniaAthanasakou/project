@@ -8,7 +8,6 @@ void initializeStack(stack* myStack){
 	myStack->top=-1;
 }
 
-
 void doubleLengthOfStack(stack* myStack){
 	myStack->length*=2;
 	myStack->positionsToDelete = (int*) realloc(myStack->positionsToDelete , myStack->length * sizeof(int));

@@ -137,14 +137,11 @@ void binarySearchTopK(topKStruct* array, char* ngram, int maxElems){
 	int first = 0;
 	int last = maxElems - 1;
 	int middle = (first+last)/2;
-	//printf("last = %d\n",last);
 	while (first <= last) {
-		//printf("MID = %d\n", middle);
 		if (strcmp(array[middle].ngram,ngram)<0)
 			first = middle + 1;    
-		else if (strcmp(array[middle].ngram,ngram)==0) {		//found increase occurences
+		else if (strcmp(array[middle].ngram,ngram)==0) {		//found, increase occurences
 			array[middle].occurences++;
-			//printf("FINAL STRING EXISTS\n");
 			return;
 		}
 		else
@@ -152,7 +149,6 @@ void binarySearchTopK(topKStruct* array, char* ngram, int maxElems){
 
 		middle = (first + last)/2;
 	}
-	//printf("FINAL STRING DOES NOT EXIST\n");
 }
 
 

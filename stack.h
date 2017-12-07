@@ -6,9 +6,9 @@
 typedef struct stack stack;
 
 struct stack{
-	int* positionsToDelete;		//pinakas apo theseis pou prepei na diagrafoun
-	int top;					//thesh tou teleutaiou stoixeiou;
-	int length;					//megethos tou pinaka
+	int* positionsToDelete;		//array of positions that must be deleted
+	int top;					//position of last element
+	int length;					//length of array
 };
 
 void initializeStack(stack* myStack);

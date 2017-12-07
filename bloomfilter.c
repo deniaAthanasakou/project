@@ -9,9 +9,8 @@
 BloomFilter* initializeFilter(uint8_t numHashes){
 	BloomFilter *filter = malloc(sizeof(struct BloomFilter));
 	filter->numHashes = numHashes;
-	
-	//must initialize bitVector
-	for(int i=0; i<HASH_SIZE; i++)
+
+	for(int i=0; i<HASH_SIZE; i++)				//must initialize bitVector
 		filter->bitVector[i] = false;
 	return filter;
 }

@@ -43,12 +43,8 @@ int main (int argc,char* argv[]){
 		fclose (initFile);
 	}
 	
-	//printf("staticDynamic == %d\n",staticDynamic);
-	if(staticDynamic==0){
-		//compress
-		//printf("COMPRESS\n");
-		recreateStructure(hashTable);
-			
+	if(staticDynamic==0){			//compress
+		recreateStructure(hashTable);	
 	}
 	
 	//query
