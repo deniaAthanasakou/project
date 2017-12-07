@@ -50,13 +50,20 @@ void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter*
 		insert_ngram(hashTable, arrayOfWords,noOfWords);
 	}
 	else if(query == 'Q'){
-		char* searchString = NULL;
-		if(isDynamic)
+		//char* searchString = NULL;
+		char* searchString = NULL;// search_ngram(hashTable, arrayOfWords,noOfWords, topFilter, topArray);
+		if(isDynamic){
+			//printf("cool\n");
 		 	searchString= search_ngram(hashTable, arrayOfWords,noOfWords, topFilter, topArray);
-		else
+		 }
+		else{
+			//printf("ABORT\n");
 			searchString = search_ngram_StaticVersion(hashTable, arrayOfWords,noOfWords, topFilter, topArray);
-		free(searchString);
-		searchString=NULL;
+		}
+		if(searchString!=NULL){
+			free(searchString);
+			searchString=NULL;
+		}
 	}
 	else if(query == 'D'){
 		delete_ngram(hashTable, arrayOfWords,noOfWords);
@@ -138,6 +145,7 @@ void copyDataNode(dataNode* node, dataNode* tempNode){
 
 checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last, checkItemExists* check)	
 {
+	//printf("start\n");
 	if(check==NULL)
 		check = malloc(sizeof(checkItemExists));
 	check->exists=false;
@@ -184,7 +192,7 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
     	return 	check;
      }
      
-  	//printf("mid\n");
+  //	printf("mid\n");
 
  	int mid = (first+last)/2;
 
@@ -208,6 +216,7 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 	char* wordItem = getString(item);
  	
 	if(strcmp(wordItem ,wordMid)==0){
+	//printf("found\n");
 		check->position=mid;
 		check->exists=true;
 		check->insertedNode = &array[mid];
@@ -215,6 +224,7 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 		wordMid = NULL;
 		free (wordItem);
 		wordItem=NULL;
+	
 	
 	    return check;
 	 }
@@ -544,6 +554,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 
 		if(strcmp(wordCase,"A")==0){	
 			endingLetter = 'A';
+			//printf("ADD\n");
 			if(staticDynamic==0){	//STATIC
 				printf("Error with init file! Add is not supported in Static version.\n");
 				if (line){
@@ -556,11 +567,13 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			callBasicFuncs(remainingLine,'A',hashTable, NULL, NULL, 1);
 		}
 		else if(strcmp(wordCase,"Q")==0){
+			//printf("QUERY\n");
 			endingLetter = 'Q';
 			callBasicFuncs(remainingLine,'Q',hashTable,topFilter,topArray,staticDynamic);		
 		}
 		else if(strcmp(wordCase,"D")==0){
 			endingLetter = 'D';
+			//printf("DELETE\n");
 			if(staticDynamic==0){	//STATIC
 				printf("Error with init file! Delete is not supported in Static version.\n");
 				if (line){
