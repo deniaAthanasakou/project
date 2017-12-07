@@ -423,6 +423,12 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 					//printf("now counterForArray %d\n", counterForArray);
 				}
 				if(flagStringWasNotFound){
+					for(int m=0; m<=tempElement->staticArrayLength; m++){
+						free(convertedStrings[m]);
+						convertedStrings[m] = NULL;
+					}
+					free(convertedStrings);
+					convertedStrings = NULL;
 					break;
 				}
 				if(flagCounterIncreased){
@@ -521,12 +527,13 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 			//printf("WORD %s\n",getString(tempElement));	 
 			//printf("POSITIONNN arrayOfWords is '%s' with i = %d and noOfWords = %d\n",arrayOfWords[position],position,noOfWords);
 			dataNode* madeUpElement = malloc(sizeof(dataNode));
+			initializeDataNode(madeUpElement);
 			insertString (madeUpElement, arrayOfWords[position]);
 			checkItemExists* getPosition = binarySearch(tempArray, madeUpElement, 0 ,tempArray->position,NULL); 
 			
-			//deleteDataNode(madeUpElement);
-			//free(madeUpElement);
-			//madeUpElement = NULL;
+			deleteDataNode(madeUpElement);
+			free(madeUpElement);
+			madeUpElement = NULL;
 			if(getPosition->exists){
 				tempElement = getPosition->insertedNode;
 				free(getPosition);

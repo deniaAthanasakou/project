@@ -299,7 +299,7 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
 
  
 
-checkItemExists* binarySearch2(dataNode* array, dataNode* item, int first, int last, int trueLastElement, checkItemExists* check)	
+checkItemExists* binarySearchBucket(dataNode* array, dataNode* item, int first, int last, int trueLastElement, checkItemExists* check)	
 {
 	if(check==NULL)
 		check = malloc(sizeof(checkItemExists));
@@ -370,7 +370,7 @@ checkItemExists* binarySearch2(dataNode* array, dataNode* item, int first, int l
 		wordMid = NULL;
 		free (wordItem);
 		wordItem=NULL;
-	    return binarySearch2(array, item, mid+1, last,trueLastElement, check);
+	    return binarySearchBucket(array, item, mid+1, last,trueLastElement, check);
 	}
 	if(wordMid!=NULL){
 		free(wordMid);
@@ -380,12 +380,12 @@ checkItemExists* binarySearch2(dataNode* array, dataNode* item, int first, int l
 		free (wordItem);
 		wordItem=NULL;
 	}
-	return binarySearch2(array, item, first, mid-1,trueLastElement, check);
+	return binarySearchBucket(array, item, first, mid-1,trueLastElement, check);
 }
  
 
 
-checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* itemForInsert, int lastElement)
+checkItemExists* insertionSortBucket(HashTable* hashTable,Bucket* bucket, dataNode* itemForInsert, int lastElement)
 {	
 	int  loc, j; 
     checkItemExists* retPosition=malloc(sizeof(checkItemExists));
@@ -404,7 +404,7 @@ checkItemExists* insertionSort2(HashTable* hashTable,Bucket* bucket, dataNode* i
     j = lastElement - 1;
 
     // find location where selected should be inserted
-    checkItemExists* getPosition = binarySearch2(bucket->cells, itemForInsert, 0, j,bucket->position, NULL);
+    checkItemExists* getPosition = binarySearchBucket(bucket->cells, itemForInsert, 0, j,bucket->position, NULL);
     if(getPosition->exists==true){
     	if(itemForInsert->isFinal)
     		bucket->cells[getPosition->position].isFinal= true;

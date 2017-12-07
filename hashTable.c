@@ -90,7 +90,7 @@ dataNode* insertTrieNode(dataNode* node, HashTable* hashTable){
 	Bucket* bucket = &(hashTable->buckets[noOfbucket]);
 	
 	checkItemExists* check;	
-	check = insertionSort2(hashTable, &(hashTable->buckets[noOfbucket]),node,bucket->position);
+	check = insertionSortBucket(hashTable, &(hashTable->buckets[noOfbucket]),node,bucket->position);
 	
 	dataNode* returnNodePtr = check->insertedNode;
 	
@@ -137,11 +137,11 @@ dataNode* insertTrieNodeAgain(dataNode* node, HashTable* hashTable, int checkBuc
 	//insertion sort
 	checkItemExists* check;
 	if(checkBucketToBeSplit==-1 || noOfbucket==checkBucketToBeSplit){
-		check = insertionSort2(hashTable, &(hashTable->buckets[noOfbucket]),node,bucket->position);
+		check = insertionSortBucket(hashTable, &(hashTable->buckets[noOfbucket]),node,bucket->position);
 	}
 	else{
 		if(noOfbucket!=checkBucketToBeSplit){
-			check = insertionSort2(hashTable, &(hashTable->buckets[noOfbucket]),&splitted,bucket->position);
+			check = insertionSortBucket(hashTable, &(hashTable->buckets[noOfbucket]),&splitted,bucket->position);
 		}		
 	}
 	free(word);
