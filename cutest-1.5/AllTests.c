@@ -6,6 +6,7 @@
 #include "CuTestFunc.h"
 #include "CuTestStruct.h"
 #include "CuTestTopK.h"
+#include "CuTestHashTable.h"
 
 CuSuite* CuGetSuite();
 CuSuite* CuStringGetSuite();
@@ -34,11 +35,6 @@ void RunAllTests(void)
 	free(funcSuite);
 	funcSuite=NULL;
 */	
-
-	//topK
-	//compress
-	//bloomFilter	
-	//hashTable
 	
 	CuSuite* topKSuite =  TopKGetSuite();
 	CuSuiteAddSuite(suite, topKSuite);
@@ -49,6 +45,11 @@ void RunAllTests(void)
 	CuSuiteAddSuite(suite, structSuite);
 	free(structSuite);
 	structSuite=NULL;
+	
+	CuSuite* hashTableSuite =  HashTableGetSuite();
+	CuSuiteAddSuite(suite, hashTableSuite);
+	free(hashTableSuite);
+	hashTableSuite=NULL;
 
 	CuSuiteRun(suite);
 	CuSuiteSummary(suite, output);
@@ -66,5 +67,7 @@ void RunAllTests(void)
 
 int main(void)
 {
+	printf("Beginning of unit testing.\n");
 	RunAllTests();
+	printf("End of unit testing.\n");
 }

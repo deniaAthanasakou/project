@@ -3,20 +3,22 @@
 #include "CuTest.h"
 #include "../auxMethods.h"
 
+#define NOOFBUCKETS 4
+#define NOOFCELLS 4
+
 void TestDeleteArrayOfWords(CuTest *tc);
 void TestStringToArray(CuTest *tc);
-//void TestInitialize(CuTest *tc);
-//void TestBinarySearch(CuTest* tc);
-//void TestInsertionSort(CuTest* tc);
-//void TestExecuteQueryFile(CuTest *tc);
-//void TestCheckIfStringExists(CuTest *tc);
-//void TestDeletionSort(CuTest *tc);
+void TestInitialize(CuTest *tc);
+void TestBinarySearch(CuTest* tc);
+void TestInsertionSort(CuTest* tc);
+void TestExecuteQueryFile(CuTest *tc);
+void TestDeletionSort(CuTest *tc);
 void TestGetString(CuTest *tc);
 void TestInsertString (CuTest *tc);
-
-
+void TestBinarySearchBucket(CuTest* tc);
+void TestInsertionSortBucket(CuTest* tc);
+void TestCopyDataNode(CuTest* tc);
 
 CuSuite* AuxMethodsGetSuite();
 
 #endif
-

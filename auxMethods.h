@@ -32,11 +32,9 @@ void printArray(arrayOfStructs* tempArray, int position);
 void printArrayFinalWords(arrayOfStructs* array_of_str, int position);
 void printFullArray(arrayOfStructs* array_of_str, int position);
 
-int checkIfStringExists(char** array, int noOfWords, char* str);
-
 checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last, checkItemExists* check);
-
 checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForInsert, int lastElement);
+
 void deletionSort(arrayOfStructs* array_of_str, int position, int lastElement);
 void deleteArrayOfWords(char** array,int length);
 void printQuery(char** items, int iterNum);

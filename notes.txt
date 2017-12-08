@@ -1,5 +1,2 @@
--to phga sta 5 la8h
-kati trexei otan briskei to university of alla meta otan akolou8ei to minnesota den paei ston epomeno kombo pou einai to minnesota
-opote ki den briskei genika fraseis opos 'university of' + 'minnesota'.
-
--ekana oti xreiazotan gia ta test tou topK, ta etreksa ki meta valgrind ki dn m bghke 8ema
+sthn insert sto func exw ena sxoliasmeno deleteDataNode
+sth gethash exw 2 print

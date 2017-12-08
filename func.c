@@ -24,7 +24,7 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 			insertString (rootElement, arrayOfWords[i]);
 			insertedElement = insertTrieNode(rootElement, hashTable);					//inserting node into hashTable
 
-			deleteDataNode(rootElement);
+			//deleteDataNode(rootElement);
 			free(rootElement);
 			rootElement=NULL;	
 		}
@@ -522,7 +522,6 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 	bool doNotDelete = false;
 	for(int i=0; i<noOfWords; i++){
 	
-	
 		if(i==0){
 			lookupElement = lookupTrieNode(arrayOfWords[i] ,hashTable);
 			if(lookupElement==NULL){
@@ -543,8 +542,17 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 		else{
 			if(i==1){
 				tempArray = lookupElement->nextWordArray;
+				if(tempArray == NULL)
+				{
+					if(i!=noOfWords-1){
+						deleteStack(myStack);
+						free(myStack);
+						myStack = NULL;
+						return;	
+					}
+					break;			
+				}	
 			}
-
 			int position = tempArray->position;
 		
 			dataNode* tempElement = malloc(sizeof(dataNode));

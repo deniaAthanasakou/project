@@ -30,8 +30,6 @@ dataNode* insertTrieNode(dataNode* node, HashTable* hashTable);
 dataNode* insertTrieNodeAgain(dataNode* node, HashTable* hashTable, int checkBucketToBeSplit);	
 dataNode* lookupTrieNode(char* lookupWord ,HashTable* hashTable);
 
-int deleteTrieNode(char* deleteWord ,HashTable* hashTable);
-
 void initializeBucket(Bucket* bucket, int noOfCells);
 
 

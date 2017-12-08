@@ -31,6 +31,7 @@ void initializeDataNode(dataNode* node){
 	node->dynamicWord = NULL;
 	node->nextWordArray = NULL;
 	node->isDynamic=false;
+	node->isFinal=false;
 	node->noOfChars = -1;
 	node->word[0]='\0';
 	node->staticArray = NULL;

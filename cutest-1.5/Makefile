@@ -1,8 +1,8 @@
 CC = gcc -g
-FILES = AllTests.c CuTest.c CuTestStack.c CuTestAuxMethods.c CuTestFunc.c CuTestStruct.c CuTestTopK.c ../struct.c ../func.c ../auxMethods.c ../stack.c ../bloomfilter.c ../hashTable.c ../murmur3/murmur3.c ../topK.c ../compress.c
-OBJECTS = AllTests.o CuTest.o CuTestStack.o CuTestAuxMethods.o CuTestFunc.o CuTestStruct.o CuTestTopK.o struct.o func.o auxMethods.o stack.o bloomfilter.o hashTable.o murmur3.o topK.o compress.o
+FILES = AllTests.c CuTest.c CuTestStack.c CuTestAuxMethods.c CuTestFunc.c CuTestStruct.c CuTestTopK.c CuTestHashTable.c ../struct.c ../func.c ../auxMethods.c ../stack.c ../bloomfilter.c ../hashTable.c ../murmur3/murmur3.c ../topK.c ../compress.c
+OBJECTS = AllTests.o CuTest.o CuTestStack.o CuTestAuxMethods.o CuTestFunc.o CuTestStruct.o CuTestTopK.o CuTestHashTable.o struct.o func.o auxMethods.o stack.o bloomfilter.o hashTable.o murmur3.o topK.o compress.o
 OUT = test
-HEADERS = CuTest.h CuTestStack.h CuTestAuxMethods.h CuTestFunc.h CuTestStruct.h CuTestTopK.h ../struct.h ../func.h ../auxMethods.h ../stack.h ../bloomfilter.h ../hashTable.h ../murmur3/murmur3.h ../topK.c ../compress.h
+HEADERS = CuTest.h CuTestStack.h CuTestAuxMethods.h CuTestFunc.h CuTestStruct.h CuTestTopK.h CuTestHashTable.h ../struct.h ../func.h ../auxMethods.h ../stack.h ../bloomfilter.h ../hashTable.h ../murmur3/murmur3.h ../topK.c ../compress.h
 
 all: $(OBJECTS) $(HEADERS)
 	$(CC) -o $(OUT) $(FILES) -lm
@@ -28,6 +28,9 @@ CuTestStruct.o: CuTestStruct.c
 
 CuTestTopK.o: CuTestTopK.c
 	$(CC) -c CuTestTopK.c
+	
+CuTestHashTable.o: CuTestHashTable.c
+	$(CC) -c CuTestHashTable.c	
 	
 struct.o: ../struct.c
 	$(CC) -c ../struct.c

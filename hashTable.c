@@ -93,7 +93,6 @@ dataNode* insertTrieNode(dataNode* node, HashTable* hashTable){
 	check = insertionSortBucket(hashTable, &(hashTable->buckets[noOfbucket]),node,bucket->position);
 	
 	dataNode* returnNodePtr = check->insertedNode;
-	
 	if(bucket->overflowed){
 		bucket->overflowed = false;
 		hashTable->bucketToBeSplit++;
@@ -355,11 +354,13 @@ int getBucketFromHash(int level, int lengthHash, int bucketToBeSplit, char* word
 	int a1 = (int)pow(2,level);
 	int a2 = (int)pow(2,level+1);
 	
-	if(hashLevel>=bucketToBeSplit)
+	if(hashLevel>=bucketToBeSplit){
 		return hashLevel;
+	}
 	
-	else
+	else{
 		return hashLevelPlus;
+	}
 	
 
 

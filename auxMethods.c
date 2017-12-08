@@ -137,6 +137,10 @@ void copyDataNode(dataNode* node, dataNode* tempNode){
 	for(int i=0; i<node->noOfChars; i++){
 		node->word[i] = tempNode->word[i];
 	}
+
+	node->staticArray = tempNode->staticArray;
+	node->staticArrayLength = tempNode->staticArrayLength;
+	
 }
 
 
@@ -409,6 +413,7 @@ checkItemExists* insertionSortBucket(HashTable* hashTable,Bucket* bucket, dataNo
 	}
 
     loc=getPosition->position;
+
     
     // Move all elements after location to create space
     int fullMoveSize=0;
@@ -548,6 +553,10 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 					line=NULL;
 				}
 				destroyLinearHash(hashTable);
+				//free bloomFilter
+				freeFilter(topFilter);
+				//free array
+				destroyTopArray(topArray);
 				exit(1);
 			}
 			callBasicFuncs(remainingLine,'A',hashTable, NULL, NULL, 1);
@@ -565,6 +574,12 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 					line=NULL;
 				}
 				destroyLinearHash(hashTable);
+				
+				//free bloomFilter
+				freeFilter(topFilter);
+				//free array
+				destroyTopArray(topArray);
+				
 				exit(1);
 			}
 			callBasicFuncs(remainingLine,'D',hashTable, NULL, NULL, 1);
@@ -598,6 +613,13 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				free(line);
 				line=NULL;
 			}
+			
+			destroyLinearHash(hashTable);
+			//free bloomFilter
+			freeFilter(topFilter);
+			//free array
+			destroyTopArray(topArray);
+			
 			return 0;
 		}
 		
@@ -611,9 +633,13 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 	
 	destroyLinearHash(hashTable);
 	if(endingLetter !='F'){
+		//free bloomFilter
+		freeFilter(topFilter);
+		//free array
+		destroyTopArray(topArray);
+	
 		return 0;
 	}
-	
 
 	return 1;
 
