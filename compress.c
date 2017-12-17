@@ -45,23 +45,24 @@ void recursiveCompression(arrayOfStructs* array){
 
 
 int checkForCompression(dataNode* node){
-	
 	if(node->nextWordArray!=NULL){
 		if (node->nextWordArray->position == 1){
 			if(node->staticArray==NULL){
 				node->staticArray = malloc(node->staticArrayLength *sizeof(int));
 				char* startString = getString(node);
-				if(node->isFinal)
+				if(node->isFinal){
 					node->staticArray[node->staticArrayLength -1] = strlen(startString);
-				else
+				}
+				else{
 					node->staticArray[node->staticArrayLength -1] = -strlen(startString);
-		
-				free(startString);
-				startString = NULL;
+				}
+				//free(startString);
+				//startString = NULL;
 			}
 			else{
 				node->staticArray = realloc(node->staticArray, node->staticArrayLength *sizeof(int));
 			}
+
 			compress(node,&node->nextWordArray->array[0]);
 			return 1;
 		}
@@ -102,10 +103,10 @@ void compress(dataNode* startNode,dataNode* additionalNode){
 	else
 		startNode->staticArray[startNode->staticArrayLength] = -strlen(secondString);	
 
-	free(firstString);
+	/*free(firstString);
 	firstString = NULL;
 	free(secondString);
-	secondString = NULL;
+	secondString = NULL;*/
 	
 	deleteArray1Layer(tempArray);
 
@@ -132,8 +133,8 @@ char** getNgramFromNode(dataNode* node){
 		char* word = getString(node);
 		ngram[0] = malloc((strlen(word) +1)*sizeof(char));
 		strcpy(ngram[0], word);
-		free(word);
-		word = NULL;
+		//free(word);
+		//word = NULL;
 	}
 	return ngram;
 }

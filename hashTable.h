@@ -33,7 +33,7 @@ dataNode* lookupTrieNode(char* lookupWord ,HashTable* hashTable);
 void initializeBucket(Bucket* bucket, int noOfCells);
 
 
-int getBucketFromHash(int level, int lengthHash, int bucketToBeSplit, char* word);
+int getBucketFromHash(int level, int lengthHash, int bucketToBeSplit, char* word, int wordLength);
 
 dataNode* splitBucket(HashTable* hashTable, char* oldCellWord);
 int levelUp(HashTable* hashTable);
@@ -45,5 +45,7 @@ void createOverflowCells(Bucket* bucket);
 int getCell(char* lookupWord ,HashTable* hashTable,int previousBucket);
 
 void deletionSortWithoutErasingNextArray(Bucket* bucket, int position);
+
+int getCharSum(int wordLength,char *word);
 
 #endif

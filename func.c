@@ -24,7 +24,6 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 			insertString (rootElement, arrayOfWords[i]);
 			insertedElement = insertTrieNode(rootElement, hashTable);					//inserting node into hashTable
 
-			//deleteDataNode(rootElement);
 			free(rootElement);
 			rootElement=NULL;	
 		}
@@ -105,14 +104,17 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 		char* finalString= NULL;
 		int strLength=0;
 
-		char* arrayOfWords[noOfWords];
+		/*char* arrayOfWords[noOfWords];
 		int counter=j;
 		for(int k=0; k<noOfWords; k++){
 			arrayOfWords[k]=arrayOfWordsOriginal[counter];
 			counter++;
-		}
-		for(int i=0; i < noOfWords; i++){				//for each word of query
-			if(i==0){
+		}*/
+		//char **arrayOfWords = populateArray(arrayOfWordsOriginal,j,noOfWords);
+		char **arrayOfWords = arrayOfWordsOriginal;
+		int counter = 0;
+		for(int i=j; i < noOfWordsOriginal; i++){				//for each word of query
+			if(counter==0){
 				firstElement = lookupTrieNode(arrayOfWords[i],hashTable);
 				if(firstElement==NULL){
 					break;
@@ -131,7 +133,7 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 						strcpy(finalStringArray[itemsOffinalStringArray-1], finalString);
 
 						//insert to topArray
-						if(!possiblyContains(topFilter,finalString,strlen(finalString))){		//if finalString does not exist in array
+						/*if(!possiblyContains(topFilter,finalString,strlen(finalString))){		//if finalString does not exist in array
 							addFilter(topFilter,finalString,strlen(finalString));
 							if(topArray->positionInsertion == topArray->length){
 								doubleTopKArray(topArray);
@@ -141,7 +143,7 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 						else{																	//exists in array
 							binarySearchTopK(topArray->array, finalString, topArray->positionInsertion);
 						}
-						HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+						HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings*/
 						returningStringLength += strlen(finalString)+2;
 						returningString=realloc(returningString,returningStringLength *sizeof(char));
 						strcat(returningString,finalString);
@@ -152,8 +154,8 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 				finalString[strlen(finalString)] = '\0';
 				strcat(finalString, " ");
 			}				
-			else{			//i!=0
-				if(i==1){
+			else{			//i!=j
+				if(counter==1){
 					tempArray = firstElement->nextWordArray;
 					if(tempArray == NULL)
 					{
@@ -173,8 +175,8 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 					finalString[strlen(finalString)] = '\0';
 					char* word = getString(&(tempArray->array[getPosition->position]));
 					strcat(finalString, word);	
-					free(word);
-					word = NULL;
+					//free(word);
+					//word = NULL;
 					
 					if(tempArray->array[getPosition->position].isFinal == true){		//if true check whether finalString should be printed
 						found=1;
@@ -188,7 +190,7 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 							strcpy(finalStringArray[itemsOffinalStringArray-1], finalString);
 							
 							//insert to topArray
-							if(!possiblyContains(topFilter,finalString,strlen(finalString))){
+							/*if(!possiblyContains(topFilter,finalString,strlen(finalString))){
 								addFilter(topFilter,finalString,strlen(finalString));
 								if(topArray->positionInsertion == topArray->length){
 									doubleTopKArray(topArray);
@@ -200,6 +202,7 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 							
 							}
 							HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+							*/
 							returningStringLength += strlen(finalString)+2;
 							returningString=realloc(returningString,returningStringLength *sizeof(char));
 							strcat(returningString,finalString);
@@ -235,10 +238,11 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 				free(getPosition);
 				getPosition = NULL;			
 			}
+			counter++;
 		}
 		free(finalString);
 		finalString = NULL;
-		noOfWords--;
+		//noOfWords--;
 	}
 	
 	if(found==0){
@@ -437,8 +441,8 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 					strcat(finalString, " ");
 				}
 				flagFinalString = 0;
-				free(word);
-				word = NULL;
+				//free(word);
+				//word = NULL;
 			}
 			
 			
@@ -540,17 +544,15 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 			}
 		}
 		else{
+			
 			if(i==1){
 				tempArray = lookupElement->nextWordArray;
 				if(tempArray == NULL)
 				{
-					if(i!=noOfWords-1){
-						deleteStack(myStack);
-						free(myStack);
-						myStack = NULL;
-						return;	
-					}
-					break;			
+					deleteStack(myStack);
+					free(myStack);
+					myStack = NULL;
+					return;				
 				}	
 			}
 			int position = tempArray->position;
@@ -567,6 +569,7 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 				push(myStack, getPosition->position);
 			}
 			else{										//element was not found inside array so it can not be deleted	
+				doNotDelete = true;
 				deleteDataNode(tempElement);
 				free(tempElement);
 				tempElement=NULL;
@@ -652,50 +655,21 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 		}
 		
 	}
-	
+
 	if(!doNotDelete){
 		char* lookUpWord = getString(lookupElement);
-		int bucket = getBucketFromHash(hashTable->level, hashTable->initialLength, hashTable->bucketToBeSplit, lookUpWord);	
+		int bucket = getBucketFromHash(hashTable->level, hashTable->initialLength, hashTable->bucketToBeSplit, lookUpWord, lookupElement->noOfChars);	
 		int cell = getCell(lookUpWord , hashTable,bucket);
 		deletionSortBucket(&hashTable->buckets[bucket], cell);
-		free(lookUpWord);
-		lookUpWord = NULL;
+		//free(lookUpWord);
+		//lookUpWord = NULL;
 	}
-	
 	
 	deleteStack(myStack);
 	free(myStack);
 	myStack = NULL;
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

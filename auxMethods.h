@@ -11,7 +11,7 @@ typedef struct checkItemExists checkItemExists;
 struct checkItemExists{
 	int position;	//position of element to insert
 	bool exists;	// if exists true
-	dataNode* insertedNode;
+	dataNode* insertedNode;		//node in position
 };
 
 typedef struct arrayWords{
@@ -46,6 +46,5 @@ checkItemExists* binarySearchBucket(dataNode* array, dataNode* item, int first, 
 checkItemExists* insertionSortBucket(HashTable* hashTable, Bucket* bucket, dataNode* itemForInsert, int lastElement);
 
 void copyDataNode(dataNode* node, dataNode* tempNode);
-
 
 #endif

@@ -8,7 +8,7 @@
 
 typedef struct BloomFilter{
 	bool bitVector[HASH_SIZE];
-	uint8_t numHashes;
+	uint8_t numHashes;			//number of hashFunctions used
 }BloomFilter;
 
 BloomFilter* initializeFilter(uint8_t numHashes);

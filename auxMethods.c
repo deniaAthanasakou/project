@@ -92,16 +92,22 @@ arrayWords* stringToArray(char* ngram){
 	char** arrayOfWords; 
 	pch = strtok (ngram," \t");
 	int noOfWords=0;
-	arrayOfWords = malloc(noOfWords * sizeof(char*));
+	int length = 10;
+	arrayOfWords = malloc(length * sizeof(char*));
 	while (pch != NULL)
 	{	
-		noOfWords++;
-		arrayOfWords = (char**)realloc(arrayOfWords, noOfWords * sizeof(char*));		
-		arrayOfWords[noOfWords-1]=malloc((strlen(pch)+1)* sizeof(char));
-		strcpy(arrayOfWords[noOfWords-1],pch);    //add pch into arrayOfWords
+		//noOfWords++;
+		if(noOfWords == length){
+			length += 10;
+			arrayOfWords = (char**)realloc(arrayOfWords, length * sizeof(char*));	
+		}
+		arrayOfWords[noOfWords]=pch;//malloc((strlen(pch)+1)* sizeof(char));
+		//strcpy(arrayOfWords[noOfWords],pch);    //add pch into arrayOfWords
 		pch = strtok (NULL, " \t");
+		noOfWords++;
 	}
 	
+	//printf("bghkeee + length =%d + noOfWords= %d\n",length,noOfWords);
 	arrayWords* arrayW = malloc(sizeof(arrayWords));
 	arrayW->length = noOfWords;
 	arrayW->words = arrayOfWords;
@@ -114,8 +120,8 @@ void deleteArrayOfWords(char** array,int length){
 	if(array!=NULL){
 		for(int i=0;i<length;i++){
 			if( array[i]!=NULL){
-				free(array[i]);
-				array[i] = NULL;
+				///free(array[i]);
+				//array[i] = NULL;
 			}
 		}
 		
@@ -179,10 +185,10 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 				check->position = first+1;
 			}
 		
-			free(wordFirst);
+			/*free(wordFirst);
 			wordFirst = NULL;
 			free (wordItem);
-			wordItem=NULL;
+			wordItem=NULL;*/
 			
     	}
     	else{
@@ -215,10 +221,11 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 		check->position=mid;
 		check->exists=true;
 		check->insertedNode = &array[mid];
-		free(wordMid);
+		
+		/*free(wordMid);
 		wordMid = NULL;
 		free (wordItem);
-		wordItem=NULL;
+		wordItem=NULL;*/
 	
 	
 	    return check;
@@ -226,17 +233,17 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
  
 	if(strcmp(wordItem,wordMid)>0){
 	
-		free(wordMid);
+		/*free(wordMid);
 		wordMid = NULL;
 		free (wordItem);
-		wordItem=NULL;
+		wordItem=NULL;*/
 	    return binarySearch(array_of_str, item, mid+1, last, check);
 	}
 	
-	free(wordMid);
+	/*free(wordMid);
 	wordMid = NULL;
 	free (wordItem);
-	wordItem=NULL;
+	wordItem=NULL;*/
 	return binarySearch(array_of_str, item, first, mid-1, check);
 
 }
@@ -325,10 +332,10 @@ checkItemExists* binarySearchBucket(dataNode* array, dataNode* item, int first, 
 				check->position = first+1;
 			}
 		
-			free(wordFirst);
+			/*free(wordFirst);
 			wordFirst = NULL;
 			free (wordItem);
-			wordItem=NULL;
+			wordItem=NULL;*/
 			
     	}
     	else{
@@ -353,27 +360,27 @@ checkItemExists* binarySearchBucket(dataNode* array, dataNode* item, int first, 
 	if(strcmp(wordItem ,wordMid)==0){
 		check->position=mid;
 		check->exists=true;
-		free(wordMid);
+		/*free(wordMid);
 		wordMid = NULL;
 		free (wordItem);
-		wordItem=NULL;
+		wordItem=NULL;*/
 	    return check;
 	 }
  
 	if(strcmp(wordItem,wordMid)>0){
-		free(wordMid);
+		/*free(wordMid);
 		wordMid = NULL;
 		free (wordItem);
-		wordItem=NULL;
+		wordItem=NULL;*/
 	    return binarySearchBucket(array, item, mid+1, last,trueLastElement, check);
 	}
 	if(wordMid!=NULL){
-		free(wordMid);
-		wordMid = NULL;
+		//free(wordMid);
+		//wordMid = NULL;
 	}
 	if(wordItem!=NULL){
-		free (wordItem);
-		wordItem=NULL;
+		//free (wordItem);
+		//wordItem=NULL;
 	}
 	return binarySearchBucket(array, item, first, mid-1,trueLastElement, check);
 }
@@ -469,8 +476,8 @@ void printFullArray(arrayOfStructs* array_of_str, int position){	//prints all la
 		for(int i=0; i < lastElement; i++){
 			char* word = getString(&( tempArray->array[i]));
 			printf("'%s' is in position %d, ", word, i);
-			free(word);
-			word=NULL;
+			//free(word);
+			//word=NULL;
 			if(i==lastElement-1){				//print only once
 				printf("\b\b: ");
 				printArray(tempArray,(position-1));
@@ -489,8 +496,8 @@ void printArray(arrayOfStructs* array_of_str, int position){		//prints layer
 	for(int k=0; k< array_of_str->position;k++){
 		char* word = getString(& (array_of_str->array[k]));
 		printf("%s ",  word);
-		free(word);
-		word=NULL;
+		//free(word);
+		//word=NULL;
 		if(k!=array_of_str->position-1)
 			printf(", ");
 	}
@@ -505,8 +512,8 @@ void printArrayFinalWords(arrayOfStructs* array_of_str, int position){
 			char* word = getString(& (array_of_str->array[k]));
 			printf("%s ",  word);
 		
-			free(word);
-			word=NULL;
+			//free(word);
+			//word=NULL;
 		
 			if(k!=array_of_str->position)
 				printf(", ");
@@ -594,11 +601,11 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			//get top-k
 			if(remainingLine!=NULL){
 				int topK = atoi(remainingLine);		
-				HeapSort(topArray->array, topArray->positionInsertion, 0);	//sort based on integers		
+				//HeapSort(topArray->array, topArray->positionInsertion, 0);	//sort based on integers		
 				//print topK
-				if(topK > topArray->positionInsertion)
+				/*if(topK > topArray->positionInsertion)
 					topK=topArray->positionInsertion;
-				printTopK(topArray,topK);
+				printTopK(topArray,topK);*/
 				
 			}
 			
@@ -682,22 +689,23 @@ void insertString (dataNode* node, char* word){
 }
 
 char* getString(dataNode* node){
-	char* returnWord = NULL;
 	if(node->noOfChars==0)
-		return returnWord;
+		return NULL;
 	if(node->isDynamic){
-		returnWord = malloc((strlen(node->dynamicWord)+1)*sizeof(char));
-		strcpy(	returnWord,  node->dynamicWord);
-		return returnWord;
+		//returnWord = malloc((strlen(node->dynamicWord)+1)*sizeof(char));
+		//strcpy(	returnWord,  node->dynamicWord);
+		return node->dynamicWord;
 	}
 	
+	return node->word;
+	
+	/*char* returnWord = NULL;
 	returnWord = (char *)malloc((node->noOfChars)*sizeof(char));
 	for(int i=0; i<node->noOfChars; i++){
 		returnWord[i] = node->word[i];
 	}
-	return returnWord;	
+	return returnWord;	*/
 }
-
 
 
 
