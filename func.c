@@ -133,17 +133,18 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 						strcpy(finalStringArray[itemsOffinalStringArray-1], finalString);
 
 						//insert to topArray
-						/*if(!possiblyContains(topFilter,finalString,strlen(finalString))){		//if finalString does not exist in array
+						if(!possiblyContains(topFilter,finalString,strlen(finalString))){		//if finalString does not exist in array
 							addFilter(topFilter,finalString,strlen(finalString));
 							if(topArray->positionInsertion == topArray->length){
 								doubleTopKArray(topArray);
 							}
 							insertTopArray(topArray,finalString);
+							HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
 						}
 						else{																	//exists in array
 							binarySearchTopK(topArray->array, finalString, topArray->positionInsertion);
 						}
-						HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings*/
+						
 						returningStringLength += strlen(finalString)+2;
 						returningString=realloc(returningString,returningStringLength *sizeof(char));
 						strcat(returningString,finalString);
@@ -190,19 +191,19 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 							strcpy(finalStringArray[itemsOffinalStringArray-1], finalString);
 							
 							//insert to topArray
-							/*if(!possiblyContains(topFilter,finalString,strlen(finalString))){
+							if(!possiblyContains(topFilter,finalString,strlen(finalString))){
 								addFilter(topFilter,finalString,strlen(finalString));
 								if(topArray->positionInsertion == topArray->length){
 									doubleTopKArray(topArray);
 								}
 								insertTopArray(topArray,finalString);
+								HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
 							}
 							else{		//exists in array
 								binarySearchTopK(topArray->array, finalString, topArray->positionInsertion);
 							
 							}
-							HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
-							*/
+							
 							returningStringLength += strlen(finalString)+2;
 							returningString=realloc(returningString,returningStringLength *sizeof(char));
 							strcat(returningString,finalString);
@@ -266,6 +267,7 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 }
 
 
+
 //search in static files
 char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWordsOriginal, BloomFilter* topFilter, topKArray *topArray){
 	BloomFilter* filter = initializeFilter(5);		//initialize bloomFilter here
@@ -289,11 +291,13 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 		int flagStringWasNotFound = 0;
 
 		char* arrayOfWords[noOfWords];
-		int counter=j;
+		/*int counter=j;
 		for(int k=0; k<noOfWords; k++){
 			arrayOfWords[k]=arrayOfWordsOriginal[counter];
 			counter++;
-		}
+		}*/
+		
+		memcpy(arrayOfWords,arrayOfWordsOriginal+j,noOfWords*sizeof(char*));
 		char** convertedStrings = NULL;
 		for(int i=0; i < noOfWords; i++){				//for each word of query
 			flagStringWasNotFound = 0;
@@ -351,11 +355,12 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 										doubleTopKArray(topArray);
 									}
 									insertTopArray(topArray,finalString);
+									HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
 								}
 								else{																	//exists in array
 									binarySearchTopK(topArray->array, finalString, topArray->positionInsertion);
 								}
-								HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+								
 								returningStringLength += strlen(finalString)+2;
 								returningString=realloc(returningString,returningStringLength *sizeof(char));
 								strcat(returningString,finalString);
@@ -425,11 +430,12 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 									doubleTopKArray(topArray);
 								}
 								insertTopArray(topArray,finalString);
+								HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
 							}
 							else{																	//exists in array
 								binarySearchTopK(topArray->array, finalString, topArray->positionInsertion);
 							}
-							HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+							
 							returningStringLength += strlen(finalString)+2;
 							returningString=realloc(returningString,returningStringLength *sizeof(char));
 							strcat(returningString,finalString);

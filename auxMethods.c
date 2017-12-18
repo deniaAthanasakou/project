@@ -601,11 +601,11 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			//get top-k
 			if(remainingLine!=NULL){
 				int topK = atoi(remainingLine);		
-				//HeapSort(topArray->array, topArray->positionInsertion, 0);	//sort based on integers		
+				HeapSort(topArray->array, topArray->positionInsertion, 0);	//sort based on integers		
 				//print topK
-				/*if(topK > topArray->positionInsertion)
+				if(topK > topArray->positionInsertion)
 					topK=topArray->positionInsertion;
-				printTopK(topArray,topK);*/
+				printTopK(topArray,topK);
 				
 			}
 			

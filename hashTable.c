@@ -254,7 +254,8 @@ dataNode* lookupTrieNode(char* lookupWord ,HashTable* hashTable){
 		char *searchWord = NULL;
 		if(bucket->cells[middle].staticArray!=NULL){
 			int sizeMalloc = abs(bucket->cells[middle].staticArray[0]);
-			memmove(searchWord,bucket->cells[middle].dynamicWord,sizeMalloc*sizeof(char));
+			searchWord = malloc((sizeMalloc+1)*sizeof(char));
+			memmove(searchWord,bucket->cells[middle].dynamicWord,(sizeMalloc)*sizeof(char));
 			/*int j = 0;
 			int k=0;
 			for(j=0; j< sizeMalloc; j++){
@@ -262,6 +263,8 @@ dataNode* lookupTrieNode(char* lookupWord ,HashTable* hashTable){
 				k++;
 			}*/
 			searchWord[sizeMalloc] = '\0';
+			//printf("\n-------------------WORRDDD : %s + buckets %s\n",searchWord,bucket->cells[middle].dynamicWord);
+			
 		}
 		else{
 			searchWord = getString(&bucket->cells[middle]);
