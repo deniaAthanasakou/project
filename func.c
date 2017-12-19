@@ -96,6 +96,7 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 	int returningStringLength=0;
 	int found = 0;
 	int noOfWords=noOfWordsOriginal;
+	int flagInserted = 0;
 	for(int j=0; j < noOfWordsOriginal; j++){	//for each word of query starting as first Word
 		
 		dataNode* firstElement;
@@ -117,6 +118,10 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 			if(counter==0){
 				firstElement = lookupTrieNode(arrayOfWords[i],hashTable);
 				if(firstElement==NULL){
+					/*if(flagInserted){														//exists in array
+						HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+						flagInserted = 0;
+					}*/
 					break;
 				}
 				strLength += strlen(arrayOfWords[i]) + 2;
@@ -139,10 +144,21 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 								doubleTopKArray(topArray);
 							}
 							insertTopArray(topArray,finalString);
-							HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+							flagInserted = 1;
+							
+							/*if(i==noOfWordsOriginal -1){		//last word
+								HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+								flagInserted = 0;
+							}*/
+							
 						}
 						else{																	//exists in array
+							if(flagInserted){
+								HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+								flagInserted = 0;
+							}
 							binarySearchTopK(topArray->array, finalString, topArray->positionInsertion);
+							
 						}
 						
 						returningStringLength += strlen(finalString)+2;
@@ -159,7 +175,11 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 				if(counter==1){
 					tempArray = firstElement->nextWordArray;
 					if(tempArray == NULL)
-					{
+					{	
+						/*if(flagInserted){
+							HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+							flagInserted = 0;
+						}*/
 						break;		
 					}
 
@@ -197,11 +217,20 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 									doubleTopKArray(topArray);
 								}
 								insertTopArray(topArray,finalString);
-								HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+								
+								flagInserted = 1;
+								/*if(i==noOfWordsOriginal -1){		//last word
+									HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+									flagInserted = 0;
+								}*/
 							}
 							else{		//exists in array
+								if(flagInserted){
+									HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+									flagInserted = 0;
+								}
 								binarySearchTopK(topArray->array, finalString, topArray->positionInsertion);
-							
+								
 							}
 							
 							returningStringLength += strlen(finalString)+2;
@@ -220,6 +249,10 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 					tempElement=NULL;
 					free(getPosition);
 					getPosition = NULL;
+					/*if(flagInserted){
+						HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+						flagInserted = 0;
+					}*/
 					break;
 				}	
 				tempArray = tempArray->array[getPosition->position].nextWordArray;
@@ -230,6 +263,10 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 					tempElement=NULL;
 					free(getPosition);
 					getPosition = NULL;
+					/*if(flagInserted){
+						HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+						flagInserted = 0;
+					}*/
 					break;		
 				}
 
@@ -244,6 +281,11 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 		free(finalString);
 		finalString = NULL;
 		//noOfWords--;
+		
+		if(j==noOfWordsOriginal -1 && flagInserted == 1){
+			HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+			flagInserted = 0;
+		}
 	}
 	
 	if(found==0){
@@ -278,6 +320,7 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 	int returningStringLength=0;
 	int found = 0;
 	int noOfWords=noOfWordsOriginal;
+	int flagInserted = 0;
 	for(int j=0; j < noOfWordsOriginal; j++){	//for each word of query starting as first Word
 		dataNode* tempElement = NULL;
 		arrayOfStructs *tempArray = NULL;
@@ -290,25 +333,32 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 		int flagFinalString = 0;
 		int flagStringWasNotFound = 0;
 
-		char* arrayOfWords[noOfWords];
+		//char* arrayOfWords[noOfWords];
 		/*int counter=j;
 		for(int k=0; k<noOfWords; k++){
 			arrayOfWords[k]=arrayOfWordsOriginal[counter];
 			counter++;
 		}*/
 		
-		memcpy(arrayOfWords,arrayOfWordsOriginal+j,noOfWords*sizeof(char*));
+		//memcpy(arrayOfWords,arrayOfWordsOriginal+j,noOfWords*sizeof(char*));
+		char** arrayOfWords = arrayOfWordsOriginal;
 		char** convertedStrings = NULL;
-		for(int i=0; i < noOfWords; i++){				//for each word of query
+		int counter = 0;
+		for(int i=j; i < noOfWordsOriginal; i++){				//for each word of query
 			flagStringWasNotFound = 0;
 			flagCounterIncreased = 0;
 			
 			
-			if(i==0){
+			if(counter==0){
 				tempElement = lookupTrieNode(arrayOfWords[i],hashTable);
 				if (tempElement == NULL)
 				{	
+					/*if(flagInserted){														//exists in array
+						HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+						flagInserted = 0;
+					}*/
 					break;
+					
 				}
 				flagFound = 1;
 				
@@ -331,7 +381,7 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 				while(counterForArray <= tempElement->staticArrayLength){
 					flagCounterIncreased=0;
 					if(strcmp(convertedStrings[counterForArray],arrayOfWords[i])==0){  //if found
-						if(i!=0 && flagFinalString != 1){
+						if(counter!=0 && flagFinalString != 1){
 							strLength += strlen(arrayOfWords[i]) + 2;
 							finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
 
@@ -355,9 +405,18 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 										doubleTopKArray(topArray);
 									}
 									insertTopArray(topArray,finalString);
-									HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+									flagInserted = 1;
+									/*if(i==noOfWordsOriginal -1){
+										HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+										flagInserted = 0;
+									}*/
+
 								}
-								else{																	//exists in array
+								else{		
+									if(flagInserted){														//exists in array
+										HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+										flagInserted = 0;
+									}
 									binarySearchTopK(topArray->array, finalString, topArray->positionInsertion);
 								}
 								
@@ -372,15 +431,24 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 						finalString[strlen(finalString)] = '\0';
 						strcat(finalString, " ");
 
-						if(i+1!=noOfWords){
+						if(counter+1!=noOfWords){
 							i++;
+							counter++;
 							flagCounterIncreased = 1;
 						}
 						else {
+							/*if(flagInserted){														//exists in array
+								HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+								flagInserted = 0;
+							}*/
 							break;
 						}
 					}
 					else{				//if not found
+						/*if(flagInserted){														//exists in array
+							HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+							flagInserted = 0;
+						}*/
 						flagStringWasNotFound = 1;
 						break;
 					}	
@@ -394,11 +462,16 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 					}
 					free(convertedStrings);
 					convertedStrings = NULL;
+					/*if(flagInserted){														//exists in array
+						HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+						flagInserted = 0;
+					}*/
 					break;
 				}
 				if(flagCounterIncreased){
 					flagCounterIncreased = 0;
 					i--;
+					counter--;
 				}
 			}
 			else {					// if tempElement is not a supernode
@@ -406,7 +479,7 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 				char *word = getString(tempElement);
 				//printf("Func %s\n",word);
 				if(strcmp(word,arrayOfWords[i])==0){
-					if(i!=0 && flagFinalString != 1 && !flagFound){
+					if(counter!=0 && flagFinalString != 1 && !flagFound){
 						strLength += strlen(arrayOfWords[i]) + 2;
 						finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
 
@@ -431,9 +504,17 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 									doubleTopKArray(topArray);
 								}
 								insertTopArray(topArray,finalString);
-								HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+								flagInserted = 1;
+								/*if(i == noOfWordsOriginal-1){														//exists in array
+									HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+									flagInserted = 0;
+								}*/
 							}
 							else{																	//exists in array
+								if(flagInserted){														//exists in array
+									HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+									flagInserted = 0;
+								}
 								binarySearchTopK(topArray->array, finalString, topArray->positionInsertion);
 							}
 							
@@ -465,11 +546,15 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 			//get next tempElement
 			tempArray = tempElement->nextWordArray;
 			if(tempArray==NULL){
+				/*if(flagInserted){														//exists in array
+					HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+					flagInserted = 0;
+				}*/
 				break;
 			}
 			
 			int position=i;
-			if(i+1!=noOfWords && flagCounterIncreased==0){
+			if(counter+1!=noOfWords && flagCounterIncreased==0){
 				 position = i+1;
 			}
 			else 
@@ -491,15 +576,26 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 			else{
 				free(getPosition);
 				getPosition = NULL;
+				/*if(flagInserted){														//exists in array
+					HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+					flagInserted = 0;
+				}*/
 				break;
 			}
 			
 			flagFinalString = 0;
+			counter++;
 		}
 		free(finalString);
 		finalString = NULL;
 		noOfWords--;
-	}	
+		
+		if(j==noOfWordsOriginal -1 && flagInserted == 1){
+			HeapSort(topArray->array, topArray->positionInsertion, 1);	//sort based on strings
+			flagInserted = 0;
+		}
+	}
+	
 	
 	if(found==0){
 		printf("-1\n");

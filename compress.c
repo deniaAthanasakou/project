@@ -122,8 +122,8 @@ void compress(dataNode* startNode,dataNode* additionalNode){
 	free(secondStringMalloc);
 	secondStringMalloc = NULL;
 	*/
-	//free(newString);
-	//newString = NULL;
+	free(newString);
+	newString = NULL;
 	
 	deleteArray1Layer(tempArray);
 
