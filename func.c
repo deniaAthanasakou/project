@@ -404,6 +404,7 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 			else {					// if tempElement is not a supernode
 				
 				char *word = getString(tempElement);
+				//printf("Func %s\n",word);
 				if(strcmp(word,arrayOfWords[i])==0){
 					if(i!=0 && flagFinalString != 1 && !flagFound){
 						strLength += strlen(arrayOfWords[i]) + 2;

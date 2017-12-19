@@ -115,7 +115,6 @@ arrayWords* stringToArray(char* ngram){
 	return arrayW;
 
 }
-
 void deleteArrayOfWords(char** array,int length){
 	if(array!=NULL){
 		for(int i=0;i<length;i++){
@@ -160,21 +159,28 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
     	check->exists=false;
     	if(array[first].noOfChars!=-1){
 			char* wordFirst = getString(&(array[first]));
+			char* wordFirstMalloc = NULL;
+			
 		 	if(array[first].staticArray!=NULL){
 				int sizeMalloc = abs(array[first].staticArray[0]);
+				wordFirstMalloc = malloc((sizeMalloc+1)*sizeof(char));
 				int j = 0;
 				int k=0;
 				for(j=0; j< sizeMalloc; j++){
-					wordFirst[j] = array[first].dynamicWord[k];
+					wordFirstMalloc[j] = array[first].dynamicWord[k];
 					k++;
 				}
-				wordFirst[j] = '\0';
+				wordFirstMalloc[j] = '\0';
+			}
+			else{
+				wordFirstMalloc = malloc((array[first].noOfChars+1)*sizeof(char));
+				strcpy(wordFirstMalloc,wordFirst);
 			}
 
 			char* wordItem = getString(item);
 			
-			if(wordFirst!=NULL){
-				if(strcmp(wordItem,wordFirst)>0){
+			if(wordFirstMalloc!=NULL){
+				if(strcmp(wordItem,wordFirstMalloc)>0){
 					check->position=first + 1;
 				}
 				else{
@@ -184,11 +190,14 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 			}else{
 				check->position = first+1;
 			}
+			
+			free(wordFirstMalloc);
+			wordFirstMalloc = NULL;
 		
-			/*free(wordFirst);
-			wordFirst = NULL;
-			free (wordItem);
-			wordItem=NULL;*/
+			//free(wordFirst);
+			//wordFirst = NULL;
+			//free (wordItem);
+			//wordItem=NULL;
 			
     	}
     	else{
@@ -206,44 +215,56 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
  	}
  	
  	char* wordMid = getString(&(array[mid]));
+ 	char* wordMidMalloc = NULL;
  	if(array[mid].staticArray!=NULL){
 		int sizeMalloc = abs(array[mid].staticArray[0]);
+		wordMidMalloc = malloc((sizeMalloc+1)*sizeof(char));
 		int j = 0;
 		for(j=0; j< sizeMalloc; j++){
-			wordMid[j] = array[mid].dynamicWord[j];
+			wordMidMalloc[j] = array[mid].dynamicWord[j];
 		}
-		wordMid[j] = '\0';
+		wordMidMalloc[j] = '\0';
+	}
+	else{
+		wordMidMalloc = malloc((array[mid].noOfChars+1)*sizeof(char));
+		strcpy(wordMidMalloc,wordMid);
 	}
 
 	char* wordItem = getString(item);
  	
-	if(strcmp(wordItem ,wordMid)==0){
+	if(strcmp(wordItem ,wordMidMalloc)==0){
 		check->position=mid;
 		check->exists=true;
 		check->insertedNode = &array[mid];
 		
-		/*free(wordMid);
-		wordMid = NULL;
-		free (wordItem);
-		wordItem=NULL;*/
+		free(wordMidMalloc);
+		wordMidMalloc = NULL;
+		//free(wordMid);
+		//wordMid = NULL;
+		//free (wordItem);
+		//wordItem=NULL;
 	
 	
 	    return check;
 	 }
  
-	if(strcmp(wordItem,wordMid)>0){
+	if(strcmp(wordItem,wordMidMalloc)>0){
 	
-		/*free(wordMid);
-		wordMid = NULL;
-		free (wordItem);
-		wordItem=NULL;*/
+		free(wordMidMalloc);
+		wordMidMalloc = NULL;
+		//free(wordMid);
+		//wordMid = NULL;
+		//free (wordItem);
+		//wordItem=NULL;
 	    return binarySearch(array_of_str, item, mid+1, last, check);
 	}
 	
-	/*free(wordMid);
-	wordMid = NULL;
-	free (wordItem);
-	wordItem=NULL;*/
+	free(wordMidMalloc);
+	wordMidMalloc = NULL;
+	//free(wordMid);
+	//wordMid = NULL;
+	//free (wordItem);
+	//wordItem=NULL;
 	return binarySearch(array_of_str, item, first, mid-1, check);
 
 }
@@ -332,10 +353,10 @@ checkItemExists* binarySearchBucket(dataNode* array, dataNode* item, int first, 
 				check->position = first+1;
 			}
 		
-			/*free(wordFirst);
-			wordFirst = NULL;
-			free (wordItem);
-			wordItem=NULL;*/
+			//free(wordFirst);
+			//wordFirst = NULL;
+			//free (wordItem);
+			//wordItem=NULL;
 			
     	}
     	else{
@@ -360,18 +381,18 @@ checkItemExists* binarySearchBucket(dataNode* array, dataNode* item, int first, 
 	if(strcmp(wordItem ,wordMid)==0){
 		check->position=mid;
 		check->exists=true;
-		/*free(wordMid);
-		wordMid = NULL;
-		free (wordItem);
-		wordItem=NULL;*/
+		//free(wordMid);
+		//wordMid = NULL;
+		//free (wordItem);
+		//wordItem=NULL;
 	    return check;
 	 }
  
 	if(strcmp(wordItem,wordMid)>0){
-		/*free(wordMid);
-		wordMid = NULL;
-		free (wordItem);
-		wordItem=NULL;*/
+		//free(wordMid);
+		//wordMid = NULL;
+		//free (wordItem);
+		//wordItem=NULL;
 	    return binarySearchBucket(array, item, mid+1, last,trueLastElement, check);
 	}
 	if(wordMid!=NULL){
@@ -689,23 +710,26 @@ void insertString (dataNode* node, char* word){
 }
 
 char* getString(dataNode* node){
+	char* returnWord = NULL;
 	if(node->noOfChars==0)
-		return NULL;
+		return returnWord;
 	if(node->isDynamic){
-		//returnWord = malloc((strlen(node->dynamicWord)+1)*sizeof(char));
-		//strcpy(	returnWord,  node->dynamicWord);
 		return node->dynamicWord;
+		/*returnWord = malloc((strlen(node->dynamicWord)+1)*sizeof(char));
+		strcpy(	returnWord,  node->dynamicWord);
+		return returnWord;*/
 	}
 	
-	return node->word;
+	return node->word;	
 	
-	/*char* returnWord = NULL;
-	returnWord = (char *)malloc((node->noOfChars)*sizeof(char));
+	/*returnWord = (char *)malloc((node->noOfChars)*sizeof(char));
 	for(int i=0; i<node->noOfChars; i++){
 		returnWord[i] = node->word[i];
 	}
 	return returnWord;	*/
 }
+
+
 
 
 

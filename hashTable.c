@@ -140,7 +140,7 @@ dataNode* insertTrieNodeAgain(dataNode* node, HashTable* hashTable, int checkBuc
 	}
 	//free(word);
 	//word=NULL;
-	 dataNode* returnNodePtr = check->insertedNode;
+	dataNode* returnNodePtr = check->insertedNode;
 	
 	if(check!=NULL){
 		free(check);
@@ -321,8 +321,8 @@ int getCell(char* lookupWord ,HashTable* hashTable,int previousBucket){
 	}
 	if (first > last){
 		if(searchWord!=NULL){
-			free(searchWord);
-			searchWord = NULL;
+			//free(searchWord);
+			//searchWord = NULL;
 		}
 		return -1;
 	}

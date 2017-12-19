@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include "./murmur3/murmur3.h"
-#define HASH_SIZE 10000
+#define HASH_SIZE 50000
 
 
 typedef struct BloomFilter{

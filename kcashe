@@ -1,0 +1,5 @@
+valgrind --tool=callgrind ./ngrams -i small_static/small_static.init -q small_static/small_static.work > temp
+
+valgrind --tool=callgrind ./ngrams -i small_dynamic/small_dynamic.init -q small_dynamic/small_dynamic.work > temp
+
+kcachegrind callgrind.out.XYZ

@@ -1,2 +1,9 @@
-sthn insert sto func exw ena sxoliasmeno deleteDataNode
-sth gethash exw 2 print
+isws xreiastei ekei pou pairnoume thn prwth leksh apo static array
+na ksanakanw malloc meta th getString
+
+
+
+small_static: 7 sec						The two files are identical
+small_dynamic: 3  sec					The two files are identical
+medium_static:  sec
+medium_dynamic:  sec

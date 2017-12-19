@@ -50,6 +50,7 @@ int checkForCompression(dataNode* node){
 			if(node->staticArray==NULL){
 				node->staticArray = malloc(node->staticArrayLength *sizeof(int));
 				char* startString = getString(node);
+				//printf("checkForCompression %s\n",startString);
 				if(node->isFinal){
 					node->staticArray[node->staticArrayLength -1] = strlen(startString);
 				}
@@ -76,34 +77,37 @@ void compress(dataNode* startNode,dataNode* additionalNode){
 
 	char *firstString = getString(startNode);
 	char *secondString = getString(additionalNode);
-	
 	//printf("-----------firststr: %s\n",firstString);
 	//printf("-----------secondString: %s\n",secondString);
 	
 	startNode->noOfChars = startNode->noOfChars + additionalNode->noOfChars;
 	char* newString = malloc((startNode->noOfChars+2)*sizeof(char));
 	
+	
+	
 	strcpy(newString, firstString);
 	strcat(newString, secondString);
+	//strcat(newString,"\0");
+	
+	//printf("-----------newString: %s\n",newString);
 	
 	startNode->staticArray = realloc(startNode->staticArray,(startNode->staticArrayLength +1) *sizeof(int));
 	arrayOfStructs* tempArray = startNode->nextWordArray;
 	
 	startNode->nextWordArray = additionalNode->nextWordArray;
 	startNode->word[0] = '\0';
+	
 	startNode->isDynamic = true;
 	startNode->isFinal = additionalNode->isFinal;
 	
 	if(startNode->dynamicWord == NULL){
 		startNode->dynamicWord = malloc(startNode->noOfChars * sizeof(char));
-		strcpy(startNode->dynamicWord,newString);
 	}
 	else{
 		startNode->dynamicWord = realloc(startNode->dynamicWord,startNode->noOfChars * sizeof(char));
-		strcat(startNode->dynamicWord,secondString);
 	}
-	
-	//printf("-----------dynamicWord: %s\n",startNode->dynamicWord);
+	strcpy(startNode->dynamicWord,newString);
+	//printf("-----------dynamicWord222: %s\n",startNode->dynamicWord);
 	
 	
 	if(additionalNode->isFinal)
@@ -113,17 +117,19 @@ void compress(dataNode* startNode,dataNode* additionalNode){
 	
 	//printStaticArray(startNode);
 
-	/*free(firstString);
-	firstString = NULL;
-	free(secondString);
-	secondString = NULL;*/
-	
+	/*free(firstStringMalloc);
+	firstStringMalloc = NULL;
+	free(secondStringMalloc);
+	secondStringMalloc = NULL;
+	*/
 	//free(newString);
 	//newString = NULL;
 	
 	deleteArray1Layer(tempArray);
 
 }
+
+
 
 char** getNgramFromNode(dataNode* node){
 	char** ngram=NULL;
@@ -144,6 +150,7 @@ char** getNgramFromNode(dataNode* node){
 	else{		//1 word
 		ngram = malloc(1*sizeof(char*));
 		char* word = getString(node);
+		//printf("getNgramFromNode %s\n",word);
 		ngram[0] = malloc((strlen(word) +1)*sizeof(char));
 		strcpy(ngram[0], word);
 		//free(word);
