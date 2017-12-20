@@ -8,6 +8,7 @@ topKArray* initializeTopKArray(){
 	topKArray *topArray = malloc(sizeof(topKArray));
 	topArray->length = TOP_SIZE;
 	topArray->positionInsertion = 0;
+	topArray->isSorted = false;
 	topArray->array = malloc(topArray->length*sizeof(topKStruct));
 	for(int i=0; i<topArray->length; i++){
 		 initializeTopKStruct(&topArray->array[i]);

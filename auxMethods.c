@@ -559,20 +559,30 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 	int counter=-1;
 	BloomFilter* topFilter = NULL;
 	topKArray* topArray = NULL;
+	//printf("\n---BEFORE WHILE\n");
 	while ((read = getline(&line, &len, file)) != -1) {
+		
+		char* ngram = strtok(line, "\n");
+		//printf("------------ngram is %s\n",ngram);
+		if(ngram==NULL){
+			continue;
+		}
+			
 	
+		
 		counter++;
 		if(counter == 0){		 
 			topFilter = initializeFilter(5);		//initialize bloomFilter here
 			topArray = initializeTopKArray();		//initialize topKArray
 		}
 		
-		char* ngram = strtok(line, "\n");
+		
 		//find first letter for each case
 		char* wordCase = strtok(ngram," \t");
 		char* remainingLine = strtok(NULL,"");
 
 		if(strcmp(wordCase,"A")==0){	
+			//printf("\n---ADD\n");
 			endingLetter = 'A';
 			if(staticDynamic==0){	//STATIC
 				printf("Error with init file! Add is not supported in Static version.\n");
@@ -590,10 +600,12 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			callBasicFuncs(remainingLine,'A',hashTable, NULL, NULL, 1);
 		}
 		else if(strcmp(wordCase,"Q")==0){
+			//printf("\n---SEARCH\n");
 			endingLetter = 'Q';
 			callBasicFuncs(remainingLine,'Q',hashTable,topFilter,topArray,staticDynamic);		
 		}
 		else if(strcmp(wordCase,"D")==0){
+			//printf("\n---DELETE\n");
 			endingLetter = 'D';
 			if(staticDynamic==0){	//STATIC
 				printf("Error with init file! Delete is not supported in Static version.\n");
@@ -613,7 +625,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			callBasicFuncs(remainingLine,'D',hashTable, NULL, NULL, 1);
 		}
 		else if(strcmp(wordCase,"F")==0){
-			
+			//printf("\n---END\n");
 			endingLetter = 'F';
 			counter = -1;
 			
@@ -621,6 +633,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			
 			//get top-k
 			if(remainingLine!=NULL){
+				//printf("\n---GET TOPK\n");
 				int topK = atoi(remainingLine);		
 				HeapSort(topArray->array, topArray->positionInsertion, 0);	//sort based on integers		
 				//print topK
@@ -642,6 +655,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				line=NULL;
 			}
 			
+			//printf("\n---DIFF LETTER\n");
 			destroyLinearHash(hashTable);
 			//free bloomFilter
 			freeFilter(topFilter);
@@ -669,12 +683,13 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 		return 0;
 	}
 
+	//printf("KOMPLE\n");
 	return 1;
 
 }
 
 void printQuery(char** items, int iterNum){
-	
+	//printf("\n----INSIDE PRINT %d\n",iterNum);
 	for(int i=0;i<iterNum;i++){
 		if(i==iterNum-1){
 			printf("%s\n",items[i]);
@@ -683,6 +698,7 @@ void printQuery(char** items, int iterNum){
 			printf("%s|",items[i]);
 		}		
 	}
+	//printf("\n----AFTER PRINT\n");
 
 }
 

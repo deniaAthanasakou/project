@@ -1,6 +1,7 @@
 #ifndef _TOP_K_H_
 #define _TOP_K_H_
 #define TOP_SIZE 20
+#include <stdbool.h>
 
 typedef struct topKStruct{
 	char* ngram;
@@ -11,6 +12,7 @@ typedef struct topKArray{
 	int length;
 	topKStruct *array;
 	int positionInsertion;		//empty position for insert
+	bool isSorted;
 }topKArray;
 
 topKArray* initializeTopKArray();
