@@ -9,11 +9,6 @@
 BloomFilter* initializeFilter(uint8_t numHashes){
 	BloomFilter *filter = malloc(sizeof(struct BloomFilter));
 	filter->numHashes = numHashes;
-
-	//for(int i=0; i<HASH_SIZE; i++)				//must initialize bitVector
-	// filter->bitVector[HASH_SIZE] = {false};
-	
-	//int arr[10][10] = {0};
 	memset(filter->bitVector,false,HASH_SIZE*sizeof(bool));
 	return filter;
 }

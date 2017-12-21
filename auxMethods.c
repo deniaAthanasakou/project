@@ -41,18 +41,22 @@ int initialize(FILE* file, HashTable* hashTable){
 
 
 void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKArray *topArray, int isDynamic){
-
+	printf("callBasicFuncs\n");
 
 	arrayWords* arrayW = stringToArray(ngram);
+	printf("after stringToArray\n");
 	int noOfWords = arrayW->length;
 	char** arrayOfWords = arrayW->words;
 	if(query == 'A'){
 		insert_ngram(hashTable, arrayOfWords,noOfWords);
 	}
 	else if(query == 'Q'){
+		printf("query == 'Q'\n");
 		char* searchString = NULL;
 		if(isDynamic){
+			printf("before calling search ngram\n");
 		 	searchString= search_ngram(hashTable, arrayOfWords,noOfWords, topFilter, topArray);
+		 	printf("after calling search ngram\n");
 		 }
 		else{
 			searchString = search_ngram_StaticVersion(hashTable, arrayOfWords,noOfWords, topFilter, topArray);
@@ -96,18 +100,15 @@ arrayWords* stringToArray(char* ngram){
 	arrayOfWords = malloc(length * sizeof(char*));
 	while (pch != NULL)
 	{	
-		//noOfWords++;
 		if(noOfWords == length){
 			length += 10;
 			arrayOfWords = (char**)realloc(arrayOfWords, length * sizeof(char*));	
 		}
-		arrayOfWords[noOfWords]=pch;//malloc((strlen(pch)+1)* sizeof(char));
-		//strcpy(arrayOfWords[noOfWords],pch);    //add pch into arrayOfWords
+		arrayOfWords[noOfWords]=pch;
 		pch = strtok (NULL, " \t");
 		noOfWords++;
 	}
 	
-	//printf("bghkeee + length =%d + noOfWords= %d\n",length,noOfWords);
 	arrayWords* arrayW = malloc(sizeof(arrayWords));
 	arrayW->length = noOfWords;
 	arrayW->words = arrayOfWords;
@@ -115,19 +116,6 @@ arrayWords* stringToArray(char* ngram){
 	return arrayW;
 
 }
-void deleteArrayOfWords(char** array,int length){
-	if(array!=NULL){
-		for(int i=0;i<length;i++){
-			if( array[i]!=NULL){
-				///free(array[i]);
-				//array[i] = NULL;
-			}
-		}
-		
-	}
-
-}
-
 
 void copyDataNode(dataNode* node, dataNode* tempNode){
 
@@ -193,11 +181,6 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 			
 			free(wordFirstMalloc);
 			wordFirstMalloc = NULL;
-		
-			//free(wordFirst);
-			//wordFirst = NULL;
-			//free (wordItem);
-			//wordItem=NULL;
 			
     	}
     	else{
@@ -239,10 +222,6 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 		
 		free(wordMidMalloc);
 		wordMidMalloc = NULL;
-		//free(wordMid);
-		//wordMid = NULL;
-		//free (wordItem);
-		//wordItem=NULL;
 	
 	
 	    return check;
@@ -252,19 +231,11 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 	
 		free(wordMidMalloc);
 		wordMidMalloc = NULL;
-		//free(wordMid);
-		//wordMid = NULL;
-		//free (wordItem);
-		//wordItem=NULL;
 	    return binarySearch(array_of_str, item, mid+1, last, check);
 	}
 	
 	free(wordMidMalloc);
 	wordMidMalloc = NULL;
-	//free(wordMid);
-	//wordMid = NULL;
-	//free (wordItem);
-	//wordItem=NULL;
 	return binarySearch(array_of_str, item, first, mid-1, check);
 
 }
@@ -351,13 +322,7 @@ checkItemExists* binarySearchBucket(dataNode* array, dataNode* item, int first, 
 		
 			}else{
 				check->position = first+1;
-			}
-		
-			//free(wordFirst);
-			//wordFirst = NULL;
-			//free (wordItem);
-			//wordItem=NULL;
-			
+			}	
     	}
     	else{
 			check->position = first+1;
@@ -381,27 +346,11 @@ checkItemExists* binarySearchBucket(dataNode* array, dataNode* item, int first, 
 	if(strcmp(wordItem ,wordMid)==0){
 		check->position=mid;
 		check->exists=true;
-		//free(wordMid);
-		//wordMid = NULL;
-		//free (wordItem);
-		//wordItem=NULL;
 	    return check;
 	 }
  
 	if(strcmp(wordItem,wordMid)>0){
-		//free(wordMid);
-		//wordMid = NULL;
-		//free (wordItem);
-		//wordItem=NULL;
 	    return binarySearchBucket(array, item, mid+1, last,trueLastElement, check);
-	}
-	if(wordMid!=NULL){
-		//free(wordMid);
-		//wordMid = NULL;
-	}
-	if(wordItem!=NULL){
-		//free (wordItem);
-		//wordItem=NULL;
 	}
 	return binarySearchBucket(array, item, first, mid-1,trueLastElement, check);
 }
@@ -497,8 +446,6 @@ void printFullArray(arrayOfStructs* array_of_str, int position){	//prints all la
 		for(int i=0; i < lastElement; i++){
 			char* word = getString(&( tempArray->array[i]));
 			printf("'%s' is in position %d, ", word, i);
-			//free(word);
-			//word=NULL;
 			if(i==lastElement-1){				//print only once
 				printf("\b\b: ");
 				printArray(tempArray,(position-1));
@@ -517,8 +464,6 @@ void printArray(arrayOfStructs* array_of_str, int position){		//prints layer
 	for(int k=0; k< array_of_str->position;k++){
 		char* word = getString(& (array_of_str->array[k]));
 		printf("%s ",  word);
-		//free(word);
-		//word=NULL;
 		if(k!=array_of_str->position-1)
 			printf(", ");
 	}
@@ -532,9 +477,6 @@ void printArrayFinalWords(arrayOfStructs* array_of_str, int position){
 		if(array_of_str->array[k].isFinal){
 			char* word = getString(& (array_of_str->array[k]));
 			printf("%s ",  word);
-		
-			//free(word);
-			//word=NULL;
 		
 			if(k!=array_of_str->position)
 				printf(", ");
@@ -550,7 +492,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 	
 	char *line = NULL;
 	size_t len = 0;
-	int read;
+	long long read;
 
 	if (file == NULL)
 		return 1;
@@ -559,17 +501,12 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 	int counter=-1;
 	BloomFilter* topFilter = NULL;
 	topKArray* topArray = NULL;
-	//printf("\n---BEFORE WHILE\n");
 	while ((read = getline(&line, &len, file)) != -1) {
-		
+		printf("LINE: %s\n",line);
 		char* ngram = strtok(line, "\n");
-		//printf("------------ngram is %s\n",ngram);
 		if(ngram==NULL){
 			continue;
 		}
-			
-	
-		
 		counter++;
 		if(counter == 0){		 
 			topFilter = initializeFilter(5);		//initialize bloomFilter here
@@ -582,7 +519,6 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 		char* remainingLine = strtok(NULL,"");
 
 		if(strcmp(wordCase,"A")==0){	
-			//printf("\n---ADD\n");
 			endingLetter = 'A';
 			if(staticDynamic==0){	//STATIC
 				printf("Error with init file! Add is not supported in Static version.\n");
@@ -600,12 +536,13 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			callBasicFuncs(remainingLine,'A',hashTable, NULL, NULL, 1);
 		}
 		else if(strcmp(wordCase,"Q")==0){
-			//printf("\n---SEARCH\n");
+			
 			endingLetter = 'Q';
-			callBasicFuncs(remainingLine,'Q',hashTable,topFilter,topArray,staticDynamic);		
+			printf("before query\n");
+			callBasicFuncs(remainingLine,'Q',hashTable,topFilter,topArray,staticDynamic);	
+			printf("after query\n");
 		}
 		else if(strcmp(wordCase,"D")==0){
-			//printf("\n---DELETE\n");
 			endingLetter = 'D';
 			if(staticDynamic==0){	//STATIC
 				printf("Error with init file! Delete is not supported in Static version.\n");
@@ -625,7 +562,6 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			callBasicFuncs(remainingLine,'D',hashTable, NULL, NULL, 1);
 		}
 		else if(strcmp(wordCase,"F")==0){
-			//printf("\n---END\n");
 			endingLetter = 'F';
 			counter = -1;
 			
@@ -633,12 +569,13 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			
 			//get top-k
 			if(remainingLine!=NULL){
-				//printf("\n---GET TOPK\n");
 				int topK = atoi(remainingLine);		
-				HeapSort(topArray->array, topArray->positionInsertion, 0);	//sort based on integers		
-				//print topK
 				if(topK > topArray->positionInsertion)
 					topK=topArray->positionInsertion;
+				//HeapSort(topArray->array, topArray->positionInsertion, topK);	//sort based on integers	
+				bubbleSort(topArray->array, topArray->positionInsertion, topK);		//faster
+				//print topK
+				
 				printTopK(topArray,topK);
 				
 			}
@@ -655,7 +592,6 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				line=NULL;
 			}
 			
-			//printf("\n---DIFF LETTER\n");
 			destroyLinearHash(hashTable);
 			//free bloomFilter
 			freeFilter(topFilter);
@@ -665,9 +601,9 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			return 0;
 		}
 		
-			
+		printf("end\n");
 	}//found eof
-	
+	printf("EOF\n");
 	if (line){
 		free(line);
 		line=NULL;
@@ -683,13 +619,11 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 		return 0;
 	}
 
-	//printf("KOMPLE\n");
 	return 1;
 
 }
 
 void printQuery(char** items, int iterNum){
-	//printf("\n----INSIDE PRINT %d\n",iterNum);
 	for(int i=0;i<iterNum;i++){
 		if(i==iterNum-1){
 			printf("%s\n",items[i]);
@@ -698,7 +632,6 @@ void printQuery(char** items, int iterNum){
 			printf("%s|",items[i]);
 		}		
 	}
-	//printf("\n----AFTER PRINT\n");
 
 }
 
@@ -731,18 +664,12 @@ char* getString(dataNode* node){
 		return returnWord;
 	if(node->isDynamic){
 		return node->dynamicWord;
-		/*returnWord = malloc((strlen(node->dynamicWord)+1)*sizeof(char));
-		strcpy(	returnWord,  node->dynamicWord);
-		return returnWord;*/
 	}
 	
 	return node->word;	
-	
-	/*returnWord = (char *)malloc((node->noOfChars)*sizeof(char));
-	for(int i=0; i<node->noOfChars; i++){
-		returnWord[i] = node->word[i];
-	}
-	return returnWord;	*/
+}
+
+void deleteArrayOfWords(char** array,int length){		//is not used
 }
 
 

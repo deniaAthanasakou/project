@@ -12,7 +12,6 @@ typedef struct topKArray{
 	int length;
 	topKStruct *array;
 	int positionInsertion;		//empty position for insert
-	bool isSorted;
 }topKArray;
 
 topKArray* initializeTopKArray();
@@ -23,11 +22,14 @@ void printTopK(topKArray *topArray,int topK);
 void printFullArrayTop(topKArray *topArray);
 void destroyTopArray(topKArray *topArray);
 
-void HeapSort(topKStruct* array, int length, int stringFlag);
-void BuildHeap(topKStruct* array, int* heapSize, int length, int stringFlag);
-void HeapifyIntegers(topKStruct* array, int i, int* heapSize);
-void HeapifyStrings(topKStruct* array, int i, int* heapSize);
+void HeapSort(topKStruct* array, int length, int topK);
+void BuildHeap(topKStruct* array, int* heapSize, int length);
+void Heapify(topKStruct* array, int i, int* heapSize);
 
-void binarySearchTopK(topKStruct* array, char* ngram, int maxElems);
+int binarySearchTopK(topKStruct* array, char* item, int low, int high);
+
+
+void bubbleSort(topKStruct* array, int length, int topK);
+void swap(topKStruct *xp, topKStruct *yp);
 
 #endif

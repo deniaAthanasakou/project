@@ -46,6 +46,4 @@ int getCell(char* lookupWord ,HashTable* hashTable,int previousBucket);
 
 void deletionSortWithoutErasingNextArray(Bucket* bucket, int position);
 
-int getCharSum(int wordLength,char *word);
-
 #endif

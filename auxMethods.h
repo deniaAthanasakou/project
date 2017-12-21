@@ -36,7 +36,6 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForInsert, int lastElement);
 
 void deletionSort(arrayOfStructs* array_of_str, int position, int lastElement);
-void deleteArrayOfWords(char** array,int length);
 void printQuery(char** items, int iterNum);
 
 char* getString(dataNode* node);
@@ -46,6 +45,9 @@ checkItemExists* binarySearchBucket(dataNode* array, dataNode* item, int first, 
 checkItemExists* insertionSortBucket(HashTable* hashTable, Bucket* bucket, dataNode* itemForInsert, int lastElement);
 
 void copyDataNode(dataNode* node, dataNode* tempNode);
+
+void deleteArrayOfWords(char** array,int length);		//is not used
+
 
 
 #endif

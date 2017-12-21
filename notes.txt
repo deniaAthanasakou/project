@@ -1,9 +1,12 @@
-isws xreiastei ekei pou pairnoume thn prwth leksh apo static array
-na ksanakanw malloc meta th getString
+na prospathisw na meiwsw to search->lookupTrieNode
 
 
+kollaei sth grammh 28230 se Query meta to 
+A merath
 
-small_static: 7 sec						The two files are identical
-small_dynamic: 3 sec					The two files are identical
-medium_static:  sec
-medium_dynamic:  sec
+sugkekrimena kollaei sto query otan
+FIRST WORD atlas
+
+
+exw valei to read sto executeQuery    long long alla kai pali dn douleuei 
+

@@ -8,7 +8,6 @@ topKArray* initializeTopKArray(){
 	topKArray *topArray = malloc(sizeof(topKArray));
 	topArray->length = TOP_SIZE;
 	topArray->positionInsertion = 0;
-	topArray->isSorted = false;
 	topArray->array = malloc(topArray->length*sizeof(topKStruct));
 	for(int i=0; i<topArray->length; i++){
 		 initializeTopKStruct(&topArray->array[i]);
@@ -31,45 +30,44 @@ void initializeTopKStruct(topKStruct* node){
 	node->occurences = 0;
 }
 
-void insertTopArray(topKArray *topArray,char *item){
-	if(item!=NULL){
-		topArray->array[topArray->positionInsertion].ngram = malloc((strlen(item)+1)*sizeof(char));
-		topArray->array[topArray->positionInsertion].occurences = 1;
-		strcpy(topArray->array[topArray->positionInsertion].ngram,item);
+
+void insertTopArray(topKArray *topArray,char *item)
+{	
+	int lastElement = topArray->positionInsertion;
+	
+	topKStruct* itemForInsert = malloc(sizeof(topKStruct));
+	itemForInsert->ngram = malloc((strlen(item)+1)*sizeof(char));
+	itemForInsert->occurences = 1;
+	strcpy(itemForInsert->ngram,item);
+	
+ 	if(lastElement==0){
+ 		topArray->array[lastElement] = * itemForInsert;
 		topArray->positionInsertion++;
+		return;
 	}
-}
-
-
-void HeapifyStrings(topKStruct* array, int i, int* heapSize)
-{
-	int l = 2 * i + 1;
-	int r = 2 * i + 2;
-	int largest;
-
-
-	if(l <= *heapSize && strcmp(array[l].ngram, array[i].ngram)>0){
-		largest = l;
+    // find location where selected sould be inseretd
+    int loc = binarySearchTopK(topArray->array, item, 0, topArray->positionInsertion-1);
+	int j = lastElement -1; 
+	
+	
+	int fullMoveSize=0;
+	int startingPoint = loc;	
+	if( j>=loc){
+		fullMoveSize = (lastElement -loc)*sizeof(topArray->array[lastElement - 1]);
+		memmove(&(topArray->array[startingPoint+1]), &(topArray->array[startingPoint]), fullMoveSize);
+		memmove(&(topArray->array[loc]), itemForInsert, sizeof(*itemForInsert));
 	}
-	else
-		largest = i;
-		
-	if(r <= *heapSize &&  strcmp(array[r].ngram, array[largest].ngram)>0){
-		largest = r;
+	else{
+		memmove(&(topArray->array[loc]), itemForInsert, sizeof(*itemForInsert));
 	}	
-		
-	if(largest != i)
-	{
-		topKStruct temp = array[i];
-		array[i] = array[largest];
-		array[largest] = temp;
-		HeapifyStrings(array, largest,heapSize);
-	}
+    
+	topArray->positionInsertion++;
+
 }
 
 
 
-void HeapifyIntegers(topKStruct* array, int i, int* heapSize)
+void Heapify(topKStruct* array, int i, int* heapSize)
 {
 	int l = 2 * i + 1;
 	int r = 2 * i + 2;
@@ -100,58 +98,75 @@ void HeapifyIntegers(topKStruct* array, int i, int* heapSize)
 		topKStruct temp = array[i];
 		array[i] = array[largest];
 		array[largest] = temp;
-		HeapifyIntegers(array, largest,heapSize);
+		Heapify(array, largest,heapSize);
 	}
 }
 
-void BuildHeap(topKStruct* array, int* heapSize, int length, int stringFlag)
+void BuildHeap(topKStruct* array, int* heapSize, int length)
 {
 	*heapSize = length - 1;
 
 	for(int i = (length - 1) / 2; i >= 0; i--){
-		if(stringFlag == 0)
-			HeapifyIntegers(array, i, heapSize);
-		else
-			HeapifyStrings(array, i, heapSize);
+		Heapify(array, i, heapSize);
 	}
 }
 
-void HeapSort(topKStruct* array, int length, int stringFlag)
+void HeapSort(topKStruct* array, int length, int topK)
 {
 	int heapSize = length - 1;	
-	BuildHeap(array, &heapSize, length,stringFlag);
-	
+	BuildHeap(array, &heapSize, length);
+	int counter=0;
 	for(int i = length - 1; i > 0; i--)
 	{
 		topKStruct temp = array[heapSize];
 		array[heapSize] = array[0];
 		array[0] = temp;
 		heapSize--;
-		if(stringFlag == 0)
-			HeapifyIntegers(array, 0, &heapSize);
-		else
-			HeapifyStrings(array, 0, &heapSize);	
+		Heapify(array, 0, &heapSize);
+		counter++;
+		/*if(counter==topK)
+			break;*/
 	}
 }
 
-void binarySearchTopK(topKStruct* array, char* ngram, int maxElems){
-	int first = 0;
-	int last = maxElems - 1;
-	int middle = (first+last)/2;
-	while (first <= last) {
-		if (strcmp(array[middle].ngram,ngram)<0)
-			first = middle + 1;    
-		else if (strcmp(array[middle].ngram,ngram)==0) {		//found, increase occurences
-			array[middle].occurences++;
-			return;
-		}
-		else
-			last = middle - 1;
-
-		middle = (first + last)/2;
-	}
+void swap(topKStruct *xp, topKStruct *yp)
+{
+    topKStruct temp = *xp;
+    *xp = *yp;
+    *yp = temp;
+}
+ 
+// A function to implement bubble sort
+void bubbleSort(topKStruct* array, int length, int topK)
+{
+   int i, j;
+   for (i = 0; i < length; i++)      
+ 
+       // Last i elements are already in place   
+       for (j = 0; j < length-i-1; j++) {
+           if (array[j].occurences < array[j+1].occurences)
+              swap(&array[j], &array[j+1]); 
+       }    		
 }
 
+int binarySearchTopK(topKStruct* array, char* item, int low, int high){
+
+    if (high <= low){
+    	if(strcmp(item,array[low].ngram)>0){
+    		return low+1;
+    	}
+    	return low;	
+    }
+    int mid = (low + high)/2;
+ 
+    if(strcmp(item,array[mid].ngram)==0){
+ 		return mid;
+ 	}
+    if(strcmp(item,array[mid].ngram)>0){
+        return binarySearchTopK(array, item, mid+1, high);
+    }
+    return binarySearchTopK(array, item, low, mid-1);
+}
 
 
 
