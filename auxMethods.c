@@ -41,22 +41,17 @@ int initialize(FILE* file, HashTable* hashTable){
 
 
 void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKArray *topArray, int isDynamic){
-	printf("callBasicFuncs\n");
 
 	arrayWords* arrayW = stringToArray(ngram);
-	printf("after stringToArray\n");
 	int noOfWords = arrayW->length;
 	char** arrayOfWords = arrayW->words;
 	if(query == 'A'){
 		insert_ngram(hashTable, arrayOfWords,noOfWords);
 	}
 	else if(query == 'Q'){
-		printf("query == 'Q'\n");
 		char* searchString = NULL;
 		if(isDynamic){
-			printf("before calling search ngram\n");
 		 	searchString= search_ngram(hashTable, arrayOfWords,noOfWords, topFilter, topArray);
-		 	printf("after calling search ngram\n");
 		 }
 		else{
 			searchString = search_ngram_StaticVersion(hashTable, arrayOfWords,noOfWords, topFilter, topArray);
@@ -145,9 +140,10 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 	dataNode* array = array_of_str->array;
     if (last < first){
     	check->exists=false;
+    	char* wordFirstMalloc = NULL;
     	if(array[first].noOfChars!=-1){
 			char* wordFirst = getString(&(array[first]));
-			char* wordFirstMalloc = NULL;
+			
 			
 		 	if(array[first].staticArray!=NULL){
 				int sizeMalloc = abs(array[first].staticArray[0]);
@@ -187,6 +183,7 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 			check->position = first+1;
 		}
     	return 	check;
+    	wordFirstMalloc = NULL;
      }
 
  	int mid = (first+last)/2;
@@ -212,6 +209,7 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 		wordMidMalloc = malloc((array[mid].noOfChars+1)*sizeof(char));
 		strcpy(wordMidMalloc,wordMid);
 	}
+	
 
 	char* wordItem = getString(item);
  	
@@ -220,23 +218,30 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 		check->exists=true;
 		check->insertedNode = &array[mid];
 		
-		free(wordMidMalloc);
-		wordMidMalloc = NULL;
-	
-	
+		/*if(wordMidMalloc!=NULL){
+			free(wordMidMalloc);
+			wordMidMalloc = NULL;
+		}*/
 	    return check;
+	    //wordFirstMalloc = NULL;
 	 }
+	 
  
 	if(strcmp(wordItem,wordMidMalloc)>0){
-	
-		free(wordMidMalloc);
-		wordMidMalloc = NULL;
+		if(wordMidMalloc!=NULL){
+			free(wordMidMalloc);
+			wordMidMalloc = NULL;
+		}
 	    return binarySearch(array_of_str, item, mid+1, last, check);
+	    //wordFirstMalloc = NULL;
 	}
 	
-	free(wordMidMalloc);
-	wordMidMalloc = NULL;
+	/*if(wordMidMalloc!=NULL){
+		free(wordMidMalloc);
+		wordMidMalloc = NULL;
+	}*/
 	return binarySearch(array_of_str, item, first, mid-1, check);
+
 
 }
  
@@ -502,7 +507,6 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 	BloomFilter* topFilter = NULL;
 	topKArray* topArray = NULL;
 	while ((read = getline(&line, &len, file)) != -1) {
-		printf("LINE: %s\n",line);
 		char* ngram = strtok(line, "\n");
 		if(ngram==NULL){
 			continue;
@@ -538,9 +542,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 		else if(strcmp(wordCase,"Q")==0){
 			
 			endingLetter = 'Q';
-			printf("before query\n");
 			callBasicFuncs(remainingLine,'Q',hashTable,topFilter,topArray,staticDynamic);	
-			printf("after query\n");
 		}
 		else if(strcmp(wordCase,"D")==0){
 			endingLetter = 'D';
@@ -570,13 +572,13 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			//get top-k
 			if(remainingLine!=NULL){
 				int topK = atoi(remainingLine);		
-				if(topK > topArray->positionInsertion)
-					topK=topArray->positionInsertion;
-				//HeapSort(topArray->array, topArray->positionInsertion, topK);	//sort based on integers	
-				bubbleSort(topArray->array, topArray->positionInsertion, topK);		//faster
-				//print topK
+				if(topK <= topArray->positionInsertion){
+					//HeapSort(topArray->array, topArray->positionInsertion, topK);	//sort based on integers	
+					bubbleSort(topArray->array, topArray->positionInsertion, topK);		//faster
+					//print topK
 				
-				printTopK(topArray,topK);
+					printTopK(topArray,topK);
+				}
 				
 			}
 			
@@ -601,9 +603,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			return 0;
 		}
 		
-		printf("end\n");
 	}//found eof
-	printf("EOF\n");
 	if (line){
 		free(line);
 		line=NULL;

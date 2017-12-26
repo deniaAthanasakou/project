@@ -86,7 +86,6 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 
 //search
 char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWordsOriginal, BloomFilter* topFilter,topKArray *topArray){		//is called for a single query
-	printf("QUERY\n");
 	BloomFilter* filter = initializeFilter(5);		//initialize bloomFilter here
 	char** finalStringArray=malloc(0*sizeof(char*));
 	int itemsOffinalStringArray=0;
@@ -96,7 +95,6 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 	int found = 0;
 	int noOfWords=noOfWordsOriginal;
 	for(int j=0; j < noOfWordsOriginal; j++){	//for each word of query starting as first Word
-		printf("FIRST WORD %s\n",arrayOfWordsOriginal[j]);
 		dataNode* firstElement;
 		arrayOfStructs *tempArray;
 		
@@ -521,10 +519,17 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 	dataNode* lookupElement=NULL;
 	bool doNotDelete = false;
 	for(int i=0; i<noOfWords; i++){
-	
+		
 		if(i==0){
+			/*if(strcmp(arrayOfWords[i],"four") ==0){
+				printf("BEGIN\n");
+			}*/
 			lookupElement = lookupTrieNode(arrayOfWords[i] ,hashTable);
+			
 			if(lookupElement==NULL){
+				/*if(strcmp(arrayOfWords[i],"four")==0){
+					printf("NOT FOUND IN lookupTrieNode\n");
+				}*/
 				deleteStack(myStack);
 				free(myStack);
 				myStack = NULL;
@@ -542,6 +547,9 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 		else{
 			
 			if(i==1){
+				/*if(strcmp(arrayOfWords[0],"four")==0  && strcmp(arrayOfWords[i],"ways")==0){
+					printf("also found ways\n");
+				}*/
 				tempArray = lookupElement->nextWordArray;
 				if(tempArray == NULL)
 				{
@@ -562,9 +570,15 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 			//find out if word exists in array and if it does return position
 			checkItemExists* getPosition = binarySearch(tempArray, tempElement,0 ,tempArray->position,NULL);
 			if(	getPosition->exists==true){
+				/*if(strcmp(arrayOfWords[0],"four")==0 && strcmp(arrayOfWords[1],"ways")==0){
+					printf("WAS FOUND in binary\n");
+				}*/
 				push(myStack, getPosition->position);
 			}
 			else{										//element was not found inside array so it can not be deleted	
+			/*	if(strcmp(arrayOfWords[0],"four")==0 && strcmp(arrayOfWords[1],"ways")==0){
+					printf("WAS NOT FOUND in binary\n");
+				}*/
 				doNotDelete = true;
 				deleteDataNode(tempElement);
 				free(tempElement);
@@ -659,7 +673,6 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 		int bucket = getBucketFromHash(hashTable->level, hashTable->initialLength, hashTable->bucketToBeSplit, lookUpWord, lookupElement->noOfChars);	
 		int cell = getCell(lookUpWord , hashTable,bucket);
 		deletionSortBucket(&hashTable->buckets[bucket], cell);
-		
 	}
 	
 	deleteStack(myStack);
