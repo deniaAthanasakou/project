@@ -36,6 +36,7 @@ void initializeDataNode(dataNode* node){
 	node->word[0]='\0';
 	node->staticArray = NULL;
 	node->staticArrayLength = 0;
+	node->isEmpty = true;
 }
 
 
@@ -111,5 +112,6 @@ void deleteDataNode(dataNode* elem){
 			free(elem->staticArray);
 			elem->staticArray = NULL;
 		}
+		initializeDataNode(elem);
 	}
 }

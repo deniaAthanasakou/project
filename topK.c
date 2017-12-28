@@ -43,6 +43,8 @@ void insertTopArray(topKArray *topArray,char *item)
  	if(lastElement==0){
  		topArray->array[lastElement] = * itemForInsert;
 		topArray->positionInsertion++;
+		free(itemForInsert);
+		itemForInsert = NULL;
 		return;
 	}
     // find location where selected sould be inseretd
@@ -61,6 +63,8 @@ void insertTopArray(topKArray *topArray,char *item)
 		memmove(&(topArray->array[loc]), itemForInsert, sizeof(*itemForInsert));
 	}	
     
+	free(itemForInsert);
+	itemForInsert = NULL;
 	topArray->positionInsertion++;
 
 }

@@ -188,11 +188,20 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 
  	int mid = (first+last)/2;
 
- 	if(array[mid].noOfChars==-1){			
+	//char* string = array[mid].dynamicWord;
+	//int numm = array[mid].noOfChars;
+	if(array[mid].isEmpty)
+	{
+		check->exists=false;
+ 		check->position=-1;
+		return check;
+	}
+		
+ 	/*if(array[mid].noOfChars==-1){			
  		check->exists=false;
  		check->position=-1;
 		return check;
- 	}
+ 	}*/
  	
  	char* wordMid = getString(&(array[mid]));
  	char* wordMidMalloc = NULL;
@@ -218,12 +227,11 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 		check->exists=true;
 		check->insertedNode = &array[mid];
 		
-		/*if(wordMidMalloc!=NULL){
+		if(wordMidMalloc!=NULL){
 			free(wordMidMalloc);
 			wordMidMalloc = NULL;
-		}*/
+		}
 	    return check;
-	    //wordFirstMalloc = NULL;
 	 }
 	 
  
@@ -233,13 +241,12 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 			wordMidMalloc = NULL;
 		}
 	    return binarySearch(array_of_str, item, mid+1, last, check);
-	    //wordFirstMalloc = NULL;
 	}
 	
-	/*if(wordMidMalloc!=NULL){
+	if(wordMidMalloc!=NULL){
 		free(wordMidMalloc);
 		wordMidMalloc = NULL;
-	}*/
+	}
 	return binarySearch(array_of_str, item, first, mid-1, check);
 
 
@@ -430,13 +437,12 @@ void deletionSort(arrayOfStructs* array_of_str,	int position, int lastElement){
 		deleteArray(array_of_str->array[position].nextWordArray);
 		array_of_str->array[position].nextWordArray=NULL;
 	}
-	
+			
 	int fullMoveSize = 0;
 	if(position < array_of_str->position -1){
-		fullMoveSize = (array_of_str->position -1 - position)*sizeof(array_of_str->array[position+1]);
+		fullMoveSize = (array_of_str->position -1 -position)*sizeof(array_of_str->array[position+1]);
+		memmove(&(array_of_str->array[position]),&(array_of_str->array[position+1]), fullMoveSize);
 	}
-	
-	memmove(&(array_of_str->array[position]),&(array_of_str->array[position+1]), fullMoveSize);
 	array_of_str->position--;
 }
 
@@ -573,8 +579,8 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			if(remainingLine!=NULL){
 				int topK = atoi(remainingLine);		
 				if(topK <= topArray->positionInsertion){
-					//HeapSort(topArray->array, topArray->positionInsertion, topK);	//sort based on integers	
-					bubbleSort(topArray->array, topArray->positionInsertion, topK);		//faster
+					HeapSort(topArray->array, topArray->positionInsertion, topK);	//sort based on integers	
+					//bubbleSort(topArray->array, topArray->positionInsertion, topK);		//faster
 					//print topK
 				
 					printTopK(topArray,topK);
@@ -655,6 +661,8 @@ void insertString (dataNode* node, char* word){
 		strcpy(node->dynamicWord,word);
 		node->word[0]='\0';
 	}
+	
+	node->isEmpty = false;
 	
 }
 

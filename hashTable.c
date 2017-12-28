@@ -67,10 +67,12 @@ void deletionSortBucket(Bucket* bucket, int position){
 	int fullMoveSize = 0;
 	int startingPoint = position;
 
-	if(position < bucket->position -1)
+	if(position < bucket->position -1){
 		fullMoveSize = (bucket->position -1 - position)*sizeof(bucket->cells[position+1]);
+		memmove(&(bucket->cells[startingPoint]),&(bucket->cells[startingPoint+1]), fullMoveSize);
+	}
 		
-	memmove(&(bucket->cells[startingPoint]),&(bucket->cells[startingPoint+1]), fullMoveSize);
+	
 	bucket->position--;
 }
 
