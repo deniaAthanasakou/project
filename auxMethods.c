@@ -15,10 +15,6 @@ int initialize(FILE* file, HashTable* hashTable){
 		return returnValue;
 	while ((read = getline(&line, &len, file)) != -1) {
 		char* ngram = strtok(line, "\n");
-		if(strcmp(ngram,"\n")==0 || strcmp(ngram,"\t")==0 || strcmp(ngram," ")==0){
-			printf("WWWWWP\n");
-			exit(1);
-		}
 		if (counter == 0){
 			if(strcmp(ngram,"STATIC")==0)
 				returnValue = 0;
@@ -122,12 +118,14 @@ void copyDataNode(dataNode* node, dataNode* tempNode){
 	node->nextWordArray = tempNode->nextWordArray;
 	node->isFinal = tempNode->isFinal;
 	node->isDynamic = tempNode->isDynamic;
-	if(tempNode->dynamicWord!=NULL)
+	if(tempNode->dynamicWord!=NULL){
+		node->dynamicWord = malloc(tempNode->noOfChars*sizeof(char));
 		strcpy(node->dynamicWord , tempNode->dynamicWord);
+	}
 	else
 		node->dynamicWord=NULL;	
 	node->noOfChars = tempNode->noOfChars;
-	for(int i=0; i<node->noOfChars; i++){
+	for(int i=0; i<tempNode->noOfChars; i++){
 		node->word[i] = tempNode->word[i];
 	}
 
@@ -162,6 +160,7 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 				wordFirstMalloc[j] = '\0';
 			}
 			else{
+				//printf("----------------- %s with noOfChars: %d\n",wordFirst,array[first].noOfChars);
 				wordFirstMalloc = malloc((array[first].noOfChars+1)*sizeof(char));
 				strcpy(wordFirstMalloc,wordFirst);
 			}
@@ -442,6 +441,7 @@ void deletionSort(arrayOfStructs* array_of_str,	int position, int lastElement){
 		deleteArray(array_of_str->array[position].nextWordArray);
 		array_of_str->array[position].nextWordArray=NULL;
 	}
+	initializeDataNode(&array_of_str->array[position]);
 			
 	int fullMoveSize = 0;
 	if(position < array_of_str->position -1){

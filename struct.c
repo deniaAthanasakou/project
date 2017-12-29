@@ -13,7 +13,6 @@ void initializeArray(arrayOfStructs* array_of_str){
 		initializeDataNode(&(array_of_str->array[i]));
 	}
 	
-	
 }
 
 void doubleLength(arrayOfStructs* array_of_str){
