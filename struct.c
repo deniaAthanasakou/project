@@ -112,6 +112,6 @@ void deleteDataNode(dataNode* elem){
 			free(elem->staticArray);
 			elem->staticArray = NULL;
 		}
-		initializeDataNode(elem);
+		//initializeDataNode(elem);
 	}
 }

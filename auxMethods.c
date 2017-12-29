@@ -15,6 +15,10 @@ int initialize(FILE* file, HashTable* hashTable){
 		return returnValue;
 	while ((read = getline(&line, &len, file)) != -1) {
 		char* ngram = strtok(line, "\n");
+		if(strcmp(ngram,"\n")==0 || strcmp(ngram,"\t")==0 || strcmp(ngram," ")==0){
+			printf("WWWWWP\n");
+			exit(1);
+		}
 		if (counter == 0){
 			if(strcmp(ngram,"STATIC")==0)
 				returnValue = 0;
@@ -31,6 +35,7 @@ int initialize(FILE* file, HashTable* hashTable){
 		}
 		counter++;
 	}
+	//printf("EOF\n");
 
 	if (line){
 		free(line);

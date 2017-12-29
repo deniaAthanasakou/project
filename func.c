@@ -82,6 +82,7 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 		
 		}
 	}
+	//printBuckets(hashTable);
 }
 
 //search

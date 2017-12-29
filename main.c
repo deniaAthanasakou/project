@@ -32,7 +32,6 @@ int main (int argc,char* argv[]){
 	}
 	
 	HashTable* hashTable = createLinearHash(NOOFBUCKETS, NOOFCELLS);
-	
 	//initialize
 	FILE * initFile;
 	initFile = fopen (init,"r");
@@ -46,7 +45,6 @@ int main (int argc,char* argv[]){
 	if(staticDynamic==0){			//compress
 		recreateStructure(hashTable);	
 	}
-	
 	//query
 	FILE * queryFile;
 	queryFile = fopen (query,"r");
