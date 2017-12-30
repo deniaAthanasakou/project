@@ -8,6 +8,7 @@ struct instruction{
 	char type;	//Q, A or D
 	char* ngram;
 	int num;
+	int numForQ;
 };
 
 struct arrayOfInstructions{

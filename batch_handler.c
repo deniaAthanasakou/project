@@ -16,18 +16,20 @@ arrayOfInstructions* initializeInstructionArray(){
 }
 
 void initializeInstruction(instruction* instr){
-	instr->type = 'A'; //default
+	instr->type = 'A'; 	//default
 	instr->ngram = NULL;
 	instr->num = 0;
+	instr->numForQ = -1;	//default
 }
 
 void destroyInstruction(instruction* instr){
 	instr->type = 'A'; //default
 	if(instr->ngram!=NULL){
-		//free(instr->ngram);
+		free(instr->ngram);
 		instr->ngram = NULL;
 	}
 	instr->num = 0;
+	instr->numForQ = -1; //default
 }
 
 
@@ -107,7 +109,11 @@ void printInstructionArray(arrayOfInstructions* arrayOfInstr){
 }
 
 void printInstruction(instruction* instr){
-	printf("QUERY: '%c'\t NGRAM: '%s'\t NUMBER: '%d'\n",instr->type, instr->ngram, instr->num);
+	printf("QUERY: '%c'\t NGRAM: '%s'\t NUMBER: '%d'",instr->type, instr->ngram, instr->num);
+	if(instr->type=='Q')
+		printf("\t NUMBER OF QUERY '%d'",instr->numForQ);
+	printf("\n");
+	
 }
 
 

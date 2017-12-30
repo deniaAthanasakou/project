@@ -520,6 +520,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 	int counterForBatch = 0;
 	arrayOfInstructions* arrayOfInstr = NULL;
 	instruction* node = NULL;
+	int numForQuery = 0;
 	while ((read = getline(&line, &len, file)) != -1) {
 		char* ngram = strtok(line, "\n");
 		if(ngram==NULL){
@@ -543,10 +544,10 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 		if(counterForBatch == 0 && staticDynamic==1){
 			arrayOfInstr = initializeInstructionArray();
 		}
-		
-		
-		printf("%s\n",remainingLine);
-		
+	
+		if(remainingLine!=NULL){
+			//printf("%s\n",remainingLine);
+		}
 
 		if(strcmp(wordCase,"A")==0){	
 			endingLetter = 'A';
@@ -564,19 +565,22 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				destroyTopArray(topArray);
 				exit(1);
 			}
-			if(staticDynamic==1){	//DYNAMIC
-				node = malloc(sizeof(instruction));
-				node->type = endingLetter;
+			else{	//DYNAMIC
+				
 				if(remainingLine!=NULL){
+					node = malloc(sizeof(instruction));
+					node->type = endingLetter;
+					//printf("%s\n",remainingLine);
 					node->ngram = malloc(sizeof(char)*(strlen(remainingLine)+1));
 					strcpy(node->ngram,remainingLine);
+					node->num = counterForBatch;
+					insertInstructionArray(arrayOfInstr, node);
+			
+					free(node);
+					node = NULL;
 				}
 
-				node->num = counterForBatch;
-				insertInstructionArray(arrayOfInstr, node);
-			
-				free(node);
-				node = NULL;
+				
 			}
 		
 			//callBasicFuncs(remainingLine,'A',hashTable, NULL, NULL, 1);
@@ -585,19 +589,22 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			
 			endingLetter = 'Q';
 			if(staticDynamic==1){	//DYNAMIC
-				node = malloc(sizeof(instruction));
-				node->type = endingLetter;
 				if(remainingLine!=NULL){
+					node = malloc(sizeof(instruction));
+					node->type = endingLetter;
+					//printf("%s\n",remainingLine);
 					node->ngram = malloc(sizeof(char)*(strlen(remainingLine)+1));
 					strcpy(node->ngram,remainingLine);
+					node->num = counterForBatch;
+					node->numForQ = numForQuery;
+					insertInstructionArray(arrayOfInstr, node);
+			
+					free(node);
+					node = NULL;
+					numForQuery++;
 				}
-
-				node->num = counterForBatch;
-				insertInstructionArray(arrayOfInstr, node);
-				free(node);
-				node = NULL;
 			}
-			if(staticDynamic==0){	//STATIC
+			else{	//STATIC
 				callBasicFuncs(remainingLine,'Q',hashTable,topFilter,topArray,staticDynamic);
 			}	
 		}
@@ -619,18 +626,19 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				
 				exit(1);
 			}
-			if(staticDynamic==1){	//DYNAMIC
-				node = malloc(sizeof(instruction));
-				node->type = endingLetter;
+			else{	//DYNAMIC
 				if(remainingLine!=NULL){
+					node = malloc(sizeof(instruction));
+					node->type = endingLetter;
+					//printf("%s\n",remainingLine);
 					node->ngram = malloc(sizeof(char)*(strlen(remainingLine)+1));
 					strcpy(node->ngram,remainingLine);
+					node->num = counterForBatch;
+					insertInstructionArray(arrayOfInstr, node);
+			
+					free(node);
+					node = NULL;
 				}
-
-				node->num = counterForBatch;
-				insertInstructionArray(arrayOfInstr, node);
-				free(node);
-				node = NULL;
 			}
 			//callBasicFuncs(remainingLine,'D',hashTable, NULL, NULL, 1);
 		}
@@ -642,7 +650,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				//rearrangeArray(arrayOfInstr);
 				//printInstructionArray(arrayOfInstr);
 			
-				executeDynamicArray(arrayOfInstr,hashTable,staticDynamic,  topFilter, topArray);
+				executeDynamicArray(arrayOfInstr,hashTable, topFilter, topArray);
 				destroyInstructionArray(arrayOfInstr);
 			}
 			
@@ -709,20 +717,17 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 
 }
 
-void executeDynamicArray(arrayOfInstructions* arrayOfInstr, HashTable* hashTable, int staticDynamic, BloomFilter* topFilter, topKArray* topArray){
+void executeDynamicArray(arrayOfInstructions* arrayOfInstr, HashTable* hashTable, BloomFilter* topFilter, topKArray* topArray){
 	for(int i = 0; i<arrayOfInstr->position; i++){
 		//printf("%s\n",arrayOfInstr->array[i].ngram);
 		if(arrayOfInstr->array[i].type =='A'){
-			//printf("inside A\n");
 			callBasicFuncs(arrayOfInstr->array[i].ngram,'A',hashTable, NULL, NULL, 1);
 		}
 		else if(arrayOfInstr->array[i].type =='D'){
-		//	printf("inside D\n");
 			callBasicFuncs(arrayOfInstr->array[i].ngram,'D',hashTable, NULL, NULL, 1);
 		}
 		else if(arrayOfInstr->array[i].type =='Q'){
-			//printf("inside Q\n");
-			callBasicFuncs(arrayOfInstr->array[i].ngram,'Q',hashTable,topFilter,topArray,staticDynamic);
+			callBasicFuncs(arrayOfInstr->array[i].ngram,'Q',hashTable,topFilter,topArray,1);
 		}
 	}
 }
