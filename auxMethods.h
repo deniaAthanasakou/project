@@ -5,6 +5,7 @@
 #include "bloomfilter.h"
 #include "hashTable.h"
 #include "topK.h"
+#include "batch_handler.h"
 
 typedef struct checkItemExists checkItemExists;
 
@@ -23,6 +24,8 @@ typedef struct arrayWords{
 
 int initialize(FILE* file, HashTable* hashTable);
 int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic);
+
+void executeDynamicArray(arrayOfInstructions* arrayOfInstr, HashTable* hashTable, int staticDynamic, BloomFilter* topFilter, topKArray* topArray);
 
 void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKArray *topArray, int isDynamic);
 

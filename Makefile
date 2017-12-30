@@ -1,8 +1,8 @@
 CC = gcc -g
-FILES = main.c struct.c func.c auxMethods.c stack.c bloomfilter.c hashTable.c ./murmur3/murmur3.c topK.c compress.c
-OBJECTS = main.o struct.o func.o auxMethods.o stack.o bloomfilter.o hashTable.o murmur3.o topK.o compress.o
+FILES = main.c struct.c func.c auxMethods.c stack.c bloomfilter.c hashTable.c ./murmur3/murmur3.c topK.c compress.c batch_handler.c
+OBJECTS = main.o struct.o func.o auxMethods.o stack.o bloomfilter.o hashTable.o murmur3.o topK.o compress.o batch_handler.o
 OUT = ngrams
-HEADERS = struct.h func.h auxMethods.h stack.h bloomfilter.h hashTable.h ./murmur3/murmur3.h topK.h compress.h
+HEADERS = struct.h func.h auxMethods.h stack.h bloomfilter.h hashTable.h ./murmur3/murmur3.h topK.h compress.h batch_handler.h
 
 
 all: $(OBJECTS) $(HEADERS)
@@ -38,6 +38,9 @@ topK.o: topK.c
 	
 compress.o: compress.c
 	$(CC) -c compress.c	
+	
+batch_handler.o: batch_handler.c
+	$(CC) -c batch_handler.c		
 
 clean:
 	rm -f $(OBJECTS)

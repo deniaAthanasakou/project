@@ -36,6 +36,8 @@ void initializeDataNode(dataNode* node){
 	node->staticArray = NULL;
 	node->staticArrayLength = 0;
 	node->isEmpty = true;
+	node->additionVersion = 0;
+	node->deletionVersion = -1;
 }
 
 

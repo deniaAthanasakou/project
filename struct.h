@@ -17,6 +17,8 @@ struct dataNode{
 	signed short* staticArray;		//for static files
 	int staticArrayLength;			//for static files
 	bool isEmpty;
+	int additionVersion;
+	int deletionVersion;
 };
 
 

@@ -235,12 +235,12 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 	
 	
 	if(found==0){
-		printf("-1\n");
+		//printf("-1\n");
 		returningString = realloc(returningString, 3*sizeof(char));
 		strcpy(returningString,"-1");
 	}
 	else{	
-		printQuery(finalStringArray, itemsOffinalStringArray);
+		//printQuery(finalStringArray, itemsOffinalStringArray);
 	}	
 	
 	for(int i=0; i<itemsOffinalStringArray; i++){

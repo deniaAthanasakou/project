@@ -5,6 +5,7 @@
 #include "struct.h"
 
 
+
 int initialize(FILE* file, HashTable* hashTable){
 	char *line = NULL;
 	size_t len = 0;
@@ -31,7 +32,6 @@ int initialize(FILE* file, HashTable* hashTable){
 		}
 		counter++;
 	}
-	//printf("EOF\n");
 
 	if (line){
 		free(line);
@@ -517,6 +517,9 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 	int counter=-1;
 	BloomFilter* topFilter = NULL;
 	topKArray* topArray = NULL;
+	int counterForBatch = 0;
+	arrayOfInstructions* arrayOfInstr = NULL;
+	instruction* node = NULL;
 	while ((read = getline(&line, &len, file)) != -1) {
 		char* ngram = strtok(line, "\n");
 		if(ngram==NULL){
@@ -529,12 +532,25 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 		}
 		
 		
+		
+		
+		
+		
 		//find first letter for each case
 		char* wordCase = strtok(ngram," \t");
 		char* remainingLine = strtok(NULL,"");
+		
+		if(counterForBatch == 0 && staticDynamic==1){
+			arrayOfInstr = initializeInstructionArray();
+		}
+		
+		
+		printf("%s\n",remainingLine);
+		
 
 		if(strcmp(wordCase,"A")==0){	
 			endingLetter = 'A';
+			
 			if(staticDynamic==0){	//STATIC
 				printf("Error with init file! Add is not supported in Static version.\n");
 				if (line){
@@ -548,15 +564,46 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				destroyTopArray(topArray);
 				exit(1);
 			}
-			callBasicFuncs(remainingLine,'A',hashTable, NULL, NULL, 1);
+			if(staticDynamic==1){	//DYNAMIC
+				node = malloc(sizeof(instruction));
+				node->type = endingLetter;
+				if(remainingLine!=NULL){
+					node->ngram = malloc(sizeof(char)*(strlen(remainingLine)+1));
+					strcpy(node->ngram,remainingLine);
+				}
+
+				node->num = counterForBatch;
+				insertInstructionArray(arrayOfInstr, node);
+			
+				free(node);
+				node = NULL;
+			}
+		
+			//callBasicFuncs(remainingLine,'A',hashTable, NULL, NULL, 1);
 		}
 		else if(strcmp(wordCase,"Q")==0){
 			
 			endingLetter = 'Q';
-			callBasicFuncs(remainingLine,'Q',hashTable,topFilter,topArray,staticDynamic);	
+			if(staticDynamic==1){	//DYNAMIC
+				node = malloc(sizeof(instruction));
+				node->type = endingLetter;
+				if(remainingLine!=NULL){
+					node->ngram = malloc(sizeof(char)*(strlen(remainingLine)+1));
+					strcpy(node->ngram,remainingLine);
+				}
+
+				node->num = counterForBatch;
+				insertInstructionArray(arrayOfInstr, node);
+				free(node);
+				node = NULL;
+			}
+			if(staticDynamic==0){	//STATIC
+				callBasicFuncs(remainingLine,'Q',hashTable,topFilter,topArray,staticDynamic);
+			}	
 		}
 		else if(strcmp(wordCase,"D")==0){
 			endingLetter = 'D';
+			
 			if(staticDynamic==0){	//STATIC
 				printf("Error with init file! Delete is not supported in Static version.\n");
 				if (line){
@@ -572,11 +619,32 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				
 				exit(1);
 			}
-			callBasicFuncs(remainingLine,'D',hashTable, NULL, NULL, 1);
+			if(staticDynamic==1){	//DYNAMIC
+				node = malloc(sizeof(instruction));
+				node->type = endingLetter;
+				if(remainingLine!=NULL){
+					node->ngram = malloc(sizeof(char)*(strlen(remainingLine)+1));
+					strcpy(node->ngram,remainingLine);
+				}
+
+				node->num = counterForBatch;
+				insertInstructionArray(arrayOfInstr, node);
+				free(node);
+				node = NULL;
+			}
+			//callBasicFuncs(remainingLine,'D',hashTable, NULL, NULL, 1);
 		}
 		else if(strcmp(wordCase,"F")==0){
 			endingLetter = 'F';
 			counter = -1;
+			counterForBatch = -1;
+			if(staticDynamic==1){	//DYNAMIC
+				//rearrangeArray(arrayOfInstr);
+				//printInstructionArray(arrayOfInstr);
+			
+				executeDynamicArray(arrayOfInstr,hashTable,staticDynamic,  topFilter, topArray);
+				destroyInstructionArray(arrayOfInstr);
+			}
 			
 			
 			
@@ -610,9 +678,14 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			freeFilter(topFilter);
 			//free array
 			destroyTopArray(topArray);
+			if(staticDynamic==1)
+				destroyInstructionArray(arrayOfInstr);
 			
 			return 0;
 		}
+		
+		counterForBatch++;
+		
 		
 	}//found eof
 	if (line){
@@ -626,6 +699,8 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 		freeFilter(topFilter);
 		//free array
 		destroyTopArray(topArray);
+		if(staticDynamic==1)
+			destroyInstructionArray(arrayOfInstr);
 	
 		return 0;
 	}
@@ -633,6 +708,26 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 	return 1;
 
 }
+
+void executeDynamicArray(arrayOfInstructions* arrayOfInstr, HashTable* hashTable, int staticDynamic, BloomFilter* topFilter, topKArray* topArray){
+	for(int i = 0; i<arrayOfInstr->position; i++){
+		//printf("%s\n",arrayOfInstr->array[i].ngram);
+		if(arrayOfInstr->array[i].type =='A'){
+			//printf("inside A\n");
+			callBasicFuncs(arrayOfInstr->array[i].ngram,'A',hashTable, NULL, NULL, 1);
+		}
+		else if(arrayOfInstr->array[i].type =='D'){
+		//	printf("inside D\n");
+			callBasicFuncs(arrayOfInstr->array[i].ngram,'D',hashTable, NULL, NULL, 1);
+		}
+		else if(arrayOfInstr->array[i].type =='Q'){
+			//printf("inside Q\n");
+			callBasicFuncs(arrayOfInstr->array[i].ngram,'Q',hashTable,topFilter,topArray,staticDynamic);
+		}
+	}
+}
+
+
 
 void printQuery(char** items, int iterNum){
 	for(int i=0;i<iterNum;i++){
