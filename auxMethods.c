@@ -533,20 +533,11 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 		}
 		
 		
-		
-		
-		
-		
 		//find first letter for each case
 		char* wordCase = strtok(ngram," \t");
 		char* remainingLine = strtok(NULL,"");
-		
 		if(counterForBatch == 0 && staticDynamic==1){
 			arrayOfInstr = initializeInstructionArray();
-		}
-	
-		if(remainingLine!=NULL){
-			//printf("%s\n",remainingLine);
 		}
 
 		if(strcmp(wordCase,"A")==0){	
@@ -570,7 +561,6 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				if(remainingLine!=NULL){
 					node = malloc(sizeof(instruction));
 					node->type = endingLetter;
-					//printf("%s\n",remainingLine);
 					node->ngram = malloc(sizeof(char)*(strlen(remainingLine)+1));
 					strcpy(node->ngram,remainingLine);
 					node->num = counterForBatch;
@@ -583,26 +573,25 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				
 			}
 		
-			//callBasicFuncs(remainingLine,'A',hashTable, NULL, NULL, 1);
 		}
 		else if(strcmp(wordCase,"Q")==0){
-			
 			endingLetter = 'Q';
 			if(staticDynamic==1){	//DYNAMIC
+				node = malloc(sizeof(instruction));
+				node->type = endingLetter;
 				if(remainingLine!=NULL){
-					node = malloc(sizeof(instruction));
-					node->type = endingLetter;
-					//printf("%s\n",remainingLine);
 					node->ngram = malloc(sizeof(char)*(strlen(remainingLine)+1));
 					strcpy(node->ngram,remainingLine);
-					node->num = counterForBatch;
-					node->numForQ = numForQuery;
-					insertInstructionArray(arrayOfInstr, node);
-			
-					free(node);
-					node = NULL;
-					numForQuery++;
 				}
+				else
+					node->ngram = NULL;
+				node->num = counterForBatch;
+				node->numForQ = numForQuery;
+				insertInstructionArray(arrayOfInstr, node);
+		
+				free(node);
+				node = NULL;
+				numForQuery++;
 			}
 			else{	//STATIC
 				callBasicFuncs(remainingLine,'Q',hashTable,topFilter,topArray,staticDynamic);
@@ -630,7 +619,6 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				if(remainingLine!=NULL){
 					node = malloc(sizeof(instruction));
 					node->type = endingLetter;
-					//printf("%s\n",remainingLine);
 					node->ngram = malloc(sizeof(char)*(strlen(remainingLine)+1));
 					strcpy(node->ngram,remainingLine);
 					node->num = counterForBatch;
@@ -640,21 +628,15 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 					node = NULL;
 				}
 			}
-			//callBasicFuncs(remainingLine,'D',hashTable, NULL, NULL, 1);
 		}
 		else if(strcmp(wordCase,"F")==0){
 			endingLetter = 'F';
 			counter = -1;
 			counterForBatch = -1;
 			if(staticDynamic==1){	//DYNAMIC
-				//rearrangeArray(arrayOfInstr);
-				//printInstructionArray(arrayOfInstr);
-			
 				executeDynamicArray(arrayOfInstr,hashTable, topFilter, topArray);
 				destroyInstructionArray(arrayOfInstr);
 			}
-			
-			
 			
 			//get top-k
 			if(remainingLine!=NULL){
@@ -663,7 +645,6 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 					HeapSort(topArray->array, topArray->positionInsertion, topK);	//sort based on integers	
 					//bubbleSort(topArray->array, topArray->positionInsertion, topK);		//faster
 					//print topK
-				
 					printTopK(topArray,topK);
 				}
 				
@@ -719,7 +700,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 
 void executeDynamicArray(arrayOfInstructions* arrayOfInstr, HashTable* hashTable, BloomFilter* topFilter, topKArray* topArray){
 	for(int i = 0; i<arrayOfInstr->position; i++){
-		//printf("%c %s\n",arrayOfInstr->array[i].type,arrayOfInstr->array[i].ngram);
+		//
 		if(arrayOfInstr->array[i].type =='A'){
 			callBasicFuncs(arrayOfInstr->array[i].ngram,'A',hashTable, NULL, NULL, 1);
 		}
@@ -730,8 +711,6 @@ void executeDynamicArray(arrayOfInstructions* arrayOfInstr, HashTable* hashTable
 			callBasicFuncs(arrayOfInstr->array[i].ngram,'Q',hashTable,topFilter,topArray,1);
 		}
 	}
-	
-	exit(2);
 }
 
 

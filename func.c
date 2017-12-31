@@ -87,6 +87,7 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 
 //search
 char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWordsOriginal, BloomFilter* topFilter,topKArray *topArray){		//is called for a single query
+	
 	BloomFilter* filter = initializeFilter(5);		//initialize bloomFilter here
 	char** finalStringArray=malloc(0*sizeof(char*));
 	int itemsOffinalStringArray=0;

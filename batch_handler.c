@@ -47,7 +47,7 @@ void doubleInstructionArray(arrayOfInstructions* arrayOfInstr){
 
 
 void insertInstructionArray(arrayOfInstructions* arrayOfInstr, instruction* node){
-	if(arrayOfInstr->position == arrayOfInstr->length-1){		//must double array
+	if(arrayOfInstr->position == arrayOfInstr->length){		//must double array
 		doubleInstructionArray(arrayOfInstr);
 	}
 	arrayOfInstr->array[arrayOfInstr->position] = *node;
