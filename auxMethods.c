@@ -719,7 +719,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 
 void executeDynamicArray(arrayOfInstructions* arrayOfInstr, HashTable* hashTable, BloomFilter* topFilter, topKArray* topArray){
 	for(int i = 0; i<arrayOfInstr->position; i++){
-		//printf("%s\n",arrayOfInstr->array[i].ngram);
+		//printf("%c %s\n",arrayOfInstr->array[i].type,arrayOfInstr->array[i].ngram);
 		if(arrayOfInstr->array[i].type =='A'){
 			callBasicFuncs(arrayOfInstr->array[i].ngram,'A',hashTable, NULL, NULL, 1);
 		}
@@ -730,6 +730,8 @@ void executeDynamicArray(arrayOfInstructions* arrayOfInstr, HashTable* hashTable
 			callBasicFuncs(arrayOfInstr->array[i].ngram,'Q',hashTable,topFilter,topArray,1);
 		}
 	}
+	
+	exit(2);
 }
 
 
