@@ -38,6 +38,8 @@ void initializeDataNode(dataNode* node){
 	node->isEmpty = true;
 	node->additionVersion = 0;
 	node->deletionVersion = -1;
+	node->notFinalInDeletionVersion = -1;
+	node->finalSinceAdditionVersion = -1;
 }
 
 

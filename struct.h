@@ -19,6 +19,8 @@ struct dataNode{
 	bool isEmpty;
 	int additionVersion;
 	int deletionVersion;
+	int notFinalInDeletionVersion;
+	int finalSinceAdditionVersion;
 };
 
 

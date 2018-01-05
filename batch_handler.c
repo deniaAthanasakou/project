@@ -109,10 +109,14 @@ void printInstructionArray(arrayOfInstructions* arrayOfInstr){
 }
 
 void printInstruction(instruction* instr){
-	printf("QUERY: '%c'\t NGRAM: '%s'\t NUMBER: '%d'",instr->type, instr->ngram, instr->num);
-	if(instr->type=='Q')
-		printf("\t NUMBER OF QUERY '%d'",instr->numForQ);
-	printf("\n");
+	//printf("QUERY: '%c'\t NGRAM: '%s'\t NUMBER: '%d'",instr->type, instr->ngram, instr->num);
+	//printf("QUERY: '%c'\t NUMBER: '%d'",instr->type, instr->num);
+	if(instr->type=='Q'){
+		printf("NUMBER: '%d'\t NUMBER OF QUERY '%d'",instr->num,instr->numForQ);
+		printf("\n");
+	}
+		//printf("\t NUMBER OF QUERY '%d'",instr->numForQ);
+	
 	
 }
 

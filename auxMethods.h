@@ -27,7 +27,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic);
 
 void executeDynamicArray(arrayOfInstructions* arrayOfInstr, HashTable* hashTable, BloomFilter* topFilter, topKArray* topArray);
 
-void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKArray *topArray, int isDynamic);
+void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKArray *topArray, int isDynamic, int instrNum);
 
 arrayWords* stringToArray(char* ngram);
 
@@ -35,7 +35,7 @@ void printArray(arrayOfStructs* tempArray, int position);
 void printArrayFinalWords(arrayOfStructs* array_of_str, int position);
 void printFullArray(arrayOfStructs* array_of_str, int position);
 
-checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last, checkItemExists* check);
+checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last, checkItemExists* check, bool add);
 checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForInsert, int lastElement);
 
 void deletionSort(arrayOfStructs* array_of_str, int position, int lastElement);
@@ -44,12 +44,14 @@ void printQuery(char** items, int iterNum);
 char* getString(dataNode* node);
 void insertString (dataNode* node, char* word);
 
-checkItemExists* binarySearchBucket(dataNode* array, dataNode* item, int first, int last, int trueLastElement, checkItemExists* check);
+checkItemExists* binarySearchBucket(dataNode* array, dataNode* item, int first, int last, int trueLastElement, checkItemExists* check, bool add);
 checkItemExists* insertionSortBucket(HashTable* hashTable, Bucket* bucket, dataNode* itemForInsert, int lastElement);
 
 void copyDataNode(dataNode* node, dataNode* tempNode);
 
 void deleteArrayOfWords(char** array,int length);		//is not used
+
+bool hasChildren(dataNode* lookupElement, int deletionNum);
 
 
 

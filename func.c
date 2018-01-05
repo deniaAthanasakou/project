@@ -6,7 +6,7 @@
 #include "bloomfilter.h"
 #include "compress.h"
 
-void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//same layer
+void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords, int additionNum){		//same layer
 	arrayOfStructs* tempArray =NULL ;
 	int i=0;
 	dataNode* insertedElement = NULL;
@@ -16,8 +16,11 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 			dataNode* rootElement=NULL;
 			rootElement = (dataNode*)malloc(1*sizeof(dataNode));		//creating dataNode for insert
 			initializeDataNode(rootElement);
-			if(i==noOfWords -1)		//final word
+			rootElement->additionVersion = additionNum;
+			if(i==noOfWords -1){		//final word
 				rootElement->isFinal=true;
+				rootElement->finalSinceAdditionVersion = additionNum;
+			}
 			else
 				rootElement->isFinal=false;
 
@@ -26,15 +29,20 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 
 			free(rootElement);
 			rootElement=NULL;	
+			
+			
 		}
 		else{
-			
+
 
 			dataNode* tempElement=NULL;
 			tempElement = (dataNode*)malloc(1*sizeof(dataNode));		//creating dataNode for insert
 			initializeDataNode(tempElement);
-			if(i==noOfWords -1)		//final word
+			tempElement->additionVersion = additionNum;
+			if(i==noOfWords -1){		//final word
 				tempElement->isFinal=true;
+				tempElement->finalSinceAdditionVersion = additionNum;
+			}
 			else
 				tempElement->isFinal=false;
 
@@ -52,14 +60,18 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 			checkItemExists* getPosition = insertionSort(tempArray, tempElement, tempArray->position); 
 	
 			if(getPosition->exists==true){
-				if(i==noOfWords -1)		//final word
+				if(i==noOfWords -1){		//final word
 					tempArray->array[getPosition->position].isFinal=true;
+					tempArray->array[getPosition->position].finalSinceAdditionVersion = additionNum;
+				}
 				deleteDataNode(tempElement);
 			
 			}
 			else{			//if word is not in array yet
-				if(i==noOfWords -1)		//final word
+				if(i==noOfWords -1){		//final word
 					tempArray->array[getPosition->position].isFinal=true;
+					tempArray->array[getPosition->position].finalSinceAdditionVersion = additionNum;
+				}
 				else
 					tempArray->array[getPosition->position].isFinal=false; 
 				
@@ -82,11 +94,10 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){		//
 		
 		}
 	}
-	//printBuckets(hashTable);
 }
 
 //search
-char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWordsOriginal, BloomFilter* topFilter,topKArray *topArray){		//is called for a single query
+char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWordsOriginal, BloomFilter* topFilter,topKArray *topArray, int queryNum){		//is called for a single query
 	
 	BloomFilter* filter = initializeFilter(5);		//initialize bloomFilter here
 	char** finalStringArray=malloc(0*sizeof(char*));
@@ -114,9 +125,10 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 				strLength += strlen(arrayOfWords[i]) + 2;
 				finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
 				strcpy(finalString,arrayOfWords[i]);
-				
-				if(firstElement->isFinal){
+
+				if(firstElement->isFinal && queryNum>=firstElement->additionVersion && (queryNum>=firstElement->finalSinceAdditionVersion && firstElement->finalSinceAdditionVersion!=-1)&&(queryNum<firstElement->deletionVersion || firstElement->deletionVersion==-1) && (queryNum <firstElement->notFinalInDeletionVersion || firstElement->notFinalInDeletionVersion==-1)){
 					found=1;
+
 					if(!possiblyContains(filter,finalString,strlen(finalString))){			//if finalString should be printed (is not in filter)
 						addFilter(filter,finalString,strlen(finalString));		//add finalString in filter
 						itemsOffinalStringArray++;
@@ -161,16 +173,20 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 				tempElement->staticArray = NULL;
 				tempElement->staticArrayLength = 0;
 				insertString (tempElement, arrayOfWords[i]);
-				checkItemExists* getPosition = binarySearch(tempArray, tempElement, 0 ,tempArray->position-1,NULL); 
+				checkItemExists* getPosition = binarySearch(tempArray, tempElement, 0 ,tempArray->position-1,NULL, false); 
+
 				if(getPosition->exists==true){		//if word was found
+	
 					strLength += strlen(arrayOfWords[i]) + 2;
 					finalString = (char*)realloc(finalString,(strLength)*sizeof(char));
 					finalString[strlen(finalString)] = '\0';
 					char* word = getString(&(tempArray->array[getPosition->position]));
 					strcat(finalString, word);	
-					
-					if(tempArray->array[getPosition->position].isFinal == true){		//if true check whether finalString should be printed
+				
+				
+					if(tempArray->array[getPosition->position].isFinal == true && queryNum>=tempArray->array[getPosition->position].additionVersion && (queryNum>=tempArray->array[getPosition->position].finalSinceAdditionVersion && queryNum>=tempArray->array[getPosition->position].finalSinceAdditionVersion!=-1) && (queryNum<tempArray->array[getPosition->position].deletionVersion || tempArray->array[getPosition->position].deletionVersion==-1 && (queryNum<tempArray->array[getPosition->position].notFinalInDeletionVersion || tempArray->array[getPosition->position].notFinalInDeletionVersion==-1))){		//if true check whether finalString should be printed
 						found=1;
+						
 						//finalString does not exist in finalStringArray
 						if(!possiblyContains(filter,finalString,strlen(finalString))){			//if finalString should be printed (is not in filter)
 							addFilter(filter,finalString,strlen(finalString));		//add finalString in filter
@@ -236,6 +252,7 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 	
 	
 	if(found==0){
+		
 		printf("-1\n");
 		returningString = realloc(returningString, 3*sizeof(char));
 		strcpy(returningString,"-1");
@@ -465,7 +482,7 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 			dataNode* madeUpElement = malloc(sizeof(dataNode));
 			initializeDataNode(madeUpElement);
 			insertString (madeUpElement, arrayOfWords[position]);
-			checkItemExists* getPosition = binarySearch(tempArray, madeUpElement, 0 ,tempArray->position-1,NULL); 
+			checkItemExists* getPosition = binarySearch(tempArray, madeUpElement, 0 ,tempArray->position-1,NULL, false); 
 			
 			deleteDataNode(madeUpElement);
 			free(madeUpElement);
@@ -514,12 +531,13 @@ char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOrigin
 }
 
 //delete
-void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
+void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords, int deletionNum){
 	arrayOfStructs* tempArray = NULL;
 	stack* myStack = malloc(sizeof(stack));
 	initializeStack(myStack);
 	dataNode* lookupElement=NULL;
 	bool doNotDelete = false;
+	bool elementFinal = false;
 	for(int i=0; i<noOfWords; i++){
 		
 		if(i==0){
@@ -531,18 +549,22 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 				myStack = NULL;
 				return;
 			}
-			
-			if(lookupElement->nextWordArray!=NULL){
+
+			if(lookupElement->nextWordArray!=NULL && i==noOfWords-1){			
 				doNotDelete = true;
 			}
 			
+			elementFinal = lookupElement->isFinal;
+			if(strcmp(arrayOfWords[0],"czech")==0){
+				//	printf("elementFinal = %d\n",elementFinal);
+				}
+			
 			if(i==noOfWords-1){
-				lookupElement->isFinal=false;
+				lookupElement->notFinalInDeletionVersion = deletionNum;
+				elementFinal = false;
 			}
 		}
 		else{
-			
-			
 			if(i==1){
 				tempArray = lookupElement->nextWordArray;
 				if(tempArray == NULL)
@@ -562,12 +584,12 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 			tempElement->nextWordArray=NULL;
 			
 			//find out if word exists in array and if it does return position
-			checkItemExists* getPosition = binarySearch(tempArray, tempElement,0 ,tempArray->position-1,NULL);
+			checkItemExists* getPosition = binarySearch(tempArray, tempElement,0 ,tempArray->position-1,NULL, false);
 			
 			if(	getPosition->exists==true){
 				push(myStack, getPosition->position);
 				if(i==noOfWords-1){
-					tempArray->array[getPosition->position].isFinal=false;
+					tempArray->array[getPosition->position].notFinalInDeletionVersion = deletionNum;
 				}
 			}
 			else{										//element was not found inside array so it can not be deleted	
@@ -613,8 +635,15 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 	
 	int flagIfElementWasDeleted=0;
 	int flagLastElementDeleted = 0;
+	int flagNextArrayWasDeleted = 0;
+	int counter = 0;
 	while(!isEmpty(myStack)){
 		//root of trie
+		
+		if(strcmp(arrayOfWords[0],"the")==0){
+		}
+		
+		counter++;
 		tempArray = lookupElement->nextWordArray;
 		
 		//get last element of stack
@@ -628,24 +657,25 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 		
 
 		if(flagIfElementWasDeleted==1 && tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray->position==0) {
-			deleteArray(tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray);			
-			tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray=NULL;					
-			
+			flagNextArrayWasDeleted = 1;
 		}
 		//if element not last && element.isFinal()
 		
 		if (flagLastElementDeleted ==1 && tempArray->array[myStack->positionsToDelete[myStack->top]].isFinal){
 			doNotDelete = true;
+			flagIfElementWasDeleted=0;
 			break;
 		}
 		
 		
-		if(tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray == NULL){			//hasnt got children
-			deletionSort(tempArray,myStack->positionsToDelete[myStack->top], tempArray->position);
+		if(tempArray->array[myStack->positionsToDelete[myStack->top]].nextWordArray == NULL || hasChildren(lookupElement, deletionNum)==0){			//hasnt got children
+			tempArray->array[myStack->positionsToDelete[myStack->top]].deletionVersion = deletionNum;
+			
 			flagIfElementWasDeleted=1;
 			flagLastElementDeleted = 1;
-		}else{	
-			tempArray->array[myStack->positionsToDelete[myStack->top]].isFinal = false;
+
+		}else{
+			flagIfElementWasDeleted=0;
 			doNotDelete = true;
 			break;																			//final word -> not final and break
 		}
@@ -659,25 +689,30 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords){
 		
 	}
 	
+	if(isEmpty(myStack)==1 && counter!=0){
+		doNotDelete = false;
+	}
+	else{
+		doNotDelete = true;
+	}
 	
-	
+	if(hasChildren(lookupElement, deletionNum) || elementFinal){
+		doNotDelete = true;
+	}
+	else{
+		doNotDelete = false;
+	}
 
 	if(!doNotDelete){
 		char* lookUpWord = getString(lookupElement);
 		int bucket = getBucketFromHash(hashTable->level, hashTable->initialLength, hashTable->bucketToBeSplit, lookUpWord, lookupElement->noOfChars);	
 		int cell = getCell(lookUpWord , hashTable,bucket);
-		deletionSortBucket(&hashTable->buckets[bucket], cell);
+		hashTable->buckets[bucket].cells[cell].deletionVersion = deletionNum;
+
 	}
-	
-	
+
 	deleteStack(myStack);
 	free(myStack);
 	myStack = NULL;
 	
 }
-
-
-
-
-
-

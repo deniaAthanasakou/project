@@ -46,4 +46,8 @@ int getCell(char* lookupWord ,HashTable* hashTable,int previousBucket);
 
 void deletionSortWithoutErasingNextArray(Bucket* bucket, int position);
 
+void restructHashTable(HashTable* hashTable);
+void restructArray(arrayOfStructs* array_of_str);
+
+
 #endif

@@ -28,7 +28,7 @@ int initialize(FILE* file, HashTable* hashTable){
 				
 		}
 		else{
-			callBasicFuncs(ngram,'A',hashTable,NULL,NULL,returnValue);
+			callBasicFuncs(ngram,'A',hashTable,NULL,NULL,returnValue, 0);
 		}
 		counter++;
 	}
@@ -41,18 +41,18 @@ int initialize(FILE* file, HashTable* hashTable){
 }
 
 
-void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKArray *topArray, int isDynamic){
+void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKArray *topArray, int isDynamic, int instrNum){
 
 	arrayWords* arrayW = stringToArray(ngram);
 	int noOfWords = arrayW->length;
 	char** arrayOfWords = arrayW->words;
 	if(query == 'A'){
-		insert_ngram(hashTable, arrayOfWords,noOfWords);
+		insert_ngram(hashTable, arrayOfWords,noOfWords, instrNum);
 	}
 	else if(query == 'Q'){
 		char* searchString = NULL;
 		if(isDynamic){
-		 	searchString= search_ngram(hashTable, arrayOfWords,noOfWords, topFilter, topArray);
+		 	searchString= search_ngram(hashTable, arrayOfWords,noOfWords, topFilter, topArray,instrNum);
 		 }
 		else{
 			searchString = search_ngram_StaticVersion(hashTable, arrayOfWords,noOfWords, topFilter, topArray);
@@ -63,7 +63,7 @@ void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter*
 		}
 	}
 	else if(query == 'D'){
-		delete_ngram(hashTable, arrayOfWords,noOfWords);
+		delete_ngram(hashTable, arrayOfWords,noOfWords,instrNum);
 	}
 	
 	deleteArrayOfWords(arrayOfWords,noOfWords);
@@ -135,8 +135,9 @@ void copyDataNode(dataNode* node, dataNode* tempNode){
 }
 
 
-checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last, checkItemExists* check)	
+checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int first, int last, checkItemExists* check, bool add)	
 {
+	
 	if(check==NULL)
 		check = malloc(sizeof(checkItemExists));
 	check->exists=false;
@@ -160,7 +161,6 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 				wordFirstMalloc[j] = '\0';
 			}
 			else{
-				//printf("----------------- %s with noOfChars: %d\n",wordFirst,array[first].noOfChars);
 				wordFirstMalloc = malloc((array[first].noOfChars+1)*sizeof(char));
 				strcpy(wordFirstMalloc,wordFirst);
 			}
@@ -192,20 +192,13 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 
  	int mid = (first+last)/2;
 
-	//char* string = array[mid].dynamicWord;
-	//int numm = array[mid].noOfChars;
 	if(array[mid].isEmpty)
 	{
 		check->exists=false;
  		check->position=-1;
 		return check;
 	}
-		
- 	/*if(array[mid].noOfChars==-1){			
- 		check->exists=false;
- 		check->position=-1;
-		return check;
- 	}*/
+
  	
  	char* wordMid = getString(&(array[mid]));
  	char* wordMidMalloc = NULL;
@@ -227,6 +220,15 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 	char* wordItem = getString(item);
  	
 	if(strcmp(wordItem ,wordMidMalloc)==0){
+
+		if(add==true &&array[mid].finalSinceAdditionVersion==-1){
+			array[mid].finalSinceAdditionVersion=item->finalSinceAdditionVersion;
+		}
+			
+		if(add==true && array[mid].deletionVersion>=array[mid].additionVersion && item->additionVersion>array[mid].deletionVersion){
+			array[mid].additionVersion=item->additionVersion;
+			array[mid].deletionVersion = -1;
+		}
 		check->position=mid;
 		check->exists=true;
 		check->insertedNode = &array[mid];
@@ -244,14 +246,14 @@ checkItemExists* binarySearch(arrayOfStructs* array_of_str, dataNode* item, int 
 			free(wordMidMalloc);
 			wordMidMalloc = NULL;
 		}
-	    return binarySearch(array_of_str, item, mid+1, last, check);
+	    return binarySearch(array_of_str, item, mid+1, last, check, add);
 	}
 	
 	if(wordMidMalloc!=NULL){
 		free(wordMidMalloc);
 		wordMidMalloc = NULL;
 	}
-	return binarySearch(array_of_str, item, first, mid-1, check);
+	return binarySearch(array_of_str, item, first, mid-1, check, add);
 
 
 }
@@ -275,7 +277,7 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
     j = lastElement - 1;
 
     // find location where selected sould be inseretd
-    checkItemExists* getPosition = binarySearch(array_of_str, itemForInsert, 0, j,NULL);
+    checkItemExists* getPosition = binarySearch(array_of_str, itemForInsert, 0, j,NULL, true);
     if(getPosition->exists==true){
     	return getPosition;
     }
@@ -309,7 +311,7 @@ checkItemExists* insertionSort(arrayOfStructs* array_of_str, dataNode* itemForIn
 
  
 
-checkItemExists* binarySearchBucket(dataNode* array, dataNode* item, int first, int last, int trueLastElement, checkItemExists* check)	
+checkItemExists* binarySearchBucket(dataNode* array, dataNode* item, int first, int last, int trueLastElement, checkItemExists* check, bool add)	
 {
 	if(check==NULL)
 		check = malloc(sizeof(checkItemExists));
@@ -360,15 +362,25 @@ checkItemExists* binarySearchBucket(dataNode* array, dataNode* item, int first, 
 	char* wordItem = getString(item);
  	
 	if(strcmp(wordItem ,wordMid)==0){
+		
+		if(add==true && array[mid].finalSinceAdditionVersion==-1){
+			array[mid].finalSinceAdditionVersion=item->finalSinceAdditionVersion;
+		}
+		
+		if(add==true &&  array[mid].deletionVersion>=array[mid].additionVersion && item->additionVersion>array[mid].deletionVersion){
+			array[mid].additionVersion=item->additionVersion;
+			
+			array[mid].deletionVersion = -1;
+		}
 		check->position=mid;
 		check->exists=true;
 	    return check;
 	 }
  
 	if(strcmp(wordItem,wordMid)>0){
-	    return binarySearchBucket(array, item, mid+1, last,trueLastElement, check);
+	    return binarySearchBucket(array, item, mid+1, last,trueLastElement, check,add);
 	}
-	return binarySearchBucket(array, item, first, mid-1,trueLastElement, check);
+	return binarySearchBucket(array, item, first, mid-1,trueLastElement, check,add);
 }
  
 
@@ -392,8 +404,9 @@ checkItemExists* insertionSortBucket(HashTable* hashTable,Bucket* bucket, dataNo
     j = lastElement - 1;
 
     // find location where selected should be inserted
-    checkItemExists* getPosition = binarySearchBucket(bucket->cells, itemForInsert, 0, j,bucket->position, NULL);
+    checkItemExists* getPosition = binarySearchBucket(bucket->cells, itemForInsert, 0, j,bucket->position, NULL,true);
     if(getPosition->exists==true){
+
     	if(itemForInsert->isFinal)
     		bucket->cells[getPosition->position].isFinal= true;
     	
@@ -479,7 +492,7 @@ void printArray(arrayOfStructs* array_of_str, int position){		//prints layer
 	printf("ELEMENTS ARE: [");
 	for(int k=0; k< array_of_str->position;k++){
 		char* word = getString(& (array_of_str->array[k]));
-		printf("%s ",  word);
+		printf("%s (add_version %d, del_version %d)",word, array_of_str->array[k].additionVersion,array_of_str->array[k].deletionVersion);
 		if(k!=array_of_str->position-1)
 			printf(", ");
 	}
@@ -518,6 +531,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 	BloomFilter* topFilter = NULL;
 	topKArray* topArray = NULL;
 	int counterForBatch = 0;
+	int realCounterForBatch = 0;
 	arrayOfInstructions* arrayOfInstr = NULL;
 	instruction* node = NULL;
 	int numForQuery = 0;
@@ -563,7 +577,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 					node->type = endingLetter;
 					node->ngram = malloc(sizeof(char)*(strlen(remainingLine)+1));
 					strcpy(node->ngram,remainingLine);
-					node->num = counterForBatch;
+					node->num = realCounterForBatch;
 					insertInstructionArray(arrayOfInstr, node);
 			
 					free(node);
@@ -585,7 +599,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				}
 				else
 					node->ngram = NULL;
-				node->num = counterForBatch;
+				node->num = realCounterForBatch;
 				node->numForQ = numForQuery;
 				insertInstructionArray(arrayOfInstr, node);
 		
@@ -594,7 +608,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				numForQuery++;
 			}
 			else{	//STATIC
-				callBasicFuncs(remainingLine,'Q',hashTable,topFilter,topArray,staticDynamic);
+				callBasicFuncs(remainingLine,'Q',hashTable,topFilter,topArray,staticDynamic, 0);
 			}	
 		}
 		else if(strcmp(wordCase,"D")==0){
@@ -621,7 +635,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 					node->type = endingLetter;
 					node->ngram = malloc(sizeof(char)*(strlen(remainingLine)+1));
 					strcpy(node->ngram,remainingLine);
-					node->num = counterForBatch;
+					node->num = realCounterForBatch;
 					insertInstructionArray(arrayOfInstr, node);
 			
 					free(node);
@@ -634,8 +648,14 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			counter = -1;
 			counterForBatch = -1;
 			if(staticDynamic==1){	//DYNAMIC
+				rearrangeArray(arrayOfInstr);
+				//printInstructionArray(arrayOfInstr);
+				//printf("\n\n");
+				
 				executeDynamicArray(arrayOfInstr,hashTable, topFilter, topArray);
 				destroyInstructionArray(arrayOfInstr);
+				restructHashTable(hashTable);
+				//printBuckets(hashTable);
 			}
 			
 			//get top-k
@@ -643,7 +663,6 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				int topK = atoi(remainingLine);		
 				if(topK <= topArray->positionInsertion){
 					HeapSort(topArray->array, topArray->positionInsertion, topK);	//sort based on integers	
-					//bubbleSort(topArray->array, topArray->positionInsertion, topK);		//faster
 					//print topK
 					printTopK(topArray,topK);
 				}
@@ -674,7 +693,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 		}
 		
 		counterForBatch++;
-		
+		realCounterForBatch++;
 		
 	}//found eof
 	if (line){
@@ -700,15 +719,14 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 
 void executeDynamicArray(arrayOfInstructions* arrayOfInstr, HashTable* hashTable, BloomFilter* topFilter, topKArray* topArray){
 	for(int i = 0; i<arrayOfInstr->position; i++){
-		//
 		if(arrayOfInstr->array[i].type =='A'){
-			callBasicFuncs(arrayOfInstr->array[i].ngram,'A',hashTable, NULL, NULL, 1);
+			callBasicFuncs(arrayOfInstr->array[i].ngram,'A',hashTable, NULL, NULL, 1, arrayOfInstr->array[i].num);
 		}
 		else if(arrayOfInstr->array[i].type =='D'){
-			callBasicFuncs(arrayOfInstr->array[i].ngram,'D',hashTable, NULL, NULL, 1);
+			callBasicFuncs(arrayOfInstr->array[i].ngram,'D',hashTable, NULL, NULL, 1,arrayOfInstr->array[i].num);
 		}
 		else if(arrayOfInstr->array[i].type =='Q'){
-			callBasicFuncs(arrayOfInstr->array[i].ngram,'Q',hashTable,topFilter,topArray,1);
+			callBasicFuncs(arrayOfInstr->array[i].ngram,'Q',hashTable,topFilter,topArray,1, arrayOfInstr->array[i].num);
 		}
 	}
 }
@@ -766,6 +784,20 @@ char* getString(dataNode* node){
 void deleteArrayOfWords(char** array,int length){		//is not used
 }
 
+
+bool hasChildren(dataNode* lookupElement, int deletionNum){
+	arrayOfStructs* tempArray = lookupElement->nextWordArray;
+	if(tempArray==NULL){
+		return false;
+		
+	}
+	for(int i=0; i<	tempArray->position; i++){
+		if(tempArray->array[i].deletionVersion!=deletionNum)
+			return true;	
+	}
+
+	return false;
+}
 
 
 

@@ -93,18 +93,27 @@ dataNode* insertTrieNode(dataNode* node, HashTable* hashTable){
 	check = insertionSortBucket(hashTable, &(hashTable->buckets[noOfbucket]),node,bucket->position);
 	
 	dataNode* returnNodePtr = check->insertedNode;
+	if(strcmp(returnNodePtr->word,"research")==0) {
+		//printf("OPAbefore  %d %d\n",returnNodePtr->finalSinceAdditionVersion,node->finalSinceAdditionVersion);
+	}
 	if(bucket->overflowed){
 		bucket->overflowed = false;
 		hashTable->bucketToBeSplit++;
 		char *tempWord = getString(node);
 		dataNode *tempNode =  splitBucket(hashTable,tempWord);
-		if(tempNode!=NULL)
+		if(tempNode!=NULL){
 			returnNodePtr = tempNode;
+			
+		}
 	}
 
 	if(check!=NULL){
 		free(check);
 		check=NULL;
+	}
+	
+	if(strcmp(returnNodePtr->word,"research")==0) {
+		//printf("OPAbefore return %d %d\n",returnNodePtr->finalSinceAdditionVersion,node->finalSinceAdditionVersion);
 	}
 	return returnNodePtr;
 }
@@ -173,7 +182,7 @@ void printBuckets(HashTable* hashTable){
 void printBucket(Bucket *bucket){
 	for(int i=0; i < bucket->position;i++){
 		char *word = getString(&bucket->cells[i]);
-		printf("%dth elem with word: '%s'",i,word);
+		printf("%dth elem with word: '%s' (add_version %d, del_version %d)",i,word,bucket->cells[i].additionVersion,bucket->cells[i].deletionVersion);
 		if(bucket->cells[i].isFinal)
 			printf(" FINAL\n ");
 		else
@@ -343,5 +352,71 @@ int getBucketFromHash(int level, int lengthHash, int bucketToBeSplit, char* word
 	else{
 		return hashLevelPlus;
 	}
-
 }
+
+
+
+void restructHashTable(HashTable* hashTable){
+	for(int i=0; i < hashTable->numberOfBuckets; i++){
+		for(int j=0; j<hashTable->buckets[i].position; j++){
+		
+			if(hashTable->buckets[i].cells[j].notFinalInDeletionVersion!=-1){
+				hashTable->buckets[i].cells[j].isFinal=false;
+
+			}
+			if(hashTable->buckets[i].cells[j].deletionVersion!=-1){
+				deletionSortBucket(&hashTable->buckets[i],j);
+				
+				continue;
+			}
+
+			if(hashTable->buckets[i].cells[j].nextWordArray!=NULL){
+
+				restructArray(hashTable->buckets[i].cells[j].nextWordArray);	
+			}
+		}
+	}
+}
+
+void restructArray(arrayOfStructs* array_of_str){
+	for(int i=0; i<array_of_str->position; i++){
+
+		if(array_of_str->array[i].notFinalInDeletionVersion!=-1){
+			array_of_str->array[i].isFinal=false;
+		}
+		if(array_of_str->array[i].deletionVersion!=-1){
+			
+
+			deletionSort(array_of_str,i,array_of_str->position);
+			continue;
+		}
+		if(array_of_str->array[i].nextWordArray!=NULL){
+
+			restructArray(array_of_str->array[i].nextWordArray);
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
