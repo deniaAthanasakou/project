@@ -24,7 +24,6 @@ void insertInstructionArray(arrayOfInstructions* arrayOfInstr, instruction* node
 void destroyInstructionArray(arrayOfInstructions* arrayOfInstr);
 
 void initializeInstruction(instruction* instr);
-void destroyInstruction(instruction* instr);
 
 void printInstruction(instruction* instr);
 void printInstructionArray(arrayOfInstructions* arrayOfInstr);

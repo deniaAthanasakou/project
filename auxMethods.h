@@ -21,7 +21,6 @@ typedef struct arrayWords{
 }arrayWords;
 
 
-
 int initialize(FILE* file, HashTable* hashTable);
 int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic);
 

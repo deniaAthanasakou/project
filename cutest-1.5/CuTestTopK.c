@@ -44,14 +44,7 @@ void TestDoubleTopKArray(CuTest *tc){
 void TestInsertTopArray(CuTest *tc){
 	topKArray *topArray = initializeTopKArray();
 	CuAssertPtrNotNull(tc,topArray);
-	char *item = NULL;								//insert NULL item
-	insertTopArray(topArray,item);
-	CuAssertStrEquals(tc,NULL,topArray->array[topArray->positionInsertion].ngram);
-	CuAssertIntEquals(tc,0,topArray->array[topArray->positionInsertion].occurences);
-	CuAssertIntEquals(tc,0,topArray->positionInsertion);
-	
-	
-	item = "Hello World";							//insert not null str
+	char *item = "Hello World";							//insert not null str
 	insertTopArray(topArray,item);
 	CuAssertStrEquals(tc,"Hello World",topArray->array[topArray->positionInsertion-1].ngram);
 	CuAssertIntEquals(tc,1,topArray->array[topArray->positionInsertion-1].occurences);
@@ -112,7 +105,7 @@ void TestHeapSort(CuTest *tc){
 	topArray->positionInsertion = 5;
 	
 	//sort for occurences
-	HeapSort(topArray->array, topArray->positionInsertion, 0);
+	HeapSort(topArray->array, topArray->positionInsertion, 5);
 	
 	CuAssertIntEquals(tc,10,topArray->array[0].occurences);
 	CuAssertStrEquals(tc,"ant",topArray->array[0].ngram);
@@ -129,23 +122,6 @@ void TestHeapSort(CuTest *tc){
 	CuAssertIntEquals(tc,1,topArray->array[4].occurences);
 	CuAssertStrEquals(tc,"wax",topArray->array[4].ngram);
 	
-	//sort for ngrams
-	HeapSort(topArray->array, topArray->positionInsertion, 1);
-	
-	CuAssertIntEquals(tc,10,topArray->array[0].occurences);
-	CuAssertStrEquals(tc,"ant",topArray->array[0].ngram);
-	
-	CuAssertIntEquals(tc,1,topArray->array[1].occurences);
-	CuAssertStrEquals(tc,"cat",topArray->array[1].ngram);
-	
-	CuAssertIntEquals(tc,2,topArray->array[2].occurences);
-	CuAssertStrEquals(tc,"hello",topArray->array[2].ngram);
-	
-	CuAssertIntEquals(tc,1,topArray->array[3].occurences);
-	CuAssertStrEquals(tc,"wax",topArray->array[3].ngram);
-	
-	CuAssertIntEquals(tc,4,topArray->array[4].occurences);
-	CuAssertStrEquals(tc,"zero",topArray->array[4].ngram);
 	
 	destroyTopArray(topArray);
 	topArray = NULL;
@@ -181,27 +157,23 @@ void TestBinarySearchTopK(CuTest *tc){
 	HeapSort(topArray->array, topArray->positionInsertion, 1);
 	
 	//search for 'ant'
-	binarySearchTopK(topArray->array, "ant", topArray->positionInsertion);
-	CuAssertIntEquals(tc,11,topArray->array[0].occurences);
+	int pos = binarySearchTopK(topArray->array, "ant", 0, topArray->positionInsertion);
+	CuAssertIntEquals(tc,0,pos);
 	
 	//search for 'wax'
-	binarySearchTopK(topArray->array, "wax", topArray->positionInsertion);
-	CuAssertIntEquals(tc,2,topArray->array[3].occurences);
-	
-	//search for 'zero'
-	binarySearchTopK(topArray->array, "zero", topArray->positionInsertion);
-	CuAssertIntEquals(tc,5,topArray->array[4].occurences);
+	pos = binarySearchTopK(topArray->array, "wax", 0, topArray->positionInsertion);
+	CuAssertIntEquals(tc,4,pos);
 	
 	//search for something not in array
-	binarySearchTopK(topArray->array, "dog", topArray->positionInsertion);
-	CuAssertIntEquals(tc,11,topArray->array[0].occurences);
-	CuAssertIntEquals(tc,1,topArray->array[1].occurences);
+	pos = binarySearchTopK(topArray->array, "dog", 0, topArray->positionInsertion);
+	CuAssertIntEquals(tc,1,pos);
+	
+	CuAssertIntEquals(tc,10,topArray->array[0].occurences);
+	CuAssertIntEquals(tc,4,topArray->array[1].occurences);
 	CuAssertIntEquals(tc,2,topArray->array[2].occurences);
-	CuAssertIntEquals(tc,2,topArray->array[3].occurences);
-	CuAssertIntEquals(tc,5,topArray->array[4].occurences);
+	CuAssertIntEquals(tc,1,topArray->array[3].occurences);
+	CuAssertIntEquals(tc,1,topArray->array[4].occurences);
 	
-	
-
 	
 	destroyTopArray(topArray);
 	topArray = NULL;

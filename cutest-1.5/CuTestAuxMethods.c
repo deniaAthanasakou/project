@@ -4,41 +4,6 @@
 #include "CuTestAuxMethods.h"
 
 
-void TestDeleteArrayOfWords(CuTest *tc) {
-    char** array=NULL;
-	int length=0;									//delete null array
-	deleteArrayOfWords(array, length);
-	free(array);
-	array = NULL;
-	CuAssertPtrEquals(tc,NULL,array); 
-	
-	length=1;										//delete array with one element
-	char** array2 = malloc(sizeof(char*)*length);
-	array2[0]= malloc(sizeof(char)*(strlen("Hello")+1));
-	strcpy(array2[0],"Hello");
-	deleteArrayOfWords(array2, length);
-	free(array2);
-	array2 = NULL;
-	CuAssertPtrEquals(tc,NULL,array2); 
-	
-	length=4;										//delete array with multiple elements
-	char** array3 = malloc(sizeof(char*)*length);
-	
-	array3[0]= malloc(sizeof(char)*(strlen("The")+1));
-	strcpy(array3[0],"The");
-	array3[1]= malloc(sizeof(char)*(strlen("fox,")+1));
-	strcpy(array3[1],"fox,");
-	array3[2]= malloc(sizeof(char)*(strlen("the")+1));
-	strcpy(array3[2],"the");
-	array3[3]= malloc(sizeof(char)*(strlen("cat.")+1));
-	strcpy(array3[3],"cat.");
-	
-	deleteArrayOfWords(array3, length);
-	free(array3);
-	array3 = NULL;
-	CuAssertPtrEquals(tc,NULL,array3); 
-
-}
 
 
 void TestStringToArray(CuTest *tc){
@@ -49,7 +14,6 @@ void TestStringToArray(CuTest *tc){
 	CuAssertIntEquals(tc,0,array->length);    
 	CuAssertPtrNotNull(tc,array->words);
 	 
-	deleteArrayOfWords(array->words, array->length);
 	free(array->words);
 	array->words = NULL;
 	free(array);
@@ -74,7 +38,6 @@ void TestStringToArray(CuTest *tc){
 	CuAssertStrEquals(tc,"good.",array->words[8]); 
 	
 	
-	deleteArrayOfWords(array->words, array->length);
 	free(array->words);
 	array->words = NULL;
 	free(array);
@@ -96,7 +59,7 @@ void TestInitialize(CuTest *tc){
 	HashTable* hashTable = createLinearHash(NOOFBUCKETS, NOOFCELLS);
 	FILE * initFile;
 	initFile = fopen ("testingFiles/test_initialize","r");
-	int staticDynamic =1;
+	int staticDynamic = 1;
 	if (initFile!=NULL)
 	{
 		staticDynamic = initialize(initFile, hashTable);
@@ -106,24 +69,24 @@ void TestInitialize(CuTest *tc){
 	CuAssertIntEquals(tc,0,staticDynamic);  			//static file
 	
 	CuAssertIntEquals(tc,4,hashTable->length);  
-	CuAssertStrEquals(tc,"heterotransplantation",hashTable->buckets[1].cells[0].dynamicWord); 
-	CuAssertPtrEquals(tc,NULL,hashTable->buckets[1].cells[0].nextWordArray);
-	CuAssertTrue(tc, hashTable->buckets[1].cells[0].isFinal);
-	CuAssertTrue(tc, hashTable->buckets[1].cells[0].isDynamic);
-	CuAssertStrEquals(tc,"\0",hashTable->buckets[1].cells[0].word);  
-	
-	CuAssertStrEquals(tc,"test",hashTable->buckets[0].cells[0].word); 
+	CuAssertStrEquals(tc,"heterotransplantation",hashTable->buckets[0].cells[0].dynamicWord); 
 	CuAssertPtrEquals(tc,NULL,hashTable->buckets[0].cells[0].nextWordArray);
 	CuAssertTrue(tc, hashTable->buckets[0].cells[0].isFinal);
-	CuAssertTrue(tc, !hashTable->buckets[0].cells[0].isDynamic);
+	CuAssertTrue(tc, hashTable->buckets[0].cells[0].isDynamic);
+	CuAssertStrEquals(tc,"\0",hashTable->buckets[0].cells[0].word);  
 	
-	CuAssertStrEquals(tc,"this",hashTable->buckets[0].cells[1].word); 
-	CuAssertPtrNotNull(tc,hashTable->buckets[0].cells[1].nextWordArray);
-	CuAssertTrue(tc, !hashTable->buckets[0].cells[1].isFinal);
+	CuAssertStrEquals(tc,"test",hashTable->buckets[0].cells[1].word); 
+	CuAssertPtrEquals(tc,NULL,hashTable->buckets[0].cells[1].nextWordArray);
+	CuAssertTrue(tc, hashTable->buckets[0].cells[1].isFinal);
 	CuAssertTrue(tc, !hashTable->buckets[0].cells[1].isDynamic);
 	
+	CuAssertStrEquals(tc,"this",hashTable->buckets[0].cells[2].word); 
+	CuAssertPtrNotNull(tc,hashTable->buckets[0].cells[2].nextWordArray);
+	CuAssertTrue(tc, !hashTable->buckets[0].cells[2].isFinal);
+	CuAssertTrue(tc, !hashTable->buckets[0].cells[2].isDynamic);
 	
-	arrayOfStructs* nextArray =hashTable->buckets[0].cells[1].nextWordArray; 
+	
+	arrayOfStructs* nextArray =hashTable->buckets[0].cells[2].nextWordArray; 
 	
 	CuAssertIntEquals(tc,10,nextArray->length);  
 	CuAssertIntEquals(tc,2,nextArray->position);      
@@ -144,6 +107,7 @@ void TestInitialize(CuTest *tc){
 	hashTable=NULL;
 	CuAssertPtrEquals(tc,NULL,hashTable);
 }
+
 void TestBinarySearch(CuTest* tc){
 
 	arrayOfStructs* array_of_str = malloc(sizeof(arrayOfStructs));
@@ -152,7 +116,7 @@ void TestBinarySearch(CuTest* tc){
 	
 	dataNode *item = malloc(sizeof(dataNode));
 	initializeDataNode(item);
-	getPosition = binarySearch(array_of_str,item,0,array_of_str->position,NULL);			//array is empty
+	getPosition = binarySearch(array_of_str,item,0,array_of_str->position,NULL, false);			//array is empty
 	CuAssertIntEquals(tc,-1,getPosition->position);
 	CuAssertTrue(tc,!getPosition->exists);
 	
@@ -168,7 +132,7 @@ void TestBinarySearch(CuTest* tc){
 	insertString(&array_of_str->array[2],"whatabeautifuldaywego");
 	array_of_str->position++;
 	
-	getPosition = binarySearch(array_of_str,item,0,array_of_str->position,NULL);		//binarySeach cat
+	getPosition = binarySearch(array_of_str,item,0,array_of_str->position,NULL, false);		//binarySeach cat
 	CuAssertIntEquals(tc,0,getPosition->position);
 	CuAssertTrue(tc,getPosition->exists);
 	
@@ -182,7 +146,7 @@ void TestBinarySearch(CuTest* tc){
 	item = malloc(sizeof(dataNode));
 	initializeDataNode(item);
 	insertString(item,"whatabeautifuldaywego");
-	getPosition = binarySearch(array_of_str,item,0,array_of_str->position,NULL);
+	getPosition = binarySearch(array_of_str,item,0,array_of_str->position,NULL, true);
 	CuAssertIntEquals(tc,2,getPosition->position);
 	CuAssertTrue(tc,getPosition->exists);
 		
@@ -196,7 +160,7 @@ void TestBinarySearch(CuTest* tc){
 	item = malloc(sizeof(dataNode));
 	initializeDataNode(item);
 	insertString(item,"hello");	
-	getPosition = binarySearch(array_of_str,item,0,array_of_str->position,NULL);
+	getPosition = binarySearch(array_of_str,item,0,array_of_str->position,NULL, true);
 	CuAssertIntEquals(tc,2,getPosition->position);
 	CuAssertTrue(tc,!getPosition->exists);
 	
@@ -337,7 +301,7 @@ void TestInsertionSort(CuTest* tc){
 
 }
 
-void TestExecuteQueryFile(CuTest *tc){
+void TestExecuteQueryFile_ExecuteDynamicArray(CuTest *tc){
 	
 	int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic);
 	HashTable* hashTable = NULL;
@@ -387,6 +351,7 @@ void TestExecuteQueryFile(CuTest *tc){
 }
 
 
+
 void TestDeletionSort(CuTest *tc){
 
 	arrayOfStructs* array_of_str = NULL;
@@ -397,16 +362,19 @@ void TestDeletionSort(CuTest *tc){
 	strcpy(item[0],"well");
 	item[1] = malloc((strlen("hello")+1) * sizeof(char));
 	strcpy(item[1],"hello");																
-	insert_ngram(hashTable, item, 2);							//add 'hello'
+	insert_ngram(hashTable, item, 2,0);							//add 'hello'
 	
-	array_of_str = hashTable->buckets[0].cells[0].nextWordArray;
+	array_of_str = hashTable->buckets[3].cells[0].nextWordArray;
 	deletionSort(array_of_str,0,array_of_str->position);		//delete only element
 	CuAssertPtrNotNull(tc,array_of_str);
 	CuAssertPtrNotNull(tc,array_of_str->array);
 	CuAssertIntEquals(tc,10,array_of_str->length);	
 	CuAssertIntEquals(tc,0,array_of_str->position);	
 	
-	deleteArrayOfWords(item, 2);
+	for(int i=0; i<2; i++){
+		free(item[i]);
+		item[i]=NULL;
+	}
 	free(item);
 	item=NULL;
 	
@@ -415,9 +383,12 @@ void TestDeletionSort(CuTest *tc){
 	strcpy(item[0],"well");
 	item[1] = malloc((strlen("hello")+1) * sizeof(char));
 	strcpy(item[1],"hello");																
-	insert_ngram(hashTable, item, 2);							//add 'hello'
+	insert_ngram(hashTable, item, 2,0);							//add 'hello'
 	
-	deleteArrayOfWords(item, 2);
+	for(int i=0; i<2; i++){
+		free(item[i]);
+		item[i]=NULL;
+	}
 	free(item);
 	item=NULL;													
 	
@@ -426,9 +397,12 @@ void TestDeletionSort(CuTest *tc){
 	strcpy(item[0],"well");
 	item[1] = malloc((strlen("heterotransplantation")+1) * sizeof(char));
 	strcpy(item[1],"heterotransplantation");																									
-	insert_ngram(hashTable, item, 2);							//add 'heterotransplantation'
+	insert_ngram(hashTable, item, 2,2);							//add 'heterotransplantation'
 	
-	deleteArrayOfWords(item, 2);
+	for(int i=0; i<2; i++){
+		free(item[i]);
+		item[i]=NULL;
+	}
 	free(item);
 	item=NULL;		
 	
@@ -437,9 +411,12 @@ void TestDeletionSort(CuTest *tc){
 	strcpy(item[0],"well");
 	item[1] = malloc((strlen("the")+1) * sizeof(char));
 	strcpy(item[1],"the");																									
-	insert_ngram(hashTable, item, 2);							//add 'the'
+	insert_ngram(hashTable, item, 2,100);							//add 'the'
 	
-	deleteArrayOfWords(item, 2);
+	for(int i=0; i<2; i++){
+		free(item[i]);
+		item[i]=NULL;
+	}
 	free(item);
 	item=NULL;		
 	
@@ -448,13 +425,16 @@ void TestDeletionSort(CuTest *tc){
 	strcpy(item[0],"well");
 	item[1] = malloc((strlen("this")+1) * sizeof(char));
 	strcpy(item[1],"this");																									
-	insert_ngram(hashTable, item, 2);							//add 'this'
+	insert_ngram(hashTable, item, 2,145);							//add 'this'
 	
-	deleteArrayOfWords(item, 2);
+	for(int i=0; i<2; i++){
+		free(item[i]);
+		item[i]=NULL;
+	}
 	free(item);
 	item=NULL;	
-	
-	array_of_str = hashTable->buckets[0].cells[0].nextWordArray;
+
+	array_of_str = hashTable->buckets[3].cells[0].nextWordArray;
 	deletionSort(array_of_str,3,array_of_str->position);		//from hello, heterotransplantation, the, this delete this
 	
 	CuAssertPtrNotNull(tc,array_of_str);
@@ -467,6 +447,7 @@ void TestDeletionSort(CuTest *tc){
 	CuAssertStrEquals(tc,"heterotransplantation",array_of_str->array[1].dynamicWord); 
 	CuAssertTrue(tc, array_of_str->array[1].isDynamic);
 	CuAssertStrEquals(tc,"\0",array_of_str->array[1].word); 
+	CuAssertIntEquals(tc,2,array_of_str->array[1].additionVersion); 
 	
 	CuAssertStrEquals(tc,"the",array_of_str->array[2].word); 
 	
@@ -475,13 +456,16 @@ void TestDeletionSort(CuTest *tc){
 	strcpy(item[0],"well");
 	item[1] = malloc((strlen("this")+1) * sizeof(char));
 	strcpy(item[1],"this");																									
-	insert_ngram(hashTable, item, 2);							//add 'this'
+	insert_ngram(hashTable, item, 2,7);							//add 'this'
 	
-	deleteArrayOfWords(item, 2);
+	for(int i=0; i<2; i++){
+		free(item[i]);
+		item[i]=NULL;
+	}
 	free(item);
 	item=NULL;	
 	
-	array_of_str = hashTable->buckets[0].cells[0].nextWordArray;
+	array_of_str = hashTable->buckets[3].cells[0].nextWordArray;
 	deletionSort(array_of_str,1,array_of_str->position);		//from hello, heterotransplantation, the, this delete heterotransplantation
 	CuAssertPtrNotNull(tc,array_of_str);
 	CuAssertPtrNotNull(tc,array_of_str->array);
@@ -489,8 +473,11 @@ void TestDeletionSort(CuTest *tc){
 	CuAssertIntEquals(tc,3,array_of_str->position);	
 	
 	CuAssertStrEquals(tc,"hello",array_of_str->array[0].word); 
+	CuAssertIntEquals(tc,0,array_of_str->array[0].additionVersion); 
 	CuAssertStrEquals(tc,"the",array_of_str->array[1].word); 
+	CuAssertIntEquals(tc,100,array_of_str->array[1].additionVersion); 
 	CuAssertStrEquals(tc,"this",array_of_str->array[2].word); 
+	CuAssertIntEquals(tc,7,array_of_str->array[2].additionVersion); 
 	
 
 	destroyLinearHash(hashTable);
@@ -554,9 +541,7 @@ void TestGetString (CuTest *tc){
 	char* myStr = getString(node);
 	
 	CuAssertStrEquals(tc,"hello",myStr);
-	free(myStr);
-	myStr=NULL;
-	
+
 	node->dynamicWord = malloc(sizeof(char)* (strlen("heterotransplantation")+1));
 	strcpy(node->dynamicWord, "heterotransplantation");
 	node->noOfChars = strlen("heterotransplantation")+1;
@@ -565,8 +550,6 @@ void TestGetString (CuTest *tc){
 	myStr = getString(node);
 	
 	CuAssertStrEquals(tc,"heterotransplantation",myStr);
-	free(myStr);
-	myStr=NULL;
 	
 	deleteDataNode(node);
 	free(node);
@@ -618,7 +601,7 @@ void TestBinarySearchBucket(CuTest* tc){
 	
 	dataNode *item = malloc(sizeof(dataNode));
 	initializeDataNode(item);
-	getPosition = binarySearchBucket(array_of_str->array,item,0,array_of_str->position,array_of_str->position,NULL);			//array is empty
+	getPosition = binarySearchBucket(array_of_str->array,item,0,array_of_str->position,array_of_str->position,NULL, true);			//array is empty
 	CuAssertIntEquals(tc,-1,getPosition->position);
 	CuAssertTrue(tc,!getPosition->exists);
 	
@@ -634,7 +617,7 @@ void TestBinarySearchBucket(CuTest* tc){
 	insertString(&array_of_str->array[2],"whatabeautifuldaywego");
 	array_of_str->position++;
 	
-	getPosition = binarySearchBucket(array_of_str->array,item,0,array_of_str->position,array_of_str->position,NULL);		//binarySeach cat
+	getPosition = binarySearchBucket(array_of_str->array,item,0,array_of_str->position,array_of_str->position,NULL, true);		//binarySeach cat
 	CuAssertIntEquals(tc,0,getPosition->position);
 	CuAssertTrue(tc,getPosition->exists);
 	
@@ -648,7 +631,7 @@ void TestBinarySearchBucket(CuTest* tc){
 	item = malloc(sizeof(dataNode));
 	initializeDataNode(item);
 	insertString(item,"whatabeautifuldaywego");
-	getPosition = binarySearchBucket(array_of_str->array,item,0,array_of_str->position,array_of_str->position,NULL);	
+	getPosition = binarySearchBucket(array_of_str->array,item,0,array_of_str->position,array_of_str->position,NULL, false);	
 	CuAssertIntEquals(tc,2,getPosition->position);
 	CuAssertTrue(tc,getPosition->exists);
 		
@@ -662,7 +645,7 @@ void TestBinarySearchBucket(CuTest* tc){
 	item = malloc(sizeof(dataNode));
 	initializeDataNode(item);
 	insertString(item,"hello");	
-	getPosition = binarySearchBucket(array_of_str->array,item,0,array_of_str->position,array_of_str->position,NULL);	
+	getPosition = binarySearchBucket(array_of_str->array,item,0,array_of_str->position,array_of_str->position,NULL, false);	
 	CuAssertIntEquals(tc,2,getPosition->position);
 	CuAssertTrue(tc,!getPosition->exists);
 	
@@ -744,21 +727,55 @@ void TestInsertionSortBucket(CuTest* tc){
 }
 
 
+void TestHasChildren(CuTest* tc){
+	dataNode* lookupElement = malloc(sizeof(dataNode));
+	initializeDataNode(lookupElement);
+	CuAssertTrue(tc,!hasChildren(lookupElement, -1));						//nextWordArray == NULL
+	deleteDataNode(lookupElement);
+	free(lookupElement);
+	lookupElement = NULL;
+	
+	lookupElement = malloc(sizeof(dataNode));
+	initializeDataNode(lookupElement);
+	lookupElement->nextWordArray = malloc(sizeof(arrayOfStructs));
+	initializeArray(lookupElement->nextWordArray);
+	lookupElement->nextWordArray->position=1;
+	CuAssertTrue(tc,hasChildren(lookupElement, 2));							//1 not deleted
+	deleteArray(lookupElement->nextWordArray);
+	deleteDataNode(lookupElement);
+	free(lookupElement);
+	lookupElement = NULL;
+	
+	lookupElement = malloc(sizeof(dataNode));
+	initializeDataNode(lookupElement);
+	lookupElement->nextWordArray = malloc(sizeof(arrayOfStructs));
+	initializeArray(lookupElement->nextWordArray);
+	lookupElement->nextWordArray->position=3;
+	lookupElement->nextWordArray->array[0].deletionVersion = 2;
+	lookupElement->nextWordArray->array[1].deletionVersion = 2;
+	lookupElement->nextWordArray->array[2].deletionVersion = -1;
+	CuAssertTrue(tc,hasChildren(lookupElement, 2));							//2 children deleted, 1 not deleted
+	deleteArray(lookupElement->nextWordArray);
+	deleteDataNode(lookupElement);
+	free(lookupElement);
+	lookupElement = NULL;
+}
+
 CuSuite* AuxMethodsGetSuite() {		//adding TestAuxMethods Functions into suite
     CuSuite* suite = CuSuiteNew();
     
-    SUITE_ADD_TEST(suite, TestDeleteArrayOfWords);
     SUITE_ADD_TEST(suite, TestStringToArray);
     SUITE_ADD_TEST(suite, TestInitialize);
 	SUITE_ADD_TEST(suite, TestBinarySearch);
 	SUITE_ADD_TEST(suite, TestInsertionSort);
-    SUITE_ADD_TEST(suite, TestExecuteQueryFile);
+    SUITE_ADD_TEST(suite, TestExecuteQueryFile_ExecuteDynamicArray);
     SUITE_ADD_TEST(suite, TestDeletionSort);
     SUITE_ADD_TEST(suite, TestGetString);
     SUITE_ADD_TEST(suite, TestInsertString);
     SUITE_ADD_TEST(suite, TestCopyDataNode);
     SUITE_ADD_TEST(suite, TestBinarySearchBucket);
     SUITE_ADD_TEST(suite, TestInsertionSortBucket);
+    SUITE_ADD_TEST(suite, TestHasChildren);
     
     return suite;
 }

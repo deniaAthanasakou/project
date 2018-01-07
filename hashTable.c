@@ -337,9 +337,7 @@ int getBucketFromHash(int level, int lengthHash, int bucketToBeSplit, char* word
 	
 	for(int i=0; i < level; i++){
 		powLevel *= 2;
-	}
-	
-	
+	}	
 	int hashLevel = (int) *word % (powLevel * lengthHash);
 	
 	powLevel *= 2;
@@ -385,8 +383,6 @@ void restructArray(arrayOfStructs* array_of_str){
 			array_of_str->array[i].isFinal=false;
 		}
 		if(array_of_str->array[i].deletionVersion!=-1){
-			
-
 			deletionSort(array_of_str,i,array_of_str->position);
 			continue;
 		}

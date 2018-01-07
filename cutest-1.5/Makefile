@@ -1,8 +1,8 @@
 CC = gcc -g
-FILES = AllTests.c CuTest.c CuTestStack.c CuTestAuxMethods.c CuTestFunc.c CuTestStruct.c CuTestTopK.c CuTestHashTable.c ../struct.c ../func.c ../auxMethods.c ../stack.c ../bloomfilter.c ../hashTable.c ../murmur3/murmur3.c ../topK.c ../compress.c
-OBJECTS = AllTests.o CuTest.o CuTestStack.o CuTestAuxMethods.o CuTestFunc.o CuTestStruct.o CuTestTopK.o CuTestHashTable.o struct.o func.o auxMethods.o stack.o bloomfilter.o hashTable.o murmur3.o topK.o compress.o
+FILES = AllTests.c CuTest.c CuTestStack.c CuTestStruct.c CuTestBatchHandler.c CuTestBloomFilter.c CuTestCompress.c CuTestTopK.c CuTestAuxMethods.c CuTestHashTable.c CuTestFunc.c ../struct.c ../func.c ../auxMethods.c ../stack.c ../bloomfilter.c ../hashTable.c ../murmur3/murmur3.c ../topK.c ../compress.c ../batch_handler.c
+OBJECTS = AllTests.o CuTest.o CuTestStack.o CuTestStruct.o CuTestBatchHandler.o CuTestBloomFilter.o CuTestCompress.o CuTestTopK.o CuTestAuxMethods.o CuTestHashTable.o CuTestFunc.o struct.o func.o auxMethods.o stack.o bloomfilter.o hashTable.o murmur3.o topK.o compress.o batch_handler.o
 OUT = test
-HEADERS = CuTest.h CuTestStack.h CuTestAuxMethods.h CuTestFunc.h CuTestStruct.h CuTestTopK.h CuTestHashTable.h ../struct.h ../func.h ../auxMethods.h ../stack.h ../bloomfilter.h ../hashTable.h ../murmur3/murmur3.h ../topK.c ../compress.h
+HEADERS = CuTest.h CuTestStack.h CuTestStruct.h CuTestBatchHandler.h CuTestBloomFilter.h CuTestCompress.h CuTestTopK.h CuTestAuxMethods.h CuTestHashTable.h CuTestFunc.h ../struct.h ../func.h ../auxMethods.h ../stack.h ../bloomfilter.h ../hashTable.h ../murmur3/murmur3.h ../topK.c ../compress.h ../batch_handler.h
 
 all: $(OBJECTS) $(HEADERS)
 	$(CC) -o $(OUT) $(FILES) -lm
@@ -25,6 +25,12 @@ CuTestFunc.o: CuTestFunc.c
 
 CuTestStruct.o: CuTestStruct.c
 	$(CC) -c CuTestStruct.c
+	
+CuTestBloomFilter.o: CuTestBloomFilter.c
+	$(CC) -c CuTestBloomFilter.c
+
+CuTestCompress.o: CuTestCompress.c
+	$(CC) -c CuTestCompress.c
 
 CuTestTopK.o: CuTestTopK.c
 	$(CC) -c CuTestTopK.c
@@ -58,6 +64,9 @@ topK.o: ../topK.c
 	
 compress.o: ../compress.c
 	$(CC) -c ../compress.c		
+
+batch_handler.o: ../batch_handler.c
+	$(CC) -c ../batch_handler.c		
 
 
 clean:

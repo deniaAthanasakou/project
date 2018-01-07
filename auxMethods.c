@@ -66,7 +66,6 @@ void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter*
 		delete_ngram(hashTable, arrayOfWords,noOfWords,instrNum);
 	}
 	
-	deleteArrayOfWords(arrayOfWords,noOfWords);
 	if(arrayOfWords!=NULL){
 		free(arrayOfWords);
 		arrayOfWords=NULL;
@@ -781,15 +780,10 @@ char* getString(dataNode* node){
 	return node->word;	
 }
 
-void deleteArrayOfWords(char** array,int length){		//is not used
-}
-
-
 bool hasChildren(dataNode* lookupElement, int deletionNum){
 	arrayOfStructs* tempArray = lookupElement->nextWordArray;
 	if(tempArray==NULL){
-		return false;
-		
+		return false;	
 	}
 	for(int i=0; i<	tempArray->position; i++){
 		if(tempArray->array[i].deletionVersion!=deletionNum)

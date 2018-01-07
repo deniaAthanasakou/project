@@ -110,11 +110,6 @@ void TestPop(CuTest *tc){
 }
 
 
-
-
-
-
-
 CuSuite* StackGetSuite() {		//adding TestStack Functions into suite
     CuSuite* suite = CuSuiteNew();
     

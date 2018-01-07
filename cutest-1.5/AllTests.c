@@ -7,6 +7,9 @@
 #include "CuTestStruct.h"
 #include "CuTestTopK.h"
 #include "CuTestHashTable.h"
+#include "CuTestBatchHandler.h"
+#include "CuTestBloomFilter.h"
+#include "CuTestCompress.h"
 
 CuSuite* CuGetSuite();
 CuSuite* CuStringGetSuite();
@@ -17,39 +20,59 @@ void RunAllTests(void)
 	CuString *output = CuStringNew();
 	CuSuite* suite = CuSuiteNew();
 
-	//CuSuiteAddSuite(suite, CuGetSuite());
-	//CuSuiteAddSuite(suite, CuStringGetSuite());
-	
+	//stack
 	CuSuite* stackSuite =  StackGetSuite();
 	CuSuiteAddSuite(suite,stackSuite);
 	free(stackSuite);
 	stackSuite=NULL;
 	
+	//auxMethods
 	CuSuite* auxMethodsSuite =  AuxMethodsGetSuite();
 	CuSuiteAddSuite(suite, auxMethodsSuite);
 	free(auxMethodsSuite);
 	auxMethodsSuite=NULL;
 	
-	/*CuSuite* funcSuite =  FuncGetSuite();
+	//func
+	CuSuite* funcSuite =  FuncGetSuite();
 	CuSuiteAddSuite(suite, funcSuite);
 	free(funcSuite);
 	funcSuite=NULL;
-*/	
 	
+	//topK
 	CuSuite* topKSuite =  TopKGetSuite();
 	CuSuiteAddSuite(suite, topKSuite);
 	free(topKSuite);
 	topKSuite=NULL;
 	
+	//struct
 	CuSuite* structSuite =  StructGetSuite();
 	CuSuiteAddSuite(suite, structSuite);
 	free(structSuite);
 	structSuite=NULL;
 	
+	CuSuite* batchHandlerSuite =  BatchHandlerGetSuite();
+	CuSuiteAddSuite(suite, batchHandlerSuite);
+	free(batchHandlerSuite);
+	batchHandlerSuite=NULL;
+	
+	//hashTable
 	CuSuite* hashTableSuite =  HashTableGetSuite();
 	CuSuiteAddSuite(suite, hashTableSuite);
 	free(hashTableSuite);
 	hashTableSuite=NULL;
+
+
+	//compress
+	CuSuite* compressSuite =  CompressGetSuite();
+	CuSuiteAddSuite(suite, compressSuite);
+	free(compressSuite);
+	compressSuite=NULL;
+	
+	//bloomFilter	
+	CuSuite* bloomFilterSuite =  BloomFilterGetSuite();
+	CuSuiteAddSuite(suite, bloomFilterSuite);
+	free(bloomFilterSuite);
+	bloomFilterSuite=NULL;
 
 	CuSuiteRun(suite);
 	CuSuiteSummary(suite, output);
@@ -58,7 +81,6 @@ void RunAllTests(void)
 	
 
 	CuStringDelete(output);
-	
 	CuSuiteDelete(suite);
 	
 }

@@ -18,6 +18,8 @@ void TestDeletionSortBucket(CuTest* tc);
 void TestCreateOverflowCells(CuTest* tc);
 void TestGetCell(CuTest* tc);
 void TestDeletionSortWithoutErasingNextArray(CuTest* tc);
+void TestRestructHashTable(CuTest* tc);
+void TestRestructArray(CuTest* tc);
 
 CuSuite* HashTableGetSuite();
 #endif

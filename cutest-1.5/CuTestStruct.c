@@ -16,12 +16,18 @@ void TestInitializeArray(CuTest *tc){
 		CuAssertPtrEquals(tc,NULL,array_of_str->array[i].dynamicWord);
 		CuAssertPtrEquals(tc,NULL,array_of_str->array[i].nextWordArray);
 		CuAssertTrue(tc,!array_of_str->array[i].isDynamic);
+		CuAssertTrue(tc,!array_of_str->array[i].isFinal);
+		CuAssertTrue(tc,array_of_str->array[i].isEmpty);
 		CuAssertIntEquals(tc,-1,array_of_str->array[i].noOfChars);
 		CuAssertIntEquals(tc,20,sizeof(array_of_str->array[i].word));
 		CuAssertIntEquals(tc,0,strlen(array_of_str->array[i].word));
 		CuAssertStrEquals(tc,"\0",array_of_str->array[i].word);
 		CuAssertPtrEquals(tc,NULL,array_of_str->array[i].staticArray);
 		CuAssertIntEquals(tc,0,array_of_str->array[i].staticArrayLength);
+		CuAssertIntEquals(tc,0,array_of_str->array[i].additionVersion);
+		CuAssertIntEquals(tc,-1,array_of_str->array[i].deletionVersion);
+		CuAssertIntEquals(tc,-1,array_of_str->array[i].notFinalInDeletionVersion);
+		CuAssertIntEquals(tc,-1,array_of_str->array[i].finalSinceAdditionVersion);
 		
 	}
 	
@@ -33,15 +39,24 @@ void TestInitializeDataNode(CuTest *tc){
 	dataNode* node = malloc(sizeof(dataNode));
 	initializeDataNode(node);
 	
+	
 	CuAssertPtrEquals(tc,NULL,node->dynamicWord);
 	CuAssertPtrEquals(tc,NULL,node->nextWordArray);
 	CuAssertTrue(tc,!node->isDynamic);
+	CuAssertTrue(tc,!node->isFinal);
+	CuAssertTrue(tc,node->isEmpty);
 	CuAssertIntEquals(tc,-1,node->noOfChars);
 	CuAssertIntEquals(tc,20,sizeof(node->word));
 	CuAssertIntEquals(tc,0,strlen(node->word));
 	CuAssertStrEquals(tc,"\0",node->word);
 	CuAssertPtrEquals(tc,NULL,node->staticArray);
+	CuAssertIntEquals(tc,0,node->additionVersion);
+	CuAssertIntEquals(tc,-1,node->deletionVersion);
 	CuAssertIntEquals(tc,0,node->staticArrayLength);
+	CuAssertIntEquals(tc,-1,node->notFinalInDeletionVersion);
+	CuAssertIntEquals(tc,-1,node->finalSinceAdditionVersion);
+
+	
 	
 	deleteDataNode(node);
 	free(node);
