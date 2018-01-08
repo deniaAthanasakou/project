@@ -10,6 +10,7 @@
 #include "CuTestBatchHandler.h"
 #include "CuTestBloomFilter.h"
 #include "CuTestCompress.h"
+#include "CuTestJobScheduler.h"
 
 CuSuite* CuGetSuite();
 CuSuite* CuStringGetSuite();
@@ -38,6 +39,7 @@ void RunAllTests(void)
 	free(funcSuite);
 	funcSuite=NULL;
 	
+	
 	//topK
 	CuSuite* topKSuite =  TopKGetSuite();
 	CuSuiteAddSuite(suite, topKSuite);
@@ -50,6 +52,7 @@ void RunAllTests(void)
 	free(structSuite);
 	structSuite=NULL;
 	
+	//batch_handler
 	CuSuite* batchHandlerSuite =  BatchHandlerGetSuite();
 	CuSuiteAddSuite(suite, batchHandlerSuite);
 	free(batchHandlerSuite);
@@ -73,6 +76,12 @@ void RunAllTests(void)
 	CuSuiteAddSuite(suite, bloomFilterSuite);
 	free(bloomFilterSuite);
 	bloomFilterSuite=NULL;
+	
+	//JobScheduler
+	CuSuite* jobScheduler = JobSchedulerGetSuite();
+	CuSuiteAddSuite(suite, jobScheduler);
+	free(jobScheduler);
+	jobScheduler=NULL;
 
 	CuSuiteRun(suite);
 	CuSuiteSummary(suite, output);

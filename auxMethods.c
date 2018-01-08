@@ -28,7 +28,7 @@ int initialize(FILE* file, HashTable* hashTable){
 				
 		}
 		else{
-			callBasicFuncs(ngram,'A',hashTable,NULL,NULL,returnValue, 0);
+			callBasicFuncs(NULL,ngram,'A',hashTable,NULL,NULL,returnValue, 0,NULL);
 		}
 		counter++;
 	}
@@ -41,47 +41,49 @@ int initialize(FILE* file, HashTable* hashTable){
 }
 
 
-void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKArray *topArray, int isDynamic, int instrNum){
+arrayWords* callBasicFuncs(JobScheduler* sch,char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKArray *topArray, int isDynamic, int instrNum,instruction* instr){
 
 	arrayWords* arrayW = stringToArray(ngram);
 	int noOfWords = arrayW->length;
 	char** arrayOfWords = arrayW->words;
 	if(query == 'A'){
 		insert_ngram(hashTable, arrayOfWords,noOfWords, instrNum);
+		free(arrayW->words);
+		arrayW->words = NULL;
+		free(arrayW);
+		arrayW = NULL;
+		return NULL;
 	}
 	else if(query == 'Q'){
-		char* searchString = NULL;
+		
+		int* noOfWordsPtr = &(arrayW->length);
+		void** p = malloc(6*sizeof(void*));
+		p[0] = (void*)hashTable;
+		p[1] = (void*)arrayW->words;
+		p[2] = (void*)noOfWordsPtr;
+		p[3] = (void*)topFilter;
+		p[4] = (void*)topArray;
+		p[5] = (void*)&instr->num;
 		if(isDynamic){
-		 	searchString= search_ngram(hashTable, arrayOfWords,noOfWords, topFilter, topArray,instrNum);
-		 }
-		else{
-			searchString = search_ngram_StaticVersion(hashTable, arrayOfWords,noOfWords, topFilter, topArray);
+			Job* j = initializeJob((void*)search_ngram,p);
+			submitJob(sch,j);	
+			return arrayW;
 		}
-		if(searchString!=NULL){
-			free(searchString);
-			searchString=NULL;
+		
+		else{
+			Job* j = initializeJob((void*)search_ngram_StaticVersion,p);
+			submitJob(sch,j);	
+			return arrayW;
 		}
 	}
 	else if(query == 'D'){
 		delete_ngram(hashTable, arrayOfWords,noOfWords,instrNum);
-	}
-	
-	if(arrayOfWords!=NULL){
-		free(arrayOfWords);
-		arrayOfWords=NULL;
+		free(arrayW->words);
+		arrayW->words = NULL;
 		free(arrayW);
 		arrayW = NULL;
+		return NULL;
 	}
-	
-}
-
-int checkIfStringExists(char** array, int noOfWords, char* str){
-	
-	for(int i=0; i<noOfWords; i++){
-		if(strcmp(str,array[i])==0)
-			return 1;
-	}
-	return 0;
 }
 
 
@@ -524,6 +526,9 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 
 	if (file == NULL)
 		return 1;
+	
+	//initialize JobScheduler
+	JobScheduler *sch = NULL;
 		
 	char endingLetter = 'F';			//initialization	
 	int counter=-1;
@@ -533,7 +538,11 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 	int realCounterForBatch = 0;
 	arrayOfInstructions* arrayOfInstr = NULL;
 	instruction* node = NULL;
+	arrayOfInstrStatic* arrayOfInstrStatic = NULL;
+	instructionStatic* nodeStatic = NULL;
+	arrayWords** arrayW = NULL;
 	int numForQuery = 0;
+	int queries = 0;
 	while ((read = getline(&line, &len, file)) != -1) {
 		char* ngram = strtok(line, "\n");
 		if(ngram==NULL){
@@ -543,6 +552,7 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 		if(counter == 0){		 
 			topFilter = initializeFilter(5);		//initialize bloomFilter here
 			topArray = initializeTopKArray();		//initialize topKArray
+			sch = initializeScheduler(1);
 		}
 		
 		
@@ -553,6 +563,10 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			arrayOfInstr = initializeInstructionArray();
 		}
 
+		if(counterForBatch == 0 && staticDynamic==0){
+			arrayOfInstrStatic = initializeInstrStaticArr();
+		}
+		
 		if(strcmp(wordCase,"A")==0){	
 			endingLetter = 'A';
 			
@@ -567,6 +581,8 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				freeFilter(topFilter);
 				//free array
 				destroyTopArray(topArray);
+				
+				destroyScheduler(&sch);
 				exit(1);
 			}
 			else{	//DYNAMIC
@@ -605,9 +621,23 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				free(node);
 				node = NULL;
 				numForQuery++;
+				queries++;
 			}
 			else{	//STATIC
-				callBasicFuncs(remainingLine,'Q',hashTable,topFilter,topArray,staticDynamic, 0);
+				nodeStatic = malloc(sizeof(instructionStatic));
+				nodeStatic->type = endingLetter;
+				if(remainingLine!=NULL){
+					nodeStatic->ngram = malloc(sizeof(char)*(strlen(remainingLine)+1));
+					strcpy(nodeStatic->ngram,remainingLine);
+				}
+				else
+					nodeStatic->ngram = NULL;
+				nodeStatic->num = numForQuery;
+				insertInstrStaticArray(arrayOfInstrStatic, nodeStatic);
+		
+				free(nodeStatic);
+				nodeStatic = NULL;
+				numForQuery++;
 			}	
 		}
 		else if(strcmp(wordCase,"D")==0){
@@ -625,6 +655,8 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 				freeFilter(topFilter);
 				//free array
 				destroyTopArray(topArray);
+				
+				destroyScheduler(&sch);
 				
 				exit(1);
 			}
@@ -648,13 +680,55 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			counterForBatch = -1;
 			if(staticDynamic==1){	//DYNAMIC
 				rearrangeArray(arrayOfInstr);
-				//printInstructionArray(arrayOfInstr);
-				//printf("\n\n");
+				arrayW = malloc(queries*sizeof(arrayWords*));
 				
-				executeDynamicArray(arrayOfInstr,hashTable, topFilter, topArray);
+				executeDynamicArray(sch,arrayOfInstr,hashTable, topFilter, topArray,arrayW);
+				
+				sch->submittedAll = 1;	
+				waitAllTasksFinish(sch);
+				sch->submittedAll = 0;
+				
+				for(int i = 0; i<queries; i++){
+					if(arrayW[i]->words!=NULL){
+						free(arrayW[i]->words);
+						arrayW[i]->words = NULL;
+					}
+					if(arrayW[i]!=NULL){
+						free(arrayW[i]);
+						arrayW[i] = NULL;
+					}
+				}
 				destroyInstructionArray(arrayOfInstr);
+				
+				free(arrayW);
+				arrayW = NULL;
+				
 				restructHashTable(hashTable);
-				//printBuckets(hashTable);
+				queries = 0;
+			}else{
+				arrayW = malloc(arrayOfInstrStatic->position*sizeof(arrayWords*));
+				for(int i = 0; i<arrayOfInstrStatic->position; i++){
+					arrayW[i] = callBasicFuncs(sch,arrayOfInstrStatic->array[i].ngram,'Q',hashTable,topFilter,topArray,0, 0,NULL);
+				}
+				
+				
+				sch->submittedAll = 1;	
+				waitAllTasksFinish(sch);
+				sch->submittedAll = 0;
+				
+				for(int i = 0; i<arrayOfInstrStatic->position; i++){
+					if(arrayW[i]->words!=NULL){
+						free(arrayW[i]->words);
+						arrayW[i]->words = NULL;
+					}
+					if(arrayW[i]!=NULL){
+						free(arrayW[i]);
+						arrayW[i] = NULL;
+					}
+				}
+				destroyInstrStaticArray(arrayOfInstrStatic);
+				free(arrayW);
+				arrayW = NULL;
 			}
 			
 			//get top-k
@@ -673,6 +747,8 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			//free array
 			destroyTopArray(topArray);
 			
+			destroyScheduler(&sch);
+			
 		}
 		else{			//different letter
 			if (line){
@@ -685,6 +761,8 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 			freeFilter(topFilter);
 			//free array
 			destroyTopArray(topArray);
+			
+			destroyScheduler(&sch);
 			if(staticDynamic==1)
 				destroyInstructionArray(arrayOfInstr);
 			
@@ -706,6 +784,8 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 		freeFilter(topFilter);
 		//free array
 		destroyTopArray(topArray);
+		
+		destroyScheduler(&sch);
 		if(staticDynamic==1)
 			destroyInstructionArray(arrayOfInstr);
 	
@@ -716,16 +796,18 @@ int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic){
 
 }
 
-void executeDynamicArray(arrayOfInstructions* arrayOfInstr, HashTable* hashTable, BloomFilter* topFilter, topKArray* topArray){
+void executeDynamicArray(JobScheduler *sch,arrayOfInstructions* arrayOfInstr, HashTable* hashTable, BloomFilter* topFilter, topKArray* topArray,arrayWords** arrayW){
+	int counter=0;
 	for(int i = 0; i<arrayOfInstr->position; i++){
 		if(arrayOfInstr->array[i].type =='A'){
-			callBasicFuncs(arrayOfInstr->array[i].ngram,'A',hashTable, NULL, NULL, 1, arrayOfInstr->array[i].num);
+			callBasicFuncs(NULL,arrayOfInstr->array[i].ngram,'A',hashTable, NULL, NULL, 1, arrayOfInstr->array[i].num,NULL);
 		}
 		else if(arrayOfInstr->array[i].type =='D'){
-			callBasicFuncs(arrayOfInstr->array[i].ngram,'D',hashTable, NULL, NULL, 1,arrayOfInstr->array[i].num);
+			callBasicFuncs(NULL,arrayOfInstr->array[i].ngram,'D',hashTable, NULL, NULL, 1,arrayOfInstr->array[i].num,NULL);
 		}
 		else if(arrayOfInstr->array[i].type =='Q'){
-			callBasicFuncs(arrayOfInstr->array[i].ngram,'Q',hashTable,topFilter,topArray,1, arrayOfInstr->array[i].num);
+			arrayW[counter] = callBasicFuncs(sch,arrayOfInstr->array[i].ngram,'Q',hashTable,topFilter,topArray,1, arrayOfInstr->array[i].num,&arrayOfInstr->array[i]);
+			counter++;
 		}
 	}
 }

@@ -28,7 +28,7 @@ void TestInsert_ngram(CuTest *tc){
 	arrayOfWords[11] = malloc(10* sizeof(char));
 	
 	noOfWords = 3;
-	strcpy(arrayOfWords[0],"this");										//check if nextWordArray is created -> insert phrase 'cat dog "big phrase"'
+	strcpy(arrayOfWords[0],"this");										//check if nextWordArray is created -> insert phrase 'this dog "big phrase"'
 	strcpy(arrayOfWords[1],"dog");
 	strcpy(arrayOfWords[2],"whatagreatworldthatisiamflattered");
 	insert_ngram(hashTable, arrayOfWords, noOfWords, 0);
@@ -63,7 +63,7 @@ void TestInsert_ngram(CuTest *tc){
 	
 	
 	
-	strcpy(arrayOfWords[0],"hello");															//check if insert is sorting array -> insert phrase 'act dog'
+	strcpy(arrayOfWords[0],"hello");															//check if insert is sorting array -> insert phrase 'hello dog'
 	strcpy(arrayOfWords[1],"dog");
 	noOfWords = 2;
 	insert_ngram(hashTable, arrayOfWords, noOfWords,1);
@@ -75,7 +75,7 @@ void TestInsert_ngram(CuTest *tc){
 	CuAssertStrEquals(tc,"dog",tempArray->array[0].word);
 	CuAssertTrue(tc,tempArray->array[0].isFinal);
 	
-	strcpy(arrayOfWords[0],"hello");															//check if insert is sorting nextWordArray -> insert phrase 'act act'
+	strcpy(arrayOfWords[0],"hello");															//check if insert is sorting nextWordArray -> insert phrase 'hello hello'
 	strcpy(arrayOfWords[1],"hello");
 	noOfWords = 2;
 	insert_ngram(hashTable, arrayOfWords, noOfWords,2);
@@ -116,7 +116,7 @@ void TestInsert_ngram(CuTest *tc){
 	hashTable = NULL;
 }
 
-/*
+
 void TestSearch_ngram(CuTest *tc){
 	
 	HashTable* hashTable = createLinearHash(NOOFBUCKETS, NOOFCELLS);
@@ -139,15 +139,35 @@ void TestSearch_ngram(CuTest *tc){
 	strcpy(arrayOfWords[1],"dogisthebestpetexceptforcats");
 	strcpy(arrayOfWords[2],"record");
 
-	insert_ngram(hashTable, arrayOfWords, noOfWords);
+	insert_ngram(hashTable, arrayOfWords, noOfWords, 1);
 	
 	topFilter = initializeFilter(5);		//initialize bloomFilter here
 	topArray = initializeTopKArray();		//initialize topKArray
 	
 	char* searchString;
-	searchString = search_ngram(hashTable, arrayOfWords, noOfWords, topFilter, topArray);
+	int* noOfWordsPtr = &noOfWords;
+	int instrNum = 2;
+	int* instrNumPtr = &instrNum;
+	void** p1 = malloc(6*sizeof(void*));
+	p1[0] = (void*) hashTable;
+	p1[1] = (void*) arrayOfWords;
+	p1[2] = (void*) noOfWordsPtr;
+	p1[3] = (void*) topFilter;
+	p1[4] = (void*) topArray;
+	p1[5] = (void*) instrNumPtr;
+	searchString = search_ngram(p1);		//query after insert
 	
 	CuAssertStrEquals(tc,"cat dogisthebestpetexceptforcats record",searchString);
+	free(searchString);
+	searchString=NULL;
+	
+	
+	instrNum = 0;
+	instrNumPtr = &instrNum;
+	p1[5] = (void*) instrNumPtr;
+	searchString = search_ngram(p1);		//query before insert
+	
+	CuAssertStrEquals(tc,"-1",searchString);
 	free(searchString);
 	searchString=NULL;
 	
@@ -156,10 +176,13 @@ void TestSearch_ngram(CuTest *tc){
 		arrayOfWords[i] = NULL;
 	}
 	
+	*instrNumPtr = 1;
+	*noOfWordsPtr = 1;
 	noOfWords = 1;
 	arrayOfWords[0] = malloc(10* sizeof(char));														//not found
 	strcpy(arrayOfWords[0],"init");
-	searchString = search_ngram(hashTable, arrayOfWords, noOfWords, topFilter, topArray);
+	p1[1] = (void*) arrayOfWords;
+	searchString = search_ngram(p1);
 	CuAssertStrEquals(tc,"-1",searchString);
 	free(searchString);
 	searchString=NULL;
@@ -168,15 +191,14 @@ void TestSearch_ngram(CuTest *tc){
 	free(arrayOfWords[0]);					//free 
 	arrayOfWords[0] = NULL;
 
-	
-	
 	arrayOfWords[0] = malloc(10* sizeof(char));
-
+	*instrNumPtr = 3;
+	*noOfWordsPtr = 1;
 	noOfWords = 1;
 	strcpy(arrayOfWords[0],"cat");										//get search phrase ->found
-	insert_ngram(hashTable, arrayOfWords, 1);
-	
-	searchString = search_ngram(hashTable, arrayOfWords, noOfWords, topFilter, topArray);
+	insert_ngram(hashTable, arrayOfWords, 1, 2);
+	p1[1] = (void*) arrayOfWords;
+	searchString = search_ngram(p1);
 	CuAssertStrEquals(tc,"cat",searchString);
 	free(searchString);
 	searchString=NULL;
@@ -187,13 +209,13 @@ void TestSearch_ngram(CuTest *tc){
 	
 	arrayOfWords[0] = malloc(40* sizeof(char));
 	strcpy(arrayOfWords[0],"heterotransplantations");
-	insert_ngram(hashTable, arrayOfWords, 1);
+	insert_ngram(hashTable, arrayOfWords, 1, 4);
 	free(arrayOfWords[0]);
 	arrayOfWords[0] = NULL;
 	
 	arrayOfWords[0] = malloc(10* sizeof(char));
 	strcpy(arrayOfWords[0],"this");
-	insert_ngram(hashTable, arrayOfWords, 1);
+	insert_ngram(hashTable, arrayOfWords, 1, 5);
 	free(arrayOfWords[0]);
 	arrayOfWords[0] = NULL;
 	
@@ -205,7 +227,10 @@ void TestSearch_ngram(CuTest *tc){
 	strcpy(temp[0],"cat");
 	strcpy(temp[1],"is");
 	strcpy(temp[2],"heterotransplantations");
-	searchString = search_ngram(hashTable, temp, noOfWords, topFilter, topArray);
+	p1[1] = (void*) temp;
+	*instrNumPtr = 6;
+	*noOfWordsPtr = 3;
+	searchString = search_ngram(p1);
 	
 	//found multiple ones
 	CuAssertStrEquals(tc,"catheterotransplantations",searchString);
@@ -224,8 +249,7 @@ void TestSearch_ngram(CuTest *tc){
 	temp = NULL;
 	free(arrayOfWords);
 	arrayOfWords = NULL;
-	destroyLinearHash(hashTable);
-	hashTable = NULL;
+	
 
 	//check query results were inserted into topArray
 	CuAssertIntEquals(tc,20, topArray->length);
@@ -240,10 +264,54 @@ void TestSearch_ngram(CuTest *tc){
 	CuAssertStrEquals(tc,"heterotransplantations",topArray->array[2].ngram);
 	CuAssertIntEquals(tc,1,topArray->array[2].occurences);
 	
+	
+	arrayOfWords = malloc(3*sizeof(char*));
+	arrayOfWords[0] = malloc(10* sizeof(char));
+	arrayOfWords[1] = malloc(10* sizeof(char));
+	arrayOfWords[2] = malloc(10* sizeof(char));
+	
+	noOfWords = 3;
+	strcpy(arrayOfWords[0],"hello");										//get search phrase ->found
+	strcpy(arrayOfWords[1],"world");
+	strcpy(arrayOfWords[2],"!");
+	
+	insert_ngram(hashTable, arrayOfWords, noOfWords, 7);
+	delete_ngram(hashTable, arrayOfWords, noOfWords, 10);
+	p1[1] = (void*) arrayOfWords;
+	*instrNumPtr = 8;
+	*noOfWordsPtr = 3;
+	searchString = search_ngram(p1);		//before delete
+	CuAssertStrEquals(tc,"hello world !",searchString);
+	free(searchString);
+	searchString=NULL;
+	
+	p1[1] = (void*) arrayOfWords;
+	*instrNumPtr = 11;
+	*noOfWordsPtr = 3;
+	searchString = search_ngram(p1);		//after delete
+	CuAssertStrEquals(tc,"-1",searchString);
+	free(searchString);
+	searchString=NULL;
+	
+	
+	for(int i=0;i<noOfWords;i++){
+		free(arrayOfWords[i]);												//free 
+		arrayOfWords[i] = NULL;
+	}
+	
+	destroyLinearHash(hashTable);
+	hashTable = NULL;
+	
+	free(arrayOfWords);				
+	arrayOfWords = NULL;
+		
 	//free bloomFilter
 	freeFilter(topFilter);
 	//free array
 	destroyTopArray(topArray);
+	
+	free(p1);
+	p1 = NULL;
 
 	printf("End of testing search_ngram\n");
 }
@@ -270,17 +338,30 @@ void TestSearch_ngram_StaticVersion(CuTest *tc){
 		recreateStructure(hashTable);	
 	}
 	
+	int noOfWords = 3;
+	int* noOfWordsPtr = &noOfWords;
 	
 	char *stringQ1[3] = {"this","is","a"};
-	char *result1 = search_ngram_StaticVersion(hashTable, stringQ1, 3, topFilter, topArray);
+	void** p1 = malloc(5*sizeof(void*));
+	p1[0] = (void*) hashTable;
+	p1[1] = (void*) stringQ1;
+	p1[2] = (void*) noOfWordsPtr;
+	p1[3] = (void*) topFilter;
+	p1[4] = (void*) topArray;
+	
+	char *result1 = search_ngram_StaticVersion(p1);
 	CuAssertStrEquals(tc,"this is a",result1);
 	
 	char *stringQ2[4] = {"this","is","a","dog"};
-	char *result2 = search_ngram_StaticVersion(hashTable, stringQ2, 4, topFilter, topArray);
+	*noOfWordsPtr = 4;
+	p1[1] = (void*) stringQ2;
+	char *result2 = search_ngram_StaticVersion(p1);
 	CuAssertStrEquals(tc,"this is athis is a dog",result2);
 	
 	char *stringQ3[3] = {"this","is","the"};
-	char *result3 = search_ngram_StaticVersion(hashTable, stringQ3, 3, topFilter, topArray);
+	*noOfWordsPtr = 3;
+	p1[1] = (void*) stringQ3;
+	char *result3 = search_ngram_StaticVersion(p1);
 	CuAssertStrEquals(tc,"-1",result3);
 	
 	destroyLinearHash(hashTable);
@@ -296,10 +377,12 @@ void TestSearch_ngram_StaticVersion(CuTest *tc){
 	free(result3);
 	result3 = NULL;
 	
+	free(p1);
+	p1= NULL;
 	printf("End of Testing search_ngram_StaticVersion\n");
 	
 }
-*/
+
 void TestDelete_ngram(CuTest *tc){
 
 	/*
@@ -316,7 +399,7 @@ void TestDelete_ngram(CuTest *tc){
 	
 	char* myString= malloc(sizeof(char)*(strlen("a")+1));
 	strcpy(myString,"a");
-	callBasicFuncs(myString,'D', hashTable,NULL, NULL, 1, 1);			//will not be deleted because array_of_str does not have any ngrams inside yet
+	callBasicFuncs(NULL,myString,'D', hashTable,NULL, NULL, 1, 1,NULL);			//will not be deleted because array_of_str does not have any ngrams inside yet
 	free(myString);
 	
 	
@@ -330,17 +413,17 @@ void TestDelete_ngram(CuTest *tc){
 	
 	myString = malloc(sizeof(char)*(strlen("test")+1));
 	strcpy(myString,"test");
-	callBasicFuncs(myString,'A', hashTable,NULL, NULL, 1, 2);			
+	callBasicFuncs(NULL,myString,'A', hashTable,NULL, NULL, 1, 2,NULL);			
 	free(myString);
 	
 	myString= malloc(sizeof(char)*(strlen("this is cat")+1));
 	strcpy(myString,"this is cat");
-	callBasicFuncs(myString,'A', hashTable,NULL, NULL, 1, 3);			
+	callBasicFuncs(NULL,myString,'A', hashTable,NULL, NULL, 1, 3,NULL);			
 	free(myString);
 	
 	myString= malloc(sizeof(char)*(strlen("this is fox")+1));
 	strcpy(myString,"this is fox");
-	callBasicFuncs(myString,'A', hashTable,NULL, NULL, 1, 4);			
+	callBasicFuncs(NULL,myString,'A', hashTable,NULL, NULL, 1, 4,NULL);			
 	free(myString);
 	
 	CuAssertIntEquals(tc,2,hashTable->buckets[0].position);
@@ -349,19 +432,19 @@ void TestDelete_ngram(CuTest *tc){
 	
 	myString= malloc(sizeof(char)*(strlen("test")+1));
 	strcpy(myString,"test");
-	callBasicFuncs(myString,'D', hashTable,NULL, NULL, 1, 5);					//will be deleted
+	callBasicFuncs(NULL,myString,'D', hashTable,NULL, NULL, 1, 5,NULL);					//will be deleted
 	free(myString);
 	
 	CuAssertIntEquals(tc,5,hashTable->buckets[0].cells[0].deletionVersion);
 	
 	myString= malloc(sizeof(char)*(strlen("test")+1));
 	strcpy(myString,"test");
-	callBasicFuncs(myString,'A', hashTable,NULL, NULL, 1, 6);
+	callBasicFuncs(NULL,myString,'A', hashTable,NULL, NULL, 1, 6,NULL);
 	free(myString);
 	
 	myString= malloc(sizeof(char)*(strlen("test is")+1));
 	strcpy(myString,"test is");
-	callBasicFuncs(myString,'D', hashTable,NULL, NULL, 1, 7);			//will not be deleted because full ngram doesn't exist 
+	callBasicFuncs(NULL,myString,'D', hashTable,NULL, NULL, 1, 7,NULL);			//will not be deleted because full ngram doesn't exist 
 	free(myString);
 
 
@@ -369,7 +452,7 @@ void TestDelete_ngram(CuTest *tc){
 
 	myString= malloc(sizeof(char)*(strlen("this is")+1));
 	strcpy(myString,"this is");
-	callBasicFuncs(myString,'D', hashTable,NULL, NULL, 1, 8);			//will not be deleted because this -> is -> cat and this -> is -> dog exist
+	callBasicFuncs(NULL,myString,'D', hashTable,NULL, NULL, 1, 8,NULL);			//will not be deleted because this -> is -> cat and this -> is -> dog exist
 	free(myString);
 	
 	
@@ -380,7 +463,7 @@ void TestDelete_ngram(CuTest *tc){
 	
 	myString= malloc(sizeof(char)*(strlen("mouse")+1));
 	strcpy(myString,"mouse");
-	callBasicFuncs(myString,'D', hashTable,NULL, NULL, 1, 9);			//will not be deleted because word does not exist
+	callBasicFuncs(NULL,myString,'D', hashTable,NULL, NULL, 1, 9,NULL);			//will not be deleted because word does not exist
 	free(myString);
 	
 	
@@ -391,9 +474,9 @@ void TestDelete_ngram(CuTest *tc){
 	
 	myString= malloc(sizeof(char)*(strlen("heterotransplantations")+1));
 	strcpy(myString,"heterotransplantations");
-	callBasicFuncs(myString,'A', hashTable,NULL, NULL, 1, 10);
+	callBasicFuncs(NULL,myString,'A', hashTable,NULL, NULL, 1, 10,NULL);
 	CuAssertStrEquals(tc,"heterotransplantations",hashTable->buckets[0].cells[0].dynamicWord); 
-	callBasicFuncs(myString,'D', hashTable,NULL, NULL, 1, 11);
+	callBasicFuncs(NULL,myString,'D', hashTable,NULL, NULL, 1, 11,NULL);
 	CuAssertIntEquals(tc,11,hashTable->buckets[0].cells[0].deletionVersion); 
 
 	free(myString);
@@ -409,8 +492,8 @@ CuSuite* FuncGetSuite() {		//adding TestFunc Functions into suite
     CuSuite* suite = CuSuiteNew();
     
 	SUITE_ADD_TEST(suite, TestInsert_ngram);
-	//SUITE_ADD_TEST(suite, TestSearch_ngram);
-	//SUITE_ADD_TEST(suite, TestSearch_ngram_StaticVersion);
+	SUITE_ADD_TEST(suite, TestSearch_ngram);
+	SUITE_ADD_TEST(suite, TestSearch_ngram_StaticVersion);
     SUITE_ADD_TEST(suite, TestDelete_ngram);
     
     return suite;

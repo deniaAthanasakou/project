@@ -12,10 +12,10 @@
 void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords, int additionNum);
 
 //search
-char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWordsOriginal, BloomFilter* topFilter, topKArray *topArray, int queryNum);
+char* search_ngram(void** args);
 
 //search in static files
-char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWordsOriginal, BloomFilter* topFilter, topKArray *topArray);
+char* search_ngram_StaticVersion(void** args);
 
 //delete
 void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords, int deletionNum);

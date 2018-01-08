@@ -6,6 +6,7 @@
 #include "hashTable.h"
 #include "topK.h"
 #include "batch_handler.h"
+#include "JobScheduler.h"
 
 typedef struct checkItemExists checkItemExists;
 
@@ -24,9 +25,9 @@ typedef struct arrayWords{
 int initialize(FILE* file, HashTable* hashTable);
 int executeQueryFile(FILE* file, HashTable* hashTable, int staticDynamic);
 
-void executeDynamicArray(arrayOfInstructions* arrayOfInstr, HashTable* hashTable, BloomFilter* topFilter, topKArray* topArray);
+void executeDynamicArray(JobScheduler *sch,arrayOfInstructions* arrayOfInstr, HashTable* hashTable, BloomFilter* topFilter, topKArray* topArray, arrayWords** arrayW);
 
-void callBasicFuncs(char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKArray *topArray, int isDynamic, int instrNum);
+arrayWords* callBasicFuncs(JobScheduler* sch,char* ngram, char query , HashTable* hashTable, BloomFilter* topFilter, topKArray *topArray, int isDynamic, int instrNum,instruction* instr);
 
 arrayWords* stringToArray(char* ngram);
 

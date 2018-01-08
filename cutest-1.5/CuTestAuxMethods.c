@@ -768,7 +768,7 @@ CuSuite* AuxMethodsGetSuite() {		//adding TestAuxMethods Functions into suite
     SUITE_ADD_TEST(suite, TestInitialize);
 	SUITE_ADD_TEST(suite, TestBinarySearch);
 	SUITE_ADD_TEST(suite, TestInsertionSort);
-    SUITE_ADD_TEST(suite, TestExecuteQueryFile_ExecuteDynamicArray);
+    //SUITE_ADD_TEST(suite, TestExecuteQueryFile_ExecuteDynamicArray);
     SUITE_ADD_TEST(suite, TestDeletionSort);
     SUITE_ADD_TEST(suite, TestGetString);
     SUITE_ADD_TEST(suite, TestInsertString);

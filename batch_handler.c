@@ -109,18 +109,71 @@ void printInstructionArray(arrayOfInstructions* arrayOfInstr){
 }
 
 void printInstruction(instruction* instr){
-	//printf("QUERY: '%c'\t NGRAM: '%s'\t NUMBER: '%d'",instr->type, instr->ngram, instr->num);
-	//printf("QUERY: '%c'\t NUMBER: '%d'",instr->type, instr->num);
 	if(instr->type=='Q'){
 		printf("NUMBER: '%d'\t NUMBER OF QUERY '%d'",instr->num,instr->numForQ);
 		printf("\n");
+	}	
+}
+
+//static 
+arrayOfInstrStatic* initializeInstrStaticArr(){
+	arrayOfInstrStatic* arrayOfInstr = malloc(sizeof(arrayOfInstrStatic));
+	arrayOfInstr->length = 10;
+	arrayOfInstr->array = malloc(arrayOfInstr->length*sizeof(instructionStatic));
+	arrayOfInstr->position = 0;
+	for(int i = 0; i< arrayOfInstr->length; i++){
+		initializeInstrStatic(&arrayOfInstr->array[i]);
 	}
-		//printf("\t NUMBER OF QUERY '%d'",instr->numForQ);
+	return arrayOfInstr;
+}
+
+void initializeInstrStatic(instructionStatic* instr){
+	instr->type = 'Q'; 	//default
+	instr->ngram = NULL;
+	instr->num = -1;	//default
+}
+
+void doubleInstrStaticArray(arrayOfInstrStatic* arrayOfInstr){
+	int oldLength = arrayOfInstr->length;
+	arrayOfInstr->length = 2 * oldLength;
+	arrayOfInstr->array = realloc(arrayOfInstr->array,arrayOfInstr->length*sizeof(instructionStatic));
+	for(int i = oldLength; i< arrayOfInstr->length; i++){
+		initializeInstrStatic(&arrayOfInstr->array[i]);
+	}
+}
+
+void insertInstrStaticArray(arrayOfInstrStatic* arrayOfInstr, instructionStatic* node){
+	if(arrayOfInstr->position == arrayOfInstr->length){		//must double array
+		doubleInstrStaticArray(arrayOfInstr);
+	}
+	arrayOfInstr->array[arrayOfInstr->position] = *node;
 	
-	
+	arrayOfInstr->position++;
 }
 
 
+void destroyInstructionStatic(instructionStatic* instr){
+	instr->type = 'Q'; //default
+	if(instr->ngram!=NULL){
+		free(instr->ngram);
+		instr->ngram = NULL;
+	}
+	instr->num = -1; //default
+}
+
+
+void destroyInstrStaticArray(arrayOfInstrStatic* arrayOfInstr){
+	for(int i = 0; i< arrayOfInstr->position; i++){
+		destroyInstructionStatic(&arrayOfInstr->array[i]);
+	}
+	
+	arrayOfInstr->position = 0;
+	free(arrayOfInstr->array);
+	arrayOfInstr->array = NULL;
+	free(arrayOfInstr);
+	arrayOfInstr = NULL;
+
+}
 
 
 

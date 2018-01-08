@@ -347,6 +347,137 @@ void TestRearrange_MoveUpArray(CuTest *tc){
 	destroyInstructionArray(arrayOfInstr);
 }
 
+void TestInitializeInstrStaticArr(CuTest *tc){
+	arrayOfInstrStatic* arrayOfInstr = initializeInstrStaticArr();
+	CuAssertPtrNotNull(tc,arrayOfInstr);
+	CuAssertIntEquals(tc,10,arrayOfInstr->length); 
+    CuAssertPtrNotNull(tc,arrayOfInstr->array);
+    CuAssertIntEquals(tc,0,arrayOfInstr->position); 
+    for(int i = 0; i< arrayOfInstr->length; i++){
+    	assert(arrayOfInstr->array[i].type=='Q');
+		CuAssertPtrEquals(tc,NULL,arrayOfInstr->array[i].ngram); 
+		CuAssertIntEquals(tc,-1,arrayOfInstr->array[i].num); 
+	}
+	
+	destroyInstrStaticArray(arrayOfInstr);
+}
+
+void TestInitializeInstrStatic(CuTest *tc){
+	instructionStatic* instr = malloc(sizeof(instructionStatic));
+	initializeInstrStatic(instr);
+	assert(instr->type=='Q');
+	CuAssertPtrEquals(tc,NULL,instr->ngram); 
+	CuAssertIntEquals(tc,-1,instr->num); 
+	destroyInstructionStatic(instr);
+	free(instr);
+	instr = NULL;
+}
+
+void TestDoubleInstrStaticArray(CuTest *tc){
+	arrayOfInstrStatic* arrayOfInstr = initializeInstrStaticArr();
+	doubleInstrStaticArray(arrayOfInstr);
+	CuAssertIntEquals(tc,20,arrayOfInstr->length); 
+	CuAssertPtrNotNull(tc,arrayOfInstr->array);
+	for(int i = 10; i< arrayOfInstr->length; i++){
+    	assert(arrayOfInstr->array[i].type=='Q');
+		CuAssertPtrEquals(tc,NULL,arrayOfInstr->array[i].ngram); 
+		CuAssertIntEquals(tc,-1,arrayOfInstr->array[i].num); 
+	}
+	destroyInstrStaticArray(arrayOfInstr);
+}
+
+void TestInsertInstrStaticArray(CuTest *tc){
+	arrayOfInstrStatic* arrayOfInstr = initializeInstrStaticArr();
+	instructionStatic* node = malloc(sizeof(instructionStatic));
+	initializeInstrStatic(node);
+	
+	CuAssertIntEquals(tc,0,arrayOfInstr->position); 
+	
+	insertInstrStaticArray(arrayOfInstr, node);									//insert unchanged node
+	
+	assert(arrayOfInstr->array[0].type=='Q');
+	CuAssertPtrEquals(tc,NULL,arrayOfInstr->array[0].ngram); 
+	CuAssertIntEquals(tc,-1,arrayOfInstr->array[0].num); 
+	
+	CuAssertIntEquals(tc,1,arrayOfInstr->position); 
+	
+	free(node);
+	node=NULL;
+	
+	node = malloc(sizeof(instructionStatic));
+	initializeInstrStatic(node);
+	node->type='Q';
+	node->ngram = malloc(10*sizeof(char));
+	strcpy(node->ngram, "cat");
+	node->num = 25;
+	insertInstrStaticArray(arrayOfInstr, node);									//insert changed node
+	
+	CuAssertIntEquals(tc,2,arrayOfInstr->position); 
+	
+	assert(arrayOfInstr->array[1].type=='Q');
+	CuAssertPtrNotNull(tc,arrayOfInstr->array[1].ngram); 
+	CuAssertStrEquals(tc,"cat",arrayOfInstr->array[1].ngram); 
+	CuAssertIntEquals(tc,25,arrayOfInstr->array[1].num); 
+	
+	
+	free(node);
+	node=NULL;
+	
+	
+	for(int i = 2; i<15; i++){													//array will be doubled
+	
+		node = malloc(sizeof(instructionStatic));
+		initializeInstrStatic(node);
+		node->type='Q';
+		node->ngram = malloc(10*sizeof(char));
+		strcpy(node->ngram, "cat");
+		node->num = 25;
+		insertInstrStaticArray(arrayOfInstr, node);								//insert changed node
+	
+		assert(arrayOfInstr->array[i].type=='Q');
+		CuAssertPtrNotNull(tc,arrayOfInstr->array[i].ngram); 
+		CuAssertStrEquals(tc,"cat",arrayOfInstr->array[i].ngram); 
+		CuAssertIntEquals(tc,25,arrayOfInstr->array[i].num); 
+		CuAssertIntEquals(tc,i+1,arrayOfInstr->position); 
+		
+		free(node);
+		node=NULL;
+	}
+	CuAssertIntEquals(tc,20,arrayOfInstr->length); 
+	destroyInstrStaticArray(arrayOfInstr);
+}
+
+void TestDestroyInstructionStatic(CuTest *tc){
+	instructionStatic* instr = malloc(sizeof(instructionStatic));
+	initializeInstrStatic(instr);
+	destroyInstructionStatic(instr);						//not changed instruction
+	
+	
+	assert(instr->type=='Q');
+	CuAssertPtrEquals(tc,NULL,instr->ngram); 
+	CuAssertIntEquals(tc,-1,instr->num); 
+	
+	free(instr);
+	instr = NULL;
+	
+	instr = malloc(sizeof(instructionStatic));
+	initializeInstrStatic(instr);
+	
+	instr->type='Q';
+	instr->ngram = malloc(10*sizeof(char));
+	strcpy(instr->ngram, "cat");
+	instr->num = 25;
+	
+	destroyInstructionStatic(instr);						//changed instruction
+	
+	assert(instr->type=='Q');
+	CuAssertPtrEquals(tc,NULL,instr->ngram); 
+	CuAssertIntEquals(tc,-1,instr->num); 
+	
+	free(instr);
+	instr = NULL;
+}
+
 
 CuSuite* BatchHandlerGetSuite() {		//adding TestBatchHandler Functions into suite
     CuSuite* suite = CuSuiteNew();
@@ -357,6 +488,11 @@ CuSuite* BatchHandlerGetSuite() {		//adding TestBatchHandler Functions into suit
     SUITE_ADD_TEST(suite, TestInitializeInstruction);
     SUITE_ADD_TEST(suite, TestDestroyInstruction);
     SUITE_ADD_TEST(suite, TestRearrange_MoveUpArray);
+	SUITE_ADD_TEST(suite, TestInitializeInstrStaticArr);
+	SUITE_ADD_TEST(suite, TestInitializeInstrStatic);
+	SUITE_ADD_TEST(suite, TestDoubleInstrStaticArray);
+	SUITE_ADD_TEST(suite, TestInsertInstrStaticArray);
+	SUITE_ADD_TEST(suite, TestDestroyInstructionStatic);
     
     return suite;
 }

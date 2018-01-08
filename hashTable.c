@@ -93,9 +93,6 @@ dataNode* insertTrieNode(dataNode* node, HashTable* hashTable){
 	check = insertionSortBucket(hashTable, &(hashTable->buckets[noOfbucket]),node,bucket->position);
 	
 	dataNode* returnNodePtr = check->insertedNode;
-	if(strcmp(returnNodePtr->word,"research")==0) {
-		//printf("OPAbefore  %d %d\n",returnNodePtr->finalSinceAdditionVersion,node->finalSinceAdditionVersion);
-	}
 	if(bucket->overflowed){
 		bucket->overflowed = false;
 		hashTable->bucketToBeSplit++;
@@ -112,9 +109,6 @@ dataNode* insertTrieNode(dataNode* node, HashTable* hashTable){
 		check=NULL;
 	}
 	
-	if(strcmp(returnNodePtr->word,"research")==0) {
-		//printf("OPAbefore return %d %d\n",returnNodePtr->finalSinceAdditionVersion,node->finalSinceAdditionVersion);
-	}
 	return returnNodePtr;
 }
 

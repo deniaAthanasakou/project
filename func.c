@@ -97,7 +97,14 @@ void insert_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords, int 
 }
 
 //search
-char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWordsOriginal, BloomFilter* topFilter,topKArray *topArray, int queryNum){		//is called for a single query
+char* search_ngram(void** args){		//is called for a single query
+
+	HashTable *hashTable = (HashTable*) args[0];
+	char** arrayOfWordsOriginal = (char**) args[1];
+	int noOfWordsOriginal = (*(int*)args[2]);
+	BloomFilter* topFilter = (BloomFilter*)args[3];
+	topKArray *topArray = (topKArray*)args[4];
+	int queryNum = (*(int*)args[5]);
 	
 	BloomFilter* filter = initializeFilter(5);		//initialize bloomFilter here
 	char** finalStringArray=malloc(0*sizeof(char*));
@@ -276,7 +283,14 @@ char* search_ngram(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWo
 
 
 //search in static files
-char* search_ngram_StaticVersion(HashTable *hashTable, char** arrayOfWordsOriginal, int noOfWordsOriginal, BloomFilter* topFilter, topKArray *topArray){
+char* search_ngram_StaticVersion(void** args){
+	
+	HashTable *hashTable = (HashTable*) args[0];
+	char** arrayOfWordsOriginal = (char**) args[1];
+	BloomFilter* topFilter = (BloomFilter*)args[3];
+	topKArray *topArray = (topKArray*)args[4];
+	int noOfWordsOriginal = (*(int*)args[2]);
+
 
 	BloomFilter* filter = initializeFilter(5);		//initialize bloomFilter here
 	char** finalStringArray=malloc(0*sizeof(char*));
@@ -555,9 +569,6 @@ void delete_ngram(HashTable* hashTable, char** arrayOfWords, int noOfWords, int 
 			}
 			
 			elementFinal = lookupElement->isFinal;
-			if(strcmp(arrayOfWords[0],"czech")==0){
-				//	printf("elementFinal = %d\n",elementFinal);
-				}
 			
 			if(i==noOfWords-1){
 				lookupElement->notFinalInDeletionVersion = deletionNum;
